@@ -1,0 +1,11 @@
+apiVersion: v2
+name: postgres
+description: Postgres chart
+icon: https://
+type: application
+version: 1.0.0
+appVersion: "14.0"
+dependencies:
+  - name: base
+    version: 1.0.0
+    repository: file://../base
