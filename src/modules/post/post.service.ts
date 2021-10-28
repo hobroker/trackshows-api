@@ -1,7 +1,6 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Post } from './entities/post';
-import { Prisma } from '@prisma/client';
 
 type PostCreate = {
   title: string;
@@ -10,13 +9,9 @@ type PostCreate = {
 
 @Injectable()
 export class PostService {
-  constructor(
-    @Inject(forwardRef(() => PrismaService))
-    private readonly prismaService: PrismaService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   findMany(search: string, skip: number, take: number): Promise<Post[]> {
-    console.log('search', search);
     return this.prismaService.post.findMany({
       where: {
         published: true,

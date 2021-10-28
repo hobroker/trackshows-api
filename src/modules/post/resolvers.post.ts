@@ -9,7 +9,6 @@ import {
 } from '@nestjs/graphql';
 import { Inject } from '@nestjs/common';
 import { Post } from './entities/post';
-import { PrismaService } from '../prisma/prisma.service';
 import { PostService } from './post.service';
 
 @InputType()

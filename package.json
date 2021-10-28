@@ -1,10 +1,10 @@
 {
-  "name": "rest-nestjs",
+  "name": "trackshows-api",
   "version": "0.0.1",
   "private": true,
-  "description": "",
-  "license": "UNLICENSED",
-  "author": "",
+  "description": "Trackshows API",
+  "license": "MIT",
+  "author": "Igor Leahu <igor.leahu24@gmail.com>",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -49,8 +49,7 @@
     "graphql": "15.6.1",
     "graphql-tools": "8.2.0",
     "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.2",
-    "rxjs": "7.4.0"
+    "rimraf": "3.0.2"
   },
   "devDependencies": {
     "@nestjs/cli": "8.1.4",
@@ -61,9 +60,10 @@
     "@types/node": "16.11.6",
     "@types/supertest": "2.0.11",
     "@typescript-eslint/eslint-plugin": "5.2.0",
-    "@typescript-eslint/parser": "5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
     "eslint": "8.1.0",
     "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "4.0.0",
     "jest": "27.3.1",
     "prettier": "2.4.1",

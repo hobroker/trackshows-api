@@ -4,7 +4,7 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigType } from '@nestjs/config';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { prismaConfig } from './prisma.config';
 
@@ -26,9 +26,7 @@ export class PrismaService
       ],
     });
 
-    const shouldShowLogs = this.config.debug;
-
-    if (shouldShowLogs) {
+    if (this.config.debug) {
       this.$on<any>('query', (event: Prisma.QueryEvent) => {
         console.log('Query: ' + event.query);
         console.log('Duration: ' + event.duration + 'ms\n');
