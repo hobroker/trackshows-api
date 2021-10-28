@@ -2,19 +2,20 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
-import { PrismaService } from './prisma.service';
-import { PostResolver } from './resolvers.post';
-import { UserResolver } from './resolvers.user';
+import { PostModule } from './modules/post/post.module';
+import { UserModule } from './modules/user/user.module';
+import { appConfig } from './app.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forFeature(appConfig),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       buildSchemaOptions: { dateScalarMode: 'timestamp' },
     }),
+    PostModule,
+    UserModule,
   ],
-  controllers: [],
-  providers: [PrismaService, UserResolver, PostResolver],
+  providers: [],
 })
 export class AppModule {}

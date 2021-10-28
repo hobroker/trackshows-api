@@ -4,10 +4,17 @@
 
 type User {
   id: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
   email: String!
   name: String
   posts: [Post!]
 }
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
 type Post {
   id: Int!
@@ -20,47 +27,24 @@ type Post {
   author: User
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
-
 type Query {
-  allUsers: [User!]
-  draftsByUser(userUniqueInput: UserUniqueInput!): [Post!]
   postById(id: Float!): Post
-  feed(orderBy: PostOrderByUpdatedAtInput, take: Float, skip: Float, searchString: String): [Post!]!
-}
-
-input UserUniqueInput {
-  id: Float
-  email: String
-}
-
-input PostOrderByUpdatedAtInput {
-  updatedAt: SortOrder!
-}
-
-enum SortOrder {
-  asc
-  desc
+  feed(take: Float, skip: Float, search: String): [Post!]!
+  allUsers: [User!]
 }
 
 type Mutation {
-  signupUser(data: UserCreateInput!): User!
   createDraft(authorEmail: String!, data: PostCreateInput!): Post!
-  incrementPostViewCount(id: Float!): Post!
-  togglePublishPost(id: Float!): Post
   deletePost(id: Float!): Post
-}
-
-input UserCreateInput {
-  email: String!
-  name: String
-  posts: [PostCreateInput!]
+  signupUser(data: UserCreateInput!): User!
 }
 
 input PostCreateInput {
   title: String!
   content: String
+}
+
+input UserCreateInput {
+  email: String!
+  name: String
 }
