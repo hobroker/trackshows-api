@@ -4,7 +4,6 @@ import { HttpModule } from '../http';
 import { tmdbConfig } from './tmdb.config';
 import { HttpConfigService } from './services/http-config.service';
 import { TmdbGenreService, TmdbTvService } from './services';
-import { GenreResolver } from './resolvers';
 import { PrismaModule } from '../prisma';
 
 @Module({
@@ -16,6 +15,6 @@ import { PrismaModule } from '../prisma';
     }),
   ],
   exports: [TmdbGenreService],
-  providers: [TmdbTvService, TmdbGenreService, GenreResolver],
+  providers: [TmdbTvService, TmdbGenreService],
 })
 export class TmdbModule {}

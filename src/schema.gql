@@ -29,17 +29,17 @@ type Post {
 
 type Genre {
   id: Int!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
   name: String!
   externalId: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
 }
 
 type Query {
-  genres: [Genre!]
   postById(id: Float!): Post
   feed(take: Float, skip: Float, search: String): [Post!]!
   allUsers: [User!]
+  genres: [Genre!]
 }
 
 type Mutation {
