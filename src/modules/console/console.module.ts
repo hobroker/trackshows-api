@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConsoleModule as NestConsoleModule } from 'nestjs-console';
 import { ConsoleService } from './console.service';
-import { TmdbModule } from '../tmdb';
+import { SyncModule } from '../sync';
 
 @Module({
-  imports: [NestConsoleModule, TmdbModule],
+  imports: [NestConsoleModule, SyncModule],
   providers: [ConsoleService],
   exports: [ConsoleService],
 })

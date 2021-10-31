@@ -1,11 +1,11 @@
 import { Console, Command, createSpinner } from 'nestjs-console';
 import { Inject } from '@nestjs/common';
-import { TmdbGenreService } from '../tmdb';
+import { SyncGenreService } from '../sync';
 
 @Console()
 export class ConsoleService {
-  @Inject(TmdbGenreService)
-  private readonly tmdbGenreService: TmdbGenreService;
+  @Inject(SyncGenreService)
+  private readonly syncGenreService: SyncGenreService;
 
   @Command({
     command: 'sync',
@@ -15,7 +15,7 @@ export class ConsoleService {
     const spin = createSpinner();
     spin.start(`Working`);
 
-    await this.tmdbGenreService.syncList();
+    await this.syncGenreService.syncAll();
 
     spin.succeed('Done');
   }
