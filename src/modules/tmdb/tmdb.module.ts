@@ -5,15 +5,17 @@ import { tmdbConfig } from './tmdb.config';
 import { HttpConfigService } from './services/http-config.service';
 import { TmdbGenreService, TmdbTvService } from './services';
 import { GenreResolver } from './resolvers';
+import { PrismaModule } from '../prisma';
 
 @Module({
   imports: [
+    PrismaModule,
     HttpModule.registerAsync({
       useClass: HttpConfigService,
       imports: [ConfigModule.forFeature(tmdbConfig)],
     }),
   ],
-  exports: [],
+  exports: [TmdbGenreService],
   providers: [TmdbTvService, TmdbGenreService, GenreResolver],
 })
 export class TmdbModule {}

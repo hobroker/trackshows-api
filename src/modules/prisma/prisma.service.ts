@@ -33,7 +33,7 @@ export class PrismaService
       this.$on<any>('query', (event: Prisma.QueryEvent) => {
         this.logger.debug({
           query: event.query,
-          params: JSON.parse(event.params),
+          params: event.params,
           duration: event.duration,
         });
       });
