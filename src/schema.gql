@@ -27,7 +27,16 @@ type Post {
   author: User
 }
 
+type Genre {
+  id: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  name: String!
+  externalId: Float!
+}
+
 type Query {
+  genres: [Genre!]
   postById(id: Float!): Post
   feed(take: Float, skip: Float, search: String): [Post!]!
   allUsers: [User!]

@@ -3,7 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '../http';
 import { tmdbConfig } from './tmdb.config';
 import { HttpConfigService } from './services/http-config.service';
-import { TmdbTvService } from './services/tmdb-tv.service';
+import { TmdbGenreService, TmdbTvService } from './services';
+import { GenreResolver } from './resolvers';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { TmdbTvService } from './services/tmdb-tv.service';
     }),
   ],
   exports: [],
-  providers: [TmdbTvService],
+  providers: [TmdbTvService, TmdbGenreService, GenreResolver],
 })
 export class TmdbModule {}
