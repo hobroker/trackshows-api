@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { appConfig } from './app.config';
+import { TmdbModule } from './modules/tmdb';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { appConfig } from './app.config';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       buildSchemaOptions: { dateScalarMode: 'timestamp' },
     }),
+    TmdbModule,
     PostModule,
     UserModule,
   ],

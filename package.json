@@ -13,7 +13,7 @@
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src}/**/*.ts\" --max-warnings 0 --fix",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings 0 --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "prepare": "husky install"
@@ -78,7 +78,7 @@
     "typescript": "4.4.4"
   },
   "lint-staged": {
-    "src/**/*.*ts": [
+    "src/**/*.ts": [
       "eslint --max-warnings 0 --fix",
       "prettier --write"
     ]
