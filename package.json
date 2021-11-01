@@ -12,7 +12,7 @@
     "start": "nest start",
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main.js",
     "lint": "eslint \"src/**/*.ts\" --max-warnings 0 --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -55,8 +55,7 @@
     "graphql-tools": "8.2.0",
     "nestjs-console": "^7.0.0",
     "ramda": "^0.27.1",
-    "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.2"
+    "reflect-metadata": "0.1.13"
   },
   "devDependencies": {
     "@nestjs/cli": "8.1.4",
@@ -77,6 +76,7 @@
     "lint-staged": "^11.2.6",
     "prettier": "2.4.1",
     "prisma": "3.3.0",
+    "rimraf": "^3.0.2",
     "supertest": "6.1.6",
     "ts-jest": "27.0.7",
     "ts-loader": "9.2.6",
