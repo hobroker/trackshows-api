@@ -6,15 +6,15 @@ export class Genre {
   @Field(() => Int)
   id: number;
 
+  @Field()
+  name: string;
+
+  @Field(() => Int)
+  externalId: number;
+
   @Field(() => Date)
   createdAt: Date;
 
   @Field(() => Date)
   updatedAt: Date;
-
-  @Field()
-  name: string;
-
-  @Field()
-  externalId: number;
 }
