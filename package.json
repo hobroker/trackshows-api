@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "prepare": "husky install",
     "console:dev": "ts-node -r tsconfig-paths/register src/console/index.ts",
-    "console": "node dist/cli/index.js"
+    "console": "node dist/console/index.js"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -91,6 +91,6 @@
     ]
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "npm run console seed"
   }
 }
