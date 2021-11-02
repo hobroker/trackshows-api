@@ -14,6 +14,7 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  private isDebugEnabled = false;
   private readonly logger = new Logger(PrismaService.name);
 
   @Inject(prismaConfig.KEY)
@@ -31,6 +32,7 @@ export class PrismaService
   }
 
   async onModuleInit() {
+    this.isDebugEnabled = this.config.debug;
     this.registerEvents();
 
     await this.$connect();
@@ -40,17 +42,18 @@ export class PrismaService
     await this.$disconnect();
   }
 
-  registerEvents() {
-    if (this.config.debug) {
-      this.$on<any>('query', (event: Prisma.QueryEvent) => {
-        this.logger.debug({
-          query: event.query,
-          params: event.params,
-          duration: event.duration,
-        });
-      });
-    }
+  private registerEvents() {
+    this.$on<any>('query', (event: Prisma.QueryEvent) => {
+      if (!this.isDebugEnabled) {
+        return;
+      }
 
+      this.logger.debug({
+        query: event.query,
+        params: event.params,
+        duration: event.duration,
+      });
+    });
     this.$on<any>('info', (event: Prisma.LogEvent) => {
       this.logger.log(event.message);
     });
@@ -60,5 +63,9 @@ export class PrismaService
     this.$on<any>('error', (event: Prisma.LogEvent) => {
       this.logger.error(event.message);
     });
+  }
+
+  disableDebug() {
+    this.isDebugEnabled = false;
   }
 }

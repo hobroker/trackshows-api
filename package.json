@@ -91,6 +91,6 @@
     ]
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "npm run console:dev seed"
   }
 }
