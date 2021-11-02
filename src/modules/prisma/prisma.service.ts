@@ -14,37 +14,58 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  private isDebugEnabled = false;
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor(
-    @Inject(prismaConfig.KEY)
-    private config: ConfigType<typeof prismaConfig>,
-  ) {
+  @Inject(prismaConfig.KEY)
+  private config: ConfigType<typeof prismaConfig>;
+
+  constructor() {
     super({
       log: [
         { emit: 'event', level: 'query' },
-        { emit: 'stdout', level: 'info' },
-        { emit: 'stdout', level: 'warn' },
-        { emit: 'stdout', level: 'error' },
+        { emit: 'event', level: 'info' },
+        { emit: 'event', level: 'warn' },
+        { emit: 'event', level: 'error' },
       ],
     });
-
-    if (this.config.debug) {
-      this.$on<any>('query', (event: Prisma.QueryEvent) => {
-        this.logger.debug({
-          query: event.query,
-          params: event.params,
-          duration: event.duration,
-        });
-      });
-    }
   }
 
   async onModuleInit() {
+    this.isDebugEnabled = this.config.debug;
+    this.registerEvents();
+
     await this.$connect();
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
+  }
+
+  private registerEvents() {
+    this.$on<any>('query', (event: Prisma.QueryEvent) => {
+      if (!this.isDebugEnabled) {
+        return;
+      }
+
+      this.logger.debug({
+        query: event.query,
+        params: event.params,
+        duration: event.duration,
+      });
+    });
+    this.$on<any>('info', (event: Prisma.LogEvent) => {
+      this.logger.log(event.message);
+    });
+    this.$on<any>('warn', (event: Prisma.LogEvent) => {
+      this.logger.warn(event.message);
+    });
+    this.$on<any>('error', (event: Prisma.LogEvent) => {
+      this.logger.error(event.message);
+    });
+  }
+
+  disableDebug() {
+    this.isDebugEnabled = false;
   }
 }
