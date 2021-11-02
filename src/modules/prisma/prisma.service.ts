@@ -16,19 +16,31 @@ export class PrismaService
 {
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor(
-    @Inject(prismaConfig.KEY)
-    private config: ConfigType<typeof prismaConfig>,
-  ) {
+  @Inject(prismaConfig.KEY)
+  private config: ConfigType<typeof prismaConfig>;
+
+  constructor() {
     super({
       log: [
         { emit: 'event', level: 'query' },
-        { emit: 'stdout', level: 'info' },
-        { emit: 'stdout', level: 'warn' },
-        { emit: 'stdout', level: 'error' },
+        { emit: 'event', level: 'info' },
+        { emit: 'event', level: 'warn' },
+        { emit: 'event', level: 'error' },
       ],
     });
+  }
 
+  async onModuleInit() {
+    this.registerEvents();
+
+    await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+
+  registerEvents() {
     if (this.config.debug) {
       this.$on<any>('query', (event: Prisma.QueryEvent) => {
         this.logger.debug({
@@ -38,13 +50,15 @@ export class PrismaService
         });
       });
     }
-  }
 
-  async onModuleInit() {
-    await this.$connect();
-  }
-
-  async onModuleDestroy() {
-    await this.$disconnect();
+    this.$on<any>('info', (event: Prisma.LogEvent) => {
+      this.logger.log(event.message);
+    });
+    this.$on<any>('warn', (event: Prisma.LogEvent) => {
+      this.logger.warn(event.message);
+    });
+    this.$on<any>('error', (event: Prisma.LogEvent) => {
+      this.logger.error(event.message);
+    });
   }
 }
