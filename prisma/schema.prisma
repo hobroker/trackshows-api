@@ -9,12 +9,12 @@ datasource db {
 }
 
 model User {
-  id    Int          @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
-  email String       @unique
-  name  String?
-  posts Post[]
+  email     String       @unique
+  name      String?
+  posts     Post[]
 }
 
 model Post {
