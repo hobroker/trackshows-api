@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
 import { GenreModule } from './modules/genre';
+import { PersonModule } from './modules/person';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GenreModule } from './modules/genre';
     PostModule,
     UserModule,
     GenreModule,
+    PersonModule,
   ],
 })
 export class AppModule {}

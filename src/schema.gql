@@ -35,11 +35,20 @@ type Genre {
   updatedAt: Timestamp!
 }
 
+type Gender {
+  id: Int!
+  name: String!
+  externalId: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
 type Query {
   postById(id: Float!): Post
   feed(take: Float, skip: Float, search: String): [Post!]!
   allUsers: [User!]
   genres: [Genre!]
+  genders: [Gender!]
 }
 
 type Mutation {
