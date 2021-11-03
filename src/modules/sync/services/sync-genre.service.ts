@@ -17,7 +17,7 @@ export class SyncGenreService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async syncAll() {
+  async sync() {
     const genres = await this.tmdbGenreService.list().then(map(genreFacade));
 
     return this.prismaService.genre.createMany({

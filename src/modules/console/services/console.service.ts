@@ -22,10 +22,11 @@ export class ConsoleService {
     this.spinner = createSpinner();
     this.spinner.start(`Working`);
 
-    await this.syncGenreService.syncAll().then(this.log('genres'));
-    await this.syncGenderService
-      .createMany(gendersSeed)
-      .then(this.log('genders'));
+    // genre
+    await this.syncGenreService.sync().then(this.log('genres'));
+
+    // person
+    await this.syncGenderService.insert(gendersSeed).then(this.log('genders'));
 
     this.spinner.succeed('Done');
   }

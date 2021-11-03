@@ -6,7 +6,7 @@ export class SyncGenderService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async createMany(genders) {
+  async insert(genders) {
     return this.prismaService.gender.createMany({
       data: genders,
       skipDuplicates: true,
