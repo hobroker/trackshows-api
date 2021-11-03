@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { applySpec, map, prop } from 'ramda';
+import { Genre } from '../../genre';
 import { PrismaService } from '../../prisma';
-import { Genre, TmdbGenreService } from '../../tmdb';
+import { TmdbGenreService } from '../../tmdb';
 
 const genreFacade = applySpec<Genre>({
   externalId: prop('id'),

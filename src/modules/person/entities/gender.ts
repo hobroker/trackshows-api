@@ -2,14 +2,14 @@ import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Genre {
+export class Gender {
   @Field(() => Int)
   id: number;
 
   @Field()
   name: string;
 
-  @Field(() => Int)
+  @Field()
   externalId: number;
 
   @Field(() => Date)
