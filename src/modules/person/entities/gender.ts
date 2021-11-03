@@ -9,7 +9,7 @@ export class Gender {
   @Field()
   name: string;
 
-  @Field()
+  @Field(() => Int)
   externalId: number;
 
   @Field(() => Date)

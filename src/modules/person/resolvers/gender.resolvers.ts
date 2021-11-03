@@ -7,10 +7,10 @@ import { Gender } from '../entities';
 @Resolver(Gender)
 export class GenderResolver {
   @Inject(GenderService)
-  private genreService: GenderService;
+  private genderService: GenderService;
 
   @Query(() => [Gender], { nullable: true })
   genders() {
-    return this.genreService.list();
+    return this.genderService.list();
   }
 }

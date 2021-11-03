@@ -30,7 +30,7 @@ type Post {
 type Genre {
   id: Int!
   name: String!
-  externalId: Float!
+  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -38,7 +38,20 @@ type Genre {
 type Gender {
   id: Int!
   name: String!
-  externalId: Float!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Person {
+  id: Int!
+  name: String!
+  description: String!
+  image: String!
+  birthday: Timestamp!
+  deathday: Timestamp
+  gender: Gender!
+  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -49,6 +62,7 @@ type Query {
   allUsers: [User!]
   genres: [Genre!]
   genders: [Gender!]
+  persons: [Person!]
 }
 
 type Mutation {
