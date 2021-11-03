@@ -10,12 +10,20 @@ export class SyncPersonService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async sync() {
-    // const genres = await this.tmdbPersonService.list().then(map(genreFacade));
-    //
-    // return this.prismaService.genre.createMany({
-    //   data: genres,
-    //   skipDuplicates: true,
-    // });
+  async sync(personId: number) {
+    const { genderId, ...person } = await this.tmdbPersonService.getDetails(
+      personId,
+    );
+
+    return this.prismaService.person.create({
+      data: {
+        ...person,
+        gender: {
+          connect: {
+            externalId: genderId,
+          },
+        },
+      },
+    });
   }
 }

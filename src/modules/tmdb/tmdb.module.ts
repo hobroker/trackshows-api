@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '../http';
 import { tmdbConfig } from './tmdb.config';
 import { HttpConfigService } from './services/http-config.service';
-import { TmdbGenreService, TmdbTvService } from './services';
+import { TmdbGenreService, TmdbTvService, TmdbPersonService } from './services';
 import { PrismaModule } from '../prisma';
 
 @Module({
@@ -14,7 +14,7 @@ import { PrismaModule } from '../prisma';
       imports: [ConfigModule.forFeature(tmdbConfig)],
     }),
   ],
-  exports: [TmdbGenreService],
-  providers: [TmdbTvService, TmdbGenreService],
+  exports: [TmdbTvService, TmdbGenreService, TmdbPersonService],
+  providers: [TmdbTvService, TmdbGenreService, TmdbPersonService],
 })
 export class TmdbModule {}

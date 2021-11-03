@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { SyncGenreService } from './services';
+import {
+  SyncGenreService,
+  SyncGenderService,
+  SyncPersonService,
+} from './services';
 import { PrismaModule } from '../prisma';
 import { TmdbModule } from '../tmdb';
-import { SyncGenderService } from './services/sync-gender.service';
 
 @Module({
   imports: [PrismaModule, TmdbModule],
-  exports: [SyncGenreService, SyncGenderService],
-  providers: [SyncGenreService, SyncGenderService],
+  exports: [SyncGenreService, SyncGenderService, SyncPersonService],
+  providers: [SyncGenreService, SyncGenderService, SyncPersonService],
 })
 export class SyncModule {}
