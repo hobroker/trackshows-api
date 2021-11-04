@@ -5,3 +5,4 @@ export { RawKeywordInterface } from './raw-keyword.interface';
 export { RawStatusInterface } from './raw-status.interface';
 export { RawEpisodeInterface } from './raw-episode.interface';
 export { RawSeasonInterface } from './raw-season.interface';
+export { RawShowInterface } from './raw-show.interface';

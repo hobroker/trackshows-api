@@ -6,6 +6,5 @@ export interface RawSeasonInterface {
   description?: string;
   tallImage: string;
   number: number;
-  showId: number;
   episodes: RawEpisodeInterface[];
 }
