@@ -9,7 +9,7 @@ export class Genre {
   @Field()
   name: string;
 
-  @Field()
+  @Field(() => Int)
   externalId: number;
 
   @Field(() => Date)

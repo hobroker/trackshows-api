@@ -5,4 +5,10 @@ import { HttpService } from '../../http';
 export class TmdbTvService {
   @Inject(HttpService)
   private httpService: HttpService;
+
+  async getDetails(tvId: number) {
+    const { data } = await this.httpService.get(`/tv/${tvId}`);
+
+    return data;
+  }
 }

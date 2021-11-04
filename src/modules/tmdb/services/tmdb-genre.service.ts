@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma';
 import { HttpService } from '../../http';
+import { RawGenreInterface } from '../interfaces';
+import { genreFacade } from '../facades';
 
 @Injectable()
 export class TmdbGenreService {
@@ -10,10 +12,9 @@ export class TmdbGenreService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async list() {
+  async list(): Promise<RawGenreInterface[]> {
     const { data } = await this.httpService.get('/genre/tv/list');
-    const { genres } = data;
 
-    return genres;
+    return data.genres.map(genreFacade);
   }
 }

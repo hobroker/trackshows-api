@@ -1,12 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { applySpec, map, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
-import { Genre, TmdbGenreService } from '../../tmdb';
-
-const genreFacade = applySpec<Genre>({
-  externalId: prop('id'),
-  name: prop('name'),
-});
+import { TmdbGenreService } from '../../tmdb';
 
 @Injectable()
 export class SyncGenreService {
@@ -16,8 +10,8 @@ export class SyncGenreService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async syncAll() {
-    const genres = await this.tmdbGenreService.list().then(map(genreFacade));
+  async sync() {
+    const genres = await this.tmdbGenreService.list();
 
     return this.prismaService.genre.createMany({
       data: genres,

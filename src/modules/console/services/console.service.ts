@@ -1,6 +1,7 @@
 import { Command, Console, createSpinner } from 'nestjs-console';
 import { Inject } from '@nestjs/common';
-import { SyncGenreService } from '../../sync';
+import { SyncGenreService, SyncGenderService } from '../../sync';
+import { gendersSeed } from '../console.constants';
 
 @Console()
 export class ConsoleService {
@@ -8,6 +9,9 @@ export class ConsoleService {
 
   @Inject(SyncGenreService)
   private readonly syncGenreService: SyncGenreService;
+
+  @Inject(SyncGenderService)
+  private readonly syncGenderService: SyncGenderService;
 
   @Command({
     command: 'seed',
@@ -17,7 +21,11 @@ export class ConsoleService {
     this.spinner = createSpinner();
     this.spinner.start(`Working`);
 
-    await this.syncGenreService.syncAll().then(this.log('genres'));
+    // genre
+    await this.syncGenreService.sync().then(this.log('genres'));
+
+    // person
+    await this.syncGenderService.insert(gendersSeed).then(this.log('genders'));
 
     this.spinner.succeed('Done');
   }

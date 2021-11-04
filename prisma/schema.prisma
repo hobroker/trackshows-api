@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "darwin", "debian-openssl-1.1.x"]
 }
 
@@ -9,10 +9,10 @@ datasource db {
 }
 
 model User {
-  id        Int          @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
-  email     String       @unique
+  updatedAt DateTime @default(now()) @updatedAt
+  email     String   @unique
   name      String?
   posts     Post[]
 }
@@ -32,7 +32,30 @@ model Post {
 model Genre {
   id         Int      @id @default(autoincrement())
   name       String
-  externalId Int?     @unique
+  externalId Int      @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Gender {
+  id         Int      @id @default(autoincrement())
+  name       String
+  externalId Int      @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  persons    Person[]
+}
+
+model Person {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String    @default("")
+  image       String
+  birthday    DateTime
+  deathday    DateTime?
+  gender      Gender    @relation(fields: [genderId], references: [id])
+  genderId    Int
+  externalId  Int       @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
