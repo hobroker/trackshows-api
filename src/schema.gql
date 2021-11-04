@@ -56,6 +56,14 @@ type Person {
   updatedAt: Timestamp!
 }
 
+type Keyword {
+  id: Int!
+  name: String!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
 type Query {
   postById(id: Float!): Post
   feed(take: Float, skip: Float, search: String): [Post!]!
@@ -63,6 +71,7 @@ type Query {
   genres: [Genre!]
   genders: [Gender!]
   persons: [Person!]
+  keywords: [Keyword!]
 }
 
 type Mutation {
