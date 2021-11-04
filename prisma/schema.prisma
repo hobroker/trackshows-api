@@ -61,6 +61,7 @@ model Person {
   updatedAt   DateTime  @updatedAt
 }
 
+<<<<<<< HEAD
 model Status {
   id        Int      @id @default(autoincrement())
   name      String   @unique
@@ -119,4 +120,12 @@ model Episode {
   externalId  Int      @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+=======
+model Keyword {
+  id         Int      @id @default(autoincrement())
+  name       String
+  externalId Int      @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+>>>>>>> 5b8d045db5279188dfcf269565a7af924f0f05a0
 }

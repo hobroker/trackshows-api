@@ -8,6 +8,7 @@ import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
 import { GenreModule } from './modules/genre';
 import { PersonModule } from './modules/person';
+import { KeywordModule } from './modules/keyword';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PersonModule } from './modules/person';
     UserModule,
     GenreModule,
     PersonModule,
+    KeywordModule,
   ],
 })
 export class AppModule {}
