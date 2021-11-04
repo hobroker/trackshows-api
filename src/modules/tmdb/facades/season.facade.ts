@@ -7,5 +7,4 @@ export const seasonFacade = applySpec<RawSeasonInterface>({
   description: prop('overview'),
   tallImage: prop('poster_path'),
   number: prop('season_number'),
-  episodes: prop('episodes'),
 });

@@ -16,11 +16,5 @@ export const showFacade = applySpec<RawShowInterface>({
   status: statusFacade,
   genres: compose(map(genreFacade), prop('genres')),
   keywords: compose(map(keywordFacade), path(['keywords', 'results'])),
-  seasons: ({ seasons, episodes }) =>
-    seasons.map((season, idx) =>
-      seasonFacade({
-        ...season,
-        episodes: episodes[idx],
-      }),
-    ),
+  seasons: compose(map(seasonFacade), prop('seasons')),
 });

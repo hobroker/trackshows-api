@@ -14,11 +14,17 @@ export class TmdbShowService {
         append_to_response: 'keywords',
       },
     });
-    const seasonNumbers = data.seasons.map(prop('season_number'));
 
-    data.episodes = await this.getAllEpisodes(tvId, seasonNumbers);
+    const show = showFacade(data);
+    const seasonNumbers = show.seasons.map(prop('number'));
+    const episodes = await this.getAllEpisodes(tvId, seasonNumbers);
 
-    return showFacade(data);
+    show.seasons = show.seasons.map((season, idx) => ({
+      ...season,
+      episodes: episodes[idx],
+    }));
+
+    return show;
   }
 
   private async getSeasonEpisodes(tvId: number, seasonNumber: number) {
