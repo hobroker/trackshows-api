@@ -11,7 +11,7 @@ export class SyncPersonService {
   private prismaService: PrismaService;
 
   async sync(personId: number) {
-    const { genderId, ...person } = await this.tmdbPersonService.getDetails(
+    const { gender, ...person } = await this.tmdbPersonService.getDetails(
       personId,
     );
 
@@ -19,9 +19,7 @@ export class SyncPersonService {
       data: {
         ...person,
         gender: {
-          connect: {
-            externalId: genderId,
-          },
+          connect: gender,
         },
       },
     });

@@ -1,3 +1,5 @@
+import { RawGenderInterface } from './raw-gender.interface';
+
 export interface RawPersonInterface {
   externalId: number;
   name: string;
@@ -5,5 +7,5 @@ export interface RawPersonInterface {
   image: string;
   birthday: Date;
   deathday: Date | null;
-  genderId: number;
+  gender: RawGenderInterface;
 }

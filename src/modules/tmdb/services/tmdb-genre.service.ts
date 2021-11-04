@@ -1,13 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { applySpec, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { HttpService } from '../../http';
-import { RawGenreInterface } from '../interfaces/raw-genre.interface';
-
-const genreFacade = applySpec<RawGenreInterface>({
-  externalId: prop('id'),
-  name: prop('name'),
-});
+import { RawGenreInterface } from '../interfaces';
+import { genreFacade } from '../facades';
 
 @Injectable()
 export class TmdbGenreService {

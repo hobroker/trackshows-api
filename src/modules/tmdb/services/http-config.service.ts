@@ -12,7 +12,7 @@ export class HttpConfigService implements HttpModuleOptionsFactory {
     const { baseURL, apiKey } = this.config;
 
     return {
-      baseURL: baseURL,
+      baseURL,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
