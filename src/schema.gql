@@ -56,9 +56,44 @@ type Person {
   updatedAt: Timestamp!
 }
 
+type Status {
+  id: Int!
+  name: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
 type Keyword {
   id: Int!
   name: String!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Show {
+  id: Int!
+  name: String!
+  description: String!
+  wideImage: String!
+  tallImage: String!
+  episodeRuntime: Int!
+  isInProduction: Boolean!
+  status: Status!
+  genres: [Genre!]!
+  keywords: [Keyword!]!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Season {
+  id: Int!
+  name: String!
+  description: String!
+  tallImage: String!
+  number: Int!
+  show: Show!
   externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
@@ -71,7 +106,7 @@ type Query {
   genres: [Genre!]
   genders: [Gender!]
   persons: [Person!]
-  keywords: [Keyword!]
+  keywords: [Keyword!]!
 }
 
 type Mutation {

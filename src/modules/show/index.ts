@@ -1,3 +1,3 @@
-export { KeywordModule } from './keyword.module';
+export { ShowModule } from './show.module';
 export * from './entities';
 export * from './services';
