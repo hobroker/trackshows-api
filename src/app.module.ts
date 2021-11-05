@@ -6,9 +6,8 @@ import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
-import { GenreModule } from './modules/genre';
 import { PersonModule } from './modules/person';
-import { KeywordModule } from './modules/keyword';
+import { ShowModule } from './modules/show';
 
 @Module({
   imports: [
@@ -20,9 +19,8 @@ import { KeywordModule } from './modules/keyword';
     TmdbModule,
     PostModule,
     UserModule,
-    GenreModule,
     PersonModule,
-    KeywordModule,
+    ShowModule,
   ],
 })
 export class AppModule {}

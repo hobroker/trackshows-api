@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { Query, Resolver } from '@nestjs/graphql';
 import { Inject } from '@nestjs/common';
-import { GenreService } from '../services';
 import { Genre } from '../entities';
+import { GenreService } from '../services';
 
 @Resolver(Genre)
 export class GenreResolver {

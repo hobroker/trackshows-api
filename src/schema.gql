@@ -27,14 +27,6 @@ type Post {
   author: User
 }
 
-type Genre {
-  id: Int!
-  name: String!
-  externalId: Int!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
 type Gender {
   id: Int!
   name: String!
@@ -56,9 +48,53 @@ type Person {
   updatedAt: Timestamp!
 }
 
+type Status {
+  id: Int!
+  name: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
 type Keyword {
   id: Int!
   name: String!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Genre {
+  id: Int!
+  name: String!
+  shows: [Show!]
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Show {
+  id: Int!
+  name: String!
+  description: String!
+  wideImage: String!
+  tallImage: String!
+  episodeRuntime: Int!
+  isInProduction: Boolean!
+  status: Status!
+  genres: [Genre!]!
+  keywords: [Keyword!]!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Season {
+  id: Int!
+  name: String!
+  description: String!
+  tallImage: String!
+  number: Int!
+  show: Show!
   externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
@@ -68,10 +104,11 @@ type Query {
   postById(id: Float!): Post
   feed(take: Float, skip: Float, search: String): [Post!]!
   allUsers: [User!]
-  genres: [Genre!]
   genders: [Gender!]
   persons: [Person!]
-  keywords: [Keyword!]
+  keywords: [Keyword!]!
+  shows: [Show!]!
+  genres: [Genre!]
 }
 
 type Mutation {
