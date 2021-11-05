@@ -3,3 +3,4 @@ export { Keyword } from './keyword';
 export { Show } from './show';
 export { Season } from './season';
 export { Status } from './status';
+export { Genre } from './genre';

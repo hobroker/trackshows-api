@@ -5,7 +5,7 @@ import { ShowService } from '../services';
 import { Keyword, Show } from '../entities';
 
 @Resolver(Show)
-export class KeywordResolver {
+export class ShowResolver {
   @Inject(ShowService)
   private showService: ShowService;
 

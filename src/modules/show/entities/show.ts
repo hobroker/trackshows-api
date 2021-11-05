@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Status } from './status';
-import { Genre } from '../../genre';
 import { Keyword } from './keyword';
+import { Genre } from './genre';
 
 @ObjectType()
 export class Show {

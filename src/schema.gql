@@ -27,14 +27,6 @@ type Post {
   author: User
 }
 
-type Genre {
-  id: Int!
-  name: String!
-  externalId: Int!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
 type Gender {
   id: Int!
   name: String!
@@ -66,6 +58,15 @@ type Status {
 type Keyword {
   id: Int!
   name: String!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Genre {
+  id: Int!
+  name: String!
+  shows: [Show!]
   externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
@@ -103,11 +104,11 @@ type Query {
   postById(id: Float!): Post
   feed(take: Float, skip: Float, search: String): [Post!]!
   allUsers: [User!]
-  genres: [Genre!]
   genders: [Gender!]
   persons: [Person!]
   keywords: [Keyword!]!
   shows: [Show!]!
+  genres: [Genre!]
 }
 
 type Mutation {

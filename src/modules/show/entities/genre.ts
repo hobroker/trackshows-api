@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Show } from './show';
 
 @ObjectType()
 export class Genre {
@@ -8,6 +9,9 @@ export class Genre {
 
   @Field()
   name: string;
+
+  @Field(() => [Show], { nullable: true })
+  shows: Show;
 
   @Field(() => Int)
   externalId: number;

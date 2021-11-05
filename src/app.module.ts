@@ -6,7 +6,6 @@ import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
-import { GenreModule } from './modules/genre';
 import { PersonModule } from './modules/person';
 import { ShowModule } from './modules/show';
 
@@ -20,7 +19,6 @@ import { ShowModule } from './modules/show';
     TmdbModule,
     PostModule,
     UserModule,
-    GenreModule,
     PersonModule,
     ShowModule,
   ],
