@@ -25,7 +25,7 @@ model Post {
   content   String?
   published Boolean  @default(false)
   viewCount Int      @default(0)
-  author    User?    @relation(fields: [authorId], references: [id])
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int?
 }
 
@@ -54,7 +54,7 @@ model Person {
   image       String
   birthday    DateTime
   deathday    DateTime?
-  gender      Gender    @relation(fields: [genderId], references: [id])
+  gender      Gender    @relation(fields: [genderId], references: [id], onDelete: Cascade)
   genderId    Int
   externalId  Int       @unique
   createdAt   DateTime  @default(now())
@@ -77,7 +77,7 @@ model Show {
   tallImage      String
   episodeRuntime Int
   isInProduction Boolean
-  status         Status            @relation(fields: [statusId], references: [id])
+  status         Status            @relation(fields: [statusId], references: [id], onDelete: Cascade)
   statusId       Int
   genres         GenresOnShows[]
   keywords       KeywordsOnShows[]
@@ -93,7 +93,7 @@ model Season {
   description String
   tallImage   String
   number      Int
-  show        Show      @relation(fields: [showId], references: [id])
+  show        Show      @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId      Int
   externalId  Int       @unique
   createdAt   DateTime  @default(now())
@@ -108,7 +108,7 @@ model Episode {
   wideImage   String?
   airDate     DateTime?
   number      Int
-  season      Season   @relation(fields: [seasonId], references: [id])
+  season      Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   seasonId    Int
   externalId  Int      @unique
   createdAt   DateTime @default(now())
@@ -125,18 +125,18 @@ model Keyword {
 }
 
 model GenresOnShows {
-  show    Show  @relation(fields: [showId], references: [id])
+  show    Show  @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId  Int
-  genre   Genre @relation(fields: [genreId], references: [id])
+  genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
   genreId Int
 
   @@id([showId, genreId])
 }
 
 model KeywordsOnShows {
-  show      Show    @relation(fields: [showId], references: [id])
+  show      Show    @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId    Int
-  keyword   Keyword @relation(fields: [keywordId], references: [id])
+  keyword   Keyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
   keywordId Int
 
   @@id([showId, keywordId])
