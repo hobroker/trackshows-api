@@ -6,7 +6,7 @@ import { RawKeywordInterface } from './raw-keyword.interface';
 export interface RawShowInterface {
   externalId: number;
   name: string;
-  description?: string;
+  description: string;
   wideImage: string;
   tallImage: string;
   episodeRuntime: number;

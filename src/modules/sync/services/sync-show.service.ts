@@ -10,9 +10,62 @@ export class SyncShowService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async sync(showId: number) {
-    const show = await this.tmdbShowService.getDetails(showId);
+  async syncOne(showId: number) {
+    const { status, seasons, genres, keywords, ...show } =
+      await this.tmdbShowService.getDetails(showId);
 
-    return show;
+    return this.prismaService.show.create({
+      data: {
+        ...show,
+        status: {
+          connectOrCreate: {
+            where: {
+              name: status.name,
+            },
+            create: {
+              name: status.name,
+            },
+          },
+        },
+        genres: {
+          create: genres.map(({ externalId, name }) => ({
+            genre: {
+              connectOrCreate: {
+                where: {
+                  externalId,
+                },
+                create: {
+                  externalId,
+                  name,
+                },
+              },
+            },
+          })),
+        },
+        keywords: {
+          create: keywords.map(({ externalId, name }) => ({
+            keyword: {
+              connectOrCreate: {
+                where: {
+                  externalId,
+                },
+                create: {
+                  externalId,
+                  name,
+                },
+              },
+            },
+          })),
+        },
+        seasons: {
+          create: seasons.map(({ episodes, ...season }) => ({
+            ...season,
+            episodes: {
+              create: episodes,
+            },
+          })),
+        },
+      },
+    });
   }
 }

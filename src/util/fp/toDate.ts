@@ -1,1 +1,1 @@
-export const toDate = (value) => value && new Date(value);
+export const toDate = (value) => (value ? new Date(value) : null);

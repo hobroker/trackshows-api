@@ -105,8 +105,8 @@ model Episode {
   id          Int      @id @default(autoincrement())
   name        String
   description String   @default("")
-  wideImage   String
-  airDate     DateTime
+  wideImage   String?
+  airDate     DateTime?
   number      Int
   season      Season   @relation(fields: [seasonId], references: [id])
   seasonId    Int
