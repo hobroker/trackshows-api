@@ -11,4 +11,10 @@ export class ShowService {
       orderBy: [{ name: 'asc' }],
     });
   }
+
+  async listShows() {
+    return this.prismaService.show.findMany({
+      orderBy: [{ name: 'asc' }],
+    });
+  }
 }

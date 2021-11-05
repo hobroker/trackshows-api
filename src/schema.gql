@@ -107,6 +107,7 @@ type Query {
   genders: [Gender!]
   persons: [Person!]
   keywords: [Keyword!]!
+  shows: [Show!]!
 }
 
 type Mutation {

@@ -13,4 +13,9 @@ export class KeywordResolver {
   keywords() {
     return this.showService.listKeywords();
   }
+
+  @Query(() => [Show])
+  shows() {
+    return this.showService.listShows();
+  }
 }
