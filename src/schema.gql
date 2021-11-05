@@ -4,28 +4,16 @@
 
 type User {
   id: Int!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
   email: String!
   name: String
-  posts: [Post!]
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
 }
 
 """
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
-
-type Post {
-  id: Int!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-  title: String!
-  content: String
-  published: Boolean
-  viewCount: Int!
-  author: User
-}
 
 type Gender {
   id: Int!
@@ -101,8 +89,6 @@ type Season {
 }
 
 type Query {
-  postById(id: Float!): Post
-  feed(take: Float, skip: Float, search: String): [Post!]!
   allUsers: [User!]
   genders: [Gender!]
   persons: [Person!]
@@ -112,14 +98,7 @@ type Query {
 }
 
 type Mutation {
-  createDraft(authorEmail: String!, data: PostCreateInput!): Post!
-  deletePost(id: Float!): Post
   signupUser(data: UserCreateInput!): User!
-}
-
-input PostCreateInput {
-  title: String!
-  content: String
 }
 
 input UserCreateInput {
