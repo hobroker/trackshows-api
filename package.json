@@ -90,6 +90,6 @@
     ]
   },
   "prisma": {
-    "seed": "npm run console seed"
+    "seed": "bash ./scripts/console.sh seed"
   }
 }
