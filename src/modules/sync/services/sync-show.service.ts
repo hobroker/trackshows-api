@@ -28,7 +28,7 @@ export class SyncShowService {
           },
         },
         genres: {
-          create: genres.map(({ externalId, name }) => ({
+          create: genres.map(({ externalId, ...rest }) => ({
             genre: {
               connectOrCreate: {
                 where: {
@@ -36,14 +36,14 @@ export class SyncShowService {
                 },
                 create: {
                   externalId,
-                  name,
+                  ...rest,
                 },
               },
             },
           })),
         },
         keywords: {
-          create: keywords.map(({ externalId, name }) => ({
+          create: keywords.map(({ externalId, ...rest }) => ({
             keyword: {
               connectOrCreate: {
                 where: {
@@ -51,19 +51,14 @@ export class SyncShowService {
                 },
                 create: {
                   externalId,
-                  name,
+                  ...rest,
                 },
               },
             },
           })),
         },
         seasons: {
-          create: seasons.map(({ episodes, ...season }) => ({
-            ...season,
-            episodes: {
-              create: episodes,
-            },
-          })),
+          create: seasons,
         },
       },
     });

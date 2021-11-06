@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { prop } from 'rambda';
 import { HttpService } from '../../http';
 import { episodeFacade, showFacade } from '../facades';
+import { RawEpisodeInterface } from '../interfaces';
 
 @Injectable()
 export class TmdbShowService {
@@ -15,30 +15,27 @@ export class TmdbShowService {
       },
     });
 
-    const show = showFacade(data);
-    const seasonNumbers = show.seasons.map(prop('number'));
-    const episodes = await this.getAllEpisodes(tvId, seasonNumbers);
-
-    show.seasons = show.seasons.map((season, idx) => ({
-      ...season,
-      episodes: episodes[idx],
-    }));
-
-    return show;
+    return showFacade(data);
   }
 
-  private async getSeasonEpisodes(tvId: number, seasonNumber: number) {
+  async getSeasonEpisodes(
+    externalId: number,
+    seasonNumber: number,
+  ): Promise<RawEpisodeInterface[]> {
     const { data } = await this.httpService.get(
-      `/tv/${tvId}/season/${seasonNumber}`,
+      `/tv/${externalId}/season/${seasonNumber}`,
     );
 
     return data.episodes.map(episodeFacade);
   }
 
-  private async getAllEpisodes(tvId: number, seasonNumbers: number[]) {
+  async getAllEpisodes(
+    externalShowId: number,
+    seasonNumbers: number[],
+  ): Promise<RawEpisodeInterface[][]> {
     return Promise.all(
       seasonNumbers.map((seasonNumber) =>
-        this.getSeasonEpisodes(tvId, seasonNumber),
+        this.getSeasonEpisodes(externalShowId, seasonNumber),
       ),
     );
   }
