@@ -65,7 +65,7 @@ export class PrismaService
     });
   }
 
-  disableDebug() {
-    this.isDebugEnabled = false;
+  setDebug(value: boolean) {
+    this.isDebugEnabled = value;
   }
 }

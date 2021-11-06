@@ -1,13 +1,20 @@
 import { Console } from 'nestjs-console';
 import { Inject, OnModuleInit } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { PrismaService } from '../../prisma';
+import { consoleConfig } from '../console.config';
 
 @Console()
 export class ConsoleSetupService implements OnModuleInit {
   @Inject(PrismaService)
   private readonly prismaService: PrismaService;
 
+  @Inject(consoleConfig.KEY)
+  private config: ConfigType<typeof consoleConfig>;
+
   onModuleInit(): any {
-    this.prismaService.disableDebug();
+    const { debug } = this.config;
+
+    this.prismaService.setDebug(debug);
   }
 }
