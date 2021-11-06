@@ -1,42 +1,34 @@
-import { Command, Console, createSpinner } from 'nestjs-console';
+import { Command, Console } from 'nestjs-console';
 import { Inject } from '@nestjs/common';
-import { SyncGenreService, SyncGenderService } from '../../sync';
-import { gendersSeed } from '../console.constants';
+import { SyncShowService } from '../../sync';
+import { serial } from '../../../util/serial';
 
 @Console()
 export class ConsoleService {
-  private spinner;
-
-  @Inject(SyncGenreService)
-  private readonly syncGenreService: SyncGenreService;
-
-  @Inject(SyncGenderService)
-  private readonly syncGenderService: SyncGenderService;
+  @Inject(SyncShowService)
+  private readonly syncShowService: SyncShowService;
 
   @Command({
     command: 'seed',
-    description: 'Insert default data from TMDB',
+    description: 'Seed the DB',
   })
   async seed() {
-    this.spinner = createSpinner();
-    this.spinner.start(`Working`);
-
-    // genre
-    await this.syncGenreService.sync().then(this.log('genres'));
-
-    // person
-    await this.syncGenderService.insert(gendersSeed).then(this.log('genders'));
-
-    this.spinner.succeed('Done');
+    await this.addShows([1396]);
   }
 
-  private log(type: string) {
-    return ({ count }) => {
-      if (count) {
-        this.spinner.succeed(`Inserted ${count} ${type}`);
-      } else {
-        this.spinner.warn(`No ${type} were inserted`);
-      }
-    };
+  @Command({
+    command: 'clean',
+    description: 'Remove seed data from the DB',
+  })
+  async clean() {
+    await this.syncShowService.deleteAll();
+  }
+
+  private addShows(showIds: number[]) {
+    const promiseFns = showIds.map(
+      (showId) => () => this.syncShowService.syncOne(showId),
+    );
+
+    return serial(promiseFns);
   }
 }

@@ -69,9 +69,7 @@ export class SyncShowService {
     });
   }
 
-  async deleteOne(showId: number) {
-    return this.prismaService.show.delete({
-      where: { externalId: showId },
-    });
+  async deleteAll() {
+    return this.prismaService.show.deleteMany({});
   }
 }
