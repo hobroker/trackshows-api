@@ -71,6 +71,7 @@ type Show {
   status: Status!
   genres: [Genre!]!
   keywords: [Keyword!]!
+  seasons: [Season!]!
   externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!

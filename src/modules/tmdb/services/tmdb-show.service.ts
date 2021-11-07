@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { flatten } from 'rambda';
 import { HttpService } from '../../http';
 import { episodeFacade, showFacade } from '../facades';
 import { RawEpisodeInterface } from '../interfaces';
@@ -32,11 +33,13 @@ export class TmdbShowService {
   async getAllEpisodes(
     externalShowId: number,
     seasonNumbers: number[],
-  ): Promise<RawEpisodeInterface[][]> {
-    return Promise.all(
+  ): Promise<RawEpisodeInterface[]> {
+    const episodes = await Promise.all(
       seasonNumbers.map((seasonNumber) =>
         this.getSeasonEpisodes(externalShowId, seasonNumber),
       ),
     );
+
+    return flatten<RawEpisodeInterface>(episodes);
   }
 }

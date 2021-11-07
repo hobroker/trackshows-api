@@ -66,11 +66,11 @@ model Show {
   isInProduction Boolean
   status         Status            @relation(fields: [statusId], references: [id], onDelete: Cascade)
   statusId       Int
-  genres         GenresOnShows[]
-  keywords       KeywordsOnShows[]
   externalId     Int               @unique
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+  genres         GenresOnShows[]
+  keywords       KeywordsOnShows[]
   seasons        Season[]
 }
 

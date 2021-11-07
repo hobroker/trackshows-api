@@ -5,4 +5,5 @@ export interface RawEpisodeInterface {
   wideImage: string;
   airDate: Date;
   number: number;
+  seasonNumber: number;
 }
