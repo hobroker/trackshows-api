@@ -2,6 +2,7 @@ import { Command, Console } from 'nestjs-console';
 import { Inject } from '@nestjs/common';
 import { SyncShowService } from '../../sync';
 import { serial } from '../../../util/serial';
+import { showIdsSeed } from '../data/seed';
 
 @Console()
 export class ConsoleService {
@@ -17,7 +18,7 @@ export class ConsoleService {
       await this.clean();
     }
 
-    await this.addShows([1396]);
+    await this.addShows(showIdsSeed);
   }
 
   @Command({

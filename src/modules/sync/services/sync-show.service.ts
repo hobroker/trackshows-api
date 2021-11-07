@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { assoc, indexBy, map, prop } from 'rambda';
+import { assoc, prop } from 'rambda';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 
@@ -11,21 +11,20 @@ export class SyncShowService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async syncOne(externalId: number) {
+  async syncOne(showExternalId: number) {
     const record = await this.prismaService.show.findUnique({
-      where: { externalId },
+      where: { externalId: showExternalId },
     });
 
-    if (record) {
-      return null;
+    if (!record) {
+      await this.createShow(showExternalId);
     }
 
-    const show = await this.createShow(externalId);
-    await this.createShowEpisodes(show.id, externalId);
+    await this.createShowEpisodes(showExternalId);
   }
 
   async deleteAll() {
-    return this.prismaService.show.deleteMany({});
+    return this.prismaService.show.deleteMany();
   }
 
   private async createShow(externalId: number) {
@@ -82,24 +81,28 @@ export class SyncShowService {
     });
   }
 
-  private async createShowEpisodes(showId: number, showExternalId: number) {
-    const seasonIdsMapByNumbers = await this.prismaService.season
-      .findMany({
-        where: { showId },
-        select: { id: true, number: true },
+  private async createShowEpisodes(showExternalId: number) {
+    const showId = await this.prismaService.show
+      .findUnique({
+        where: { externalId: showExternalId },
+        select: { id: true },
       })
-      .then(indexBy(prop('number')))
-      .then(map(prop('id')));
+      .then(prop('id'));
+    const seasonIdsMapByNumbers = await this.prismaService.season.findMany({
+      where: { showId },
+      select: { id: true, number: true, showId: true },
+    });
 
     await Promise.all(
-      Object.entries(seasonIdsMapByNumbers).map(async ([key, seasonId]) => {
-        const seasonNumber = parseInt(key, 10);
-        const episodes = await this.tmdbShowService
-          .getSeasonEpisodes(showExternalId, seasonNumber)
-          .then(map(assoc('seasonId', seasonId)));
+      seasonIdsMapByNumbers.map(async ({ id, number }) => {
+        const episodes = await this.tmdbShowService.getSeasonEpisodes(
+          showExternalId,
+          number,
+        );
 
         await this.prismaService.episode.createMany({
-          data: episodes,
+          data: episodes.map(assoc('seasonId', id)),
+          skipDuplicates: true,
         });
       }),
     );
