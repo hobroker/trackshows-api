@@ -9,10 +9,14 @@ export class ConsoleService {
   private readonly syncShowService: SyncShowService;
 
   @Command({
-    command: 'seed',
+    command: 'seed [option]',
     description: 'Seed the DB',
   })
-  async seed() {
+  async seed(option: string) {
+    if (option === 'clean') {
+      await this.clean();
+    }
+
     await this.addShows([1396]);
   }
 
