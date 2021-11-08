@@ -57,21 +57,22 @@ model Status {
 }
 
 model Show {
-  id             Int       @id @default(autoincrement())
-  name           String
-  description    String
-  wideImage      String
-  tallImage      String
-  episodeRuntime Int
-  isInProduction Boolean
-  status         Status    @relation(fields: [statusId], references: [id], onDelete: Cascade)
-  statusId       Int
-  externalId     Int       @unique
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  genres         Genre[]   @relation("GenreToShow")
-  keywords       Keyword[] @relation("KeywordToShow")
-  seasons        Season[]
+  id                  Int                 @id @default(autoincrement())
+  name                String
+  description         String
+  wideImage           String
+  tallImage           String
+  episodeRuntime      Int
+  isInProduction      Boolean
+  status              Status              @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  statusId            Int
+  externalId          Int                 @unique
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  genres              Genre[]             @relation("GenreToShow")
+  keywords            Keyword[]           @relation("KeywordToShow")
+  productionCompanies ProductionCompany[] @relation("ProductionCompanyToShow")
+  seasons             Season[]
 }
 
 model Season {
@@ -109,4 +110,13 @@ model Keyword {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   shows      Show[]   @relation("KeywordToShow")
+}
+
+model ProductionCompany {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  logo       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  shows      Show[]   @relation("ProductionCompanyToShow")
 }

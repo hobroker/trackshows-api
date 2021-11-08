@@ -1,9 +1,10 @@
-import { applySpec, compose, head, map, path, prop } from 'rambda';
+import { applySpec, compose, filter, head, map, path, prop } from 'rambda';
 import { RawShowInterface } from '../interfaces';
 import { genreFacade } from './genre.facade';
 import { keywordFacade } from './keyword.facade';
 import { statusFacade } from './status.facade';
 import { seasonFacade } from './season.facade';
+import { productionCompanyFacade } from './production-company.facade';
 
 export const showFacade = applySpec<RawShowInterface>({
   externalId: prop('id'),
@@ -17,4 +18,9 @@ export const showFacade = applySpec<RawShowInterface>({
   genres: compose(map(genreFacade), prop('genres')),
   keywords: compose(map(keywordFacade), path(['keywords', 'results'])),
   seasons: compose(map(seasonFacade), prop('seasons')),
+  productionCompanies: compose(
+    map(productionCompanyFacade),
+    filter(compose(Boolean, prop('logo_path'))),
+    prop('production_companies'),
+  ),
 });

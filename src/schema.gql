@@ -60,6 +60,15 @@ type Genre {
   updatedAt: Timestamp!
 }
 
+type ProductionCompany {
+  id: Int!
+  name: String!
+  logo: String!
+  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
 type Show {
   id: Int!
   name: String!
@@ -72,6 +81,7 @@ type Show {
   genres: [Genre!]!
   keywords: [Keyword!]!
   seasons: [Season!]!
+  productionCompanies: [ProductionCompany!]!
   externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
