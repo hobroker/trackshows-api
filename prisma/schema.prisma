@@ -114,8 +114,9 @@ model Keyword {
 
 model ProductionCompany {
   id         Int      @id @default(autoincrement())
-  name       String   @unique
+  name       String
   logo       String
+  externalId Int      @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   shows      Show[]   @relation("ProductionCompanyToShow")

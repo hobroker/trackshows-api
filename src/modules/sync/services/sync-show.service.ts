@@ -67,15 +67,17 @@ export class SyncShowService {
           })),
         },
         productionCompanies: {
-          connectOrCreate: productionCompanies.map(({ name, ...rest }) => ({
-            where: {
-              name,
-            },
-            create: {
-              name,
-              ...rest,
-            },
-          })),
+          connectOrCreate: productionCompanies.map(
+            ({ externalId, ...rest }) => ({
+              where: {
+                externalId,
+              },
+              create: {
+                externalId,
+                ...rest,
+              },
+            }),
+          ),
         },
         seasons: {
           create: seasons,

@@ -3,6 +3,7 @@ CREATE TABLE "ProductionCompany" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "logo" TEXT NOT NULL,
+    "externalId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -16,7 +17,7 @@ CREATE TABLE "_ProductionCompanyToShow" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProductionCompany_name_key" ON "ProductionCompany"("name");
+CREATE UNIQUE INDEX "ProductionCompany_externalId_key" ON "ProductionCompany"("externalId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ProductionCompanyToShow_AB_unique" ON "_ProductionCompanyToShow"("A", "B");
