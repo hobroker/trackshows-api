@@ -45,32 +45,24 @@ export class SyncShowService {
           },
         },
         genres: {
-          create: genres.map(({ externalId, ...rest }) => ({
-            genre: {
-              connectOrCreate: {
-                where: {
-                  externalId,
-                },
-                create: {
-                  externalId,
-                  ...rest,
-                },
-              },
+          connectOrCreate: genres.map(({ externalId, ...rest }) => ({
+            where: {
+              externalId,
+            },
+            create: {
+              externalId,
+              ...rest,
             },
           })),
         },
         keywords: {
-          create: keywords.map(({ externalId, ...rest }) => ({
-            keyword: {
-              connectOrCreate: {
-                where: {
-                  externalId,
-                },
-                create: {
-                  externalId,
-                  ...rest,
-                },
-              },
+          connectOrCreate: keywords.map(({ externalId, ...rest }) => ({
+            where: {
+              externalId,
+            },
+            create: {
+              externalId,
+              ...rest,
             },
           })),
         },
