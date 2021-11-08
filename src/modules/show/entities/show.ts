@@ -3,6 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Status } from './status';
 import { Keyword } from './keyword';
 import { Genre } from './genre';
+import { Season } from './season';
 
 @ObjectType()
 export class Show {
@@ -27,7 +28,7 @@ export class Show {
   @Field()
   isInProduction: boolean;
 
-  @Field()
+  @Field(() => Status)
   status: Status;
 
   @Field(() => [Genre])
@@ -35,6 +36,9 @@ export class Show {
 
   @Field(() => [Keyword])
   keywords: [Keyword];
+
+  @Field(() => [Season])
+  seasons: [Season];
 
   @Field(() => Int)
   externalId: number;

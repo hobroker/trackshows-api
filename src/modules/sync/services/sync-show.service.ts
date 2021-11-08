@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { assoc, prop } from 'rambda';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 
@@ -10,9 +11,25 @@ export class SyncShowService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async syncOne(showId: number) {
+  async syncOne(showExternalId: number) {
+    const record = await this.prismaService.show.findUnique({
+      where: { externalId: showExternalId },
+    });
+
+    if (!record) {
+      await this.createShow(showExternalId);
+    }
+
+    await this.createShowEpisodes(showExternalId);
+  }
+
+  async deleteAll() {
+    return this.prismaService.show.deleteMany();
+  }
+
+  private async createShow(externalId: number) {
     const { status, seasons, genres, keywords, ...show } =
-      await this.tmdbShowService.getDetails(showId);
+      await this.tmdbShowService.getDetails(externalId);
 
     return this.prismaService.show.create({
       data: {
@@ -28,7 +45,7 @@ export class SyncShowService {
           },
         },
         genres: {
-          create: genres.map(({ externalId, name }) => ({
+          create: genres.map(({ externalId, ...rest }) => ({
             genre: {
               connectOrCreate: {
                 where: {
@@ -36,14 +53,14 @@ export class SyncShowService {
                 },
                 create: {
                   externalId,
-                  name,
+                  ...rest,
                 },
               },
             },
           })),
         },
         keywords: {
-          create: keywords.map(({ externalId, name }) => ({
+          create: keywords.map(({ externalId, ...rest }) => ({
             keyword: {
               connectOrCreate: {
                 where: {
@@ -51,27 +68,43 @@ export class SyncShowService {
                 },
                 create: {
                   externalId,
-                  name,
+                  ...rest,
                 },
               },
             },
           })),
         },
         seasons: {
-          create: seasons.map(({ episodes, ...season }) => ({
-            ...season,
-            episodes: {
-              create: episodes,
-            },
-          })),
+          create: seasons,
         },
       },
     });
   }
 
-  async deleteOne(showId: number) {
-    return this.prismaService.show.delete({
-      where: { externalId: showId },
+  private async createShowEpisodes(showExternalId: number) {
+    const showId = await this.prismaService.show
+      .findUnique({
+        where: { externalId: showExternalId },
+        select: { id: true },
+      })
+      .then(prop('id'));
+    const seasonIdsMapByNumbers = await this.prismaService.season.findMany({
+      where: { showId },
+      select: { id: true, number: true, showId: true },
     });
+
+    await Promise.all(
+      seasonIdsMapByNumbers.map(async ({ id, number }) => {
+        const episodes = await this.tmdbShowService.getSeasonEpisodes(
+          showExternalId,
+          number,
+        );
+
+        await this.prismaService.episode.createMany({
+          data: episodes.map(assoc('seasonId', id)),
+          skipDuplicates: true,
+        });
+      }),
+    );
   }
 }
