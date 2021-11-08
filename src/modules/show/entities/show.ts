@@ -4,6 +4,7 @@ import { Status } from './status';
 import { Keyword } from './keyword';
 import { Genre } from './genre';
 import { Season } from './season';
+import { ProductionCompany } from './production-company';
 
 @ObjectType()
 export class Show {
@@ -39,6 +40,9 @@ export class Show {
 
   @Field(() => [Season])
   seasons: [Season];
+
+  @Field(() => [ProductionCompany])
+  productionCompanies: [ProductionCompany];
 
   @Field(() => Int)
   externalId: number;

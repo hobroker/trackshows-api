@@ -28,7 +28,7 @@ export class SyncShowService {
   }
 
   private async createShow(externalId: number) {
-    const { status, seasons, genres, keywords, ...show } =
+    const { status, seasons, genres, keywords, productionCompanies, ...show } =
       await this.tmdbShowService.getDetails(externalId);
 
     return this.prismaService.show.create({
@@ -65,6 +65,19 @@ export class SyncShowService {
               ...rest,
             },
           })),
+        },
+        productionCompanies: {
+          connectOrCreate: productionCompanies.map(
+            ({ externalId, ...rest }) => ({
+              where: {
+                externalId,
+              },
+              create: {
+                externalId,
+                ...rest,
+              },
+            }),
+          ),
         },
         seasons: {
           create: seasons,
