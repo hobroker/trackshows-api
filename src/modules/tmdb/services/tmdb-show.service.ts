@@ -1,18 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { flatten } from 'rambda';
 import { HttpService } from '../../http';
 import { episodeFacade, showFacade } from '../facades';
 import { RawEpisodeInterface } from '../interfaces';
+import { TmdbPersonService } from './tmdb-person.service';
 
 @Injectable()
 export class TmdbShowService {
   @Inject(HttpService)
   private httpService: HttpService;
 
+  @Inject(TmdbPersonService)
+  private tmdbPersonService: TmdbPersonService;
+
   async getDetails(tvId: number) {
     const { data } = await this.httpService.get(`/tv/${tvId}`, {
       params: {
-        append_to_response: 'keywords',
+        append_to_response: 'keywords,credits',
       },
     });
 
@@ -28,18 +31,5 @@ export class TmdbShowService {
     );
 
     return data.episodes.map(episodeFacade);
-  }
-
-  async getAllEpisodes(
-    externalShowId: number,
-    seasonNumbers: number[],
-  ): Promise<RawEpisodeInterface[]> {
-    const episodes = await Promise.all(
-      seasonNumbers.map((seasonNumber) =>
-        this.getSeasonEpisodes(externalShowId, seasonNumber),
-      ),
-    );
-
-    return flatten<RawEpisodeInterface>(episodes);
   }
 }
