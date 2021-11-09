@@ -46,6 +46,8 @@ model Person {
   externalId  Int       @unique
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  casts       Cast[]
+  Crew        Crew[]
 }
 
 model Status {
@@ -73,6 +75,8 @@ model Show {
   keywords            Keyword[]           @relation("KeywordToShow")
   productionCompanies ProductionCompany[] @relation("ProductionCompanyToShow")
   seasons             Season[]
+  casts               Cast[]
+  crews               Crew[]
 }
 
 model Season {
@@ -120,4 +124,26 @@ model ProductionCompany {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   shows      Show[]   @relation("ProductionCompanyToShow")
+}
+
+model Cast {
+  person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId  Int
+  show      Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
+  showId    Int
+  order     Int
+  character String
+
+  @@id([personId, showId])
+}
+
+model Crew {
+  person     Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId   Int
+  show       Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
+  showId     Int
+  department String
+  job        String
+
+  @@id([personId, showId])
 }

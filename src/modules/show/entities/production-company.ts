@@ -12,9 +12,6 @@ export class ProductionCompany {
   @Field()
   logo: string;
 
-  @Field(() => Int)
-  externalId: number;
-
   @Field(() => Date)
   createdAt: Date;
 

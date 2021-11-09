@@ -5,3 +5,5 @@ export { Season } from './season';
 export { Status } from './status';
 export { Genre } from './genre';
 export { ProductionCompany } from './production-company';
+export { Crew } from './crew';
+export { Cast } from './cast';

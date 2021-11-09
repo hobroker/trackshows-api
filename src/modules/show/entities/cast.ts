@@ -1,29 +1,24 @@
 import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Season } from './season';
+import { Person } from '../../person';
+import { Show } from './show';
 
 @ObjectType()
-export class Episode {
+export class Cast {
   @Field(() => Int)
   id: number;
 
   @Field()
-  name: string;
-
-  @Field()
-  description: string;
-
-  @Field()
-  wideImage: string;
-
-  @Field(() => Date)
-  airDate: Date;
+  character: string;
 
   @Field(() => Int)
-  number: number;
+  order: number;
 
-  @Field(() => Season)
-  season: Season;
+  @Field(() => Person)
+  person: Person;
+
+  @Field(() => Show)
+  show: Show;
 
   @Field(() => Date)
   createdAt: Date;

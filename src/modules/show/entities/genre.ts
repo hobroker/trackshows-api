@@ -13,9 +13,6 @@ export class Genre {
   @Field(() => [Show], { nullable: true })
   shows: Show;
 
-  @Field(() => Int)
-  externalId: number;
-
   @Field(() => Date)
   createdAt: Date;
 

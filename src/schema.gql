@@ -18,7 +18,6 @@ scalar Timestamp
 type Gender {
   id: Int!
   name: String!
-  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -31,7 +30,6 @@ type Person {
   birthday: Timestamp!
   deathday: Timestamp
   gender: Gender!
-  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -46,7 +44,6 @@ type Status {
 type Keyword {
   id: Int!
   name: String!
-  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -55,7 +52,6 @@ type Genre {
   id: Int!
   name: String!
   shows: [Show!]
-  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -64,7 +60,26 @@ type ProductionCompany {
   id: Int!
   name: String!
   logo: String!
-  externalId: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Cast {
+  id: Int!
+  character: String!
+  order: Int!
+  person: Person!
+  show: Show!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Crew {
+  id: Int!
+  department: String!
+  job: String!
+  person: Person!
+  show: Show!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -82,7 +97,8 @@ type Show {
   keywords: [Keyword!]!
   seasons: [Season!]!
   productionCompanies: [ProductionCompany!]!
-  externalId: Int!
+  casts: Cast!
+  crews: Crew!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -94,7 +110,6 @@ type Season {
   tallImage: String!
   number: Int!
   show: Show!
-  externalId: Int!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }

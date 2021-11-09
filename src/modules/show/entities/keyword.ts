@@ -9,9 +9,6 @@ export class Keyword {
   @Field()
   name: string;
 
-  @Field(() => Int)
-  externalId: number;
-
   @Field(() => Date)
   createdAt: Date;
 

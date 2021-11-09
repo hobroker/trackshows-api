@@ -22,9 +22,6 @@ export class Season {
   @Field(() => Show)
   show: Show;
 
-  @Field(() => Int)
-  externalId: number;
-
   @Field(() => Date)
   createdAt: Date;
 

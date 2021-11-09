@@ -25,9 +25,6 @@ export class Person {
   @Field(() => Gender)
   gender: Gender;
 
-  @Field(() => Int)
-  externalId: number;
-
   @Field(() => Date)
   createdAt: Date;
 
