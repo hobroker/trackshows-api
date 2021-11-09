@@ -15,6 +15,10 @@ export const showIdsSeed = [
   615, // Futurama
   4589, // Arrested Development
   60625, // Rick and Morty
+  71446, // Money Heist
+  82856, // The Mandalorian
+  71912, // The Witcher
+  80752, // See
 ];
 
 export const gendersSeed = [
