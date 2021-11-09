@@ -26,8 +26,8 @@ type Person {
   id: Int!
   name: String!
   description: String!
-  image: String!
-  birthday: Timestamp!
+  image: String
+  birthday: Timestamp
   deathday: Timestamp
   gender: Gender!
   createdAt: Timestamp!

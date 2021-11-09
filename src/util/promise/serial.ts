@@ -1,10 +1,10 @@
 import { splitEvery } from 'rambda';
 import { call } from '../fp';
 
-export const serial = async (
+export async function serial<T>(
   fns: (() => Promise<any>)[],
   parallel = Infinity,
-) => {
+): Promise<T[]> {
   const results = [];
   const chunks = splitEvery(parallel, fns);
 
@@ -15,4 +15,4 @@ export const serial = async (
   }
 
   return results;
-};
+}

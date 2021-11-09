@@ -5,11 +5,12 @@ import { keywordFacade } from './keyword.facade';
 import { statusFacade } from './status.facade';
 import { seasonFacade } from './season.facade';
 import { productionCompanyFacade } from './production-company.facade';
+import { sanitize } from '../../../util/fp';
 
 export const showFacade = applySpec<RawShowInterface>({
   externalId: prop('id'),
   name: prop('name'),
-  description: prop('overview'),
+  description: compose(sanitize, prop('overview')),
   wideImage: prop('poster_path'),
   tallImage: prop('poster_path'),
   episodeRuntime: compose(head, prop('episode_run_time')),

@@ -18,4 +18,8 @@ export const gendersSeed = [
     externalId: 2,
     name: 'Male',
   },
+  {
+    externalId: 0,
+    name: 'Other',
+  },
 ];

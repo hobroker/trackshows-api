@@ -1,11 +1,14 @@
 import { Command, Console } from 'nestjs-console';
 import { Inject } from '@nestjs/common';
-import { SyncShowService } from '../../sync';
+import { SyncGenderService, SyncShowService } from '../../sync';
 import { serial } from '../../../util/promise';
-import { showIdsSeed } from '../data/seed';
+import { gendersSeed, showIdsSeed } from '../data/seed';
 
 @Console()
 export class ConsoleService {
+  @Inject(SyncGenderService)
+  private readonly syncGenderService: SyncGenderService;
+
   @Inject(SyncShowService)
   private readonly syncShowService: SyncShowService;
 
@@ -18,7 +21,9 @@ export class ConsoleService {
       await this.clean();
     }
 
-    await this.addShows(showIdsSeed);
+    await this.syncGenderService.insert(gendersSeed);
+
+    await this.addShows([showIdsSeed[0]]);
   }
 
   @Command({

@@ -38,8 +38,8 @@ model Person {
   id          Int       @id @default(autoincrement())
   name        String
   description String    @default("")
-  image       String
-  birthday    DateTime
+  image       String?
+  birthday    DateTime?
   deathday    DateTime?
   gender      Gender    @relation(fields: [genderId], references: [id], onDelete: Cascade)
   genderId    Int

@@ -21,6 +21,7 @@ export class SyncShowService {
     }
 
     await this.createShowEpisodes(showExternalId);
+    await this.createCredits(showExternalId);
   }
 
   async deleteAll() {
@@ -86,13 +87,17 @@ export class SyncShowService {
     });
   }
 
-  private async createShowEpisodes(showExternalId: number) {
-    const showId = await this.prismaService.show
+  private getShowIdByExternalId(externalId: number) {
+    return this.prismaService.show
       .findUnique({
-        where: { externalId: showExternalId },
+        where: { externalId },
         select: { id: true },
       })
       .then(prop('id'));
+  }
+
+  private async createShowEpisodes(showExternalId: number) {
+    const showId = await this.getShowIdByExternalId(showExternalId);
     const seasonIdsMapByNumbers = await this.prismaService.season.findMany({
       where: { showId },
       select: { id: true, number: true, showId: true },
@@ -108,6 +113,82 @@ export class SyncShowService {
         await this.prismaService.episode.createMany({
           data: episodes.map(assoc('seasonId', id)),
           skipDuplicates: true,
+        });
+      }),
+    );
+  }
+
+  private async createCredits(showExternalId: number) {
+    const showId = await this.getShowIdByExternalId(showExternalId);
+    const { cast, crew } = await this.tmdbShowService.getCredits(
+      showExternalId,
+    );
+    const genderIdMap = {};
+    const getGenderId = async (externalGenderId) => {
+      if (!genderIdMap[externalGenderId]) {
+        genderIdMap[externalGenderId] = await this.prismaService.gender
+          .findUnique({
+            where: { externalId: externalGenderId },
+            select: { id: true },
+          })
+          .then(prop('id'));
+      }
+
+      return genderIdMap[externalGenderId];
+    };
+
+    await Promise.all(
+      cast.map(async ({ person: { externalGenderId, ...person }, ...rest }) => {
+        const genderId = await getGenderId(externalGenderId);
+
+        return this.prismaService.cast.create({
+          data: {
+            ...rest,
+            show: {
+              connect: {
+                id: showId,
+              },
+            },
+            person: {
+              connectOrCreate: {
+                where: {
+                  externalId: person.externalId,
+                },
+                create: {
+                  ...person,
+                  genderId,
+                },
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    await Promise.all(
+      crew.map(async ({ person: { externalGenderId, ...person }, ...rest }) => {
+        const genderId = await getGenderId(externalGenderId);
+
+        return this.prismaService.crew.create({
+          data: {
+            ...rest,
+            show: {
+              connect: {
+                id: showId,
+              },
+            },
+            person: {
+              connectOrCreate: {
+                where: {
+                  externalId: person.externalId,
+                },
+                create: {
+                  ...person,
+                  genderId,
+                },
+              },
+            },
+          },
         });
       }),
     );

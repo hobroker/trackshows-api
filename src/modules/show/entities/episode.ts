@@ -10,10 +10,10 @@ export class Episode {
   @Field()
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   wideImage: string;
 
   @Field(() => Date)

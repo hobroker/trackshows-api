@@ -45,12 +45,10 @@ export class TmdbShowService {
     const { data } = await this.httpService.get(`/tv/${externalId}/credits`);
 
     const crew = await this.linkPersonToCredits<RawCrewInterface>(
-      externalId,
       data.crew,
       crewFacade,
     );
     const cast = await this.linkPersonToCredits<RawCastInterface>(
-      externalId,
       data.cast,
       castFacade,
     );
@@ -58,14 +56,8 @@ export class TmdbShowService {
     return { cast, crew };
   }
 
-  private async linkPersonToCredits<T>(
-    showExternalId,
-    credits,
-    creditFacade,
-  ): Promise<T[]> {
-    const showId = showExternalId;
-
-    return serial(
+  private async linkPersonToCredits<T>(credits, creditFacade): Promise<T[]> {
+    return serial<T>(
       credits.map((credit) => async () => {
         const { id } = credit;
         const person = await this.tmdbPersonService.getDetails(id);
@@ -73,7 +65,6 @@ export class TmdbShowService {
         return creditFacade({
           ...credit,
           person,
-          showId,
         });
       }),
       10,
