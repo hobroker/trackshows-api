@@ -13,6 +13,7 @@ import { PrismaModule } from '../prisma';
 @Module({
   imports: [
     PrismaModule,
+    ConfigModule.forFeature(tmdbConfig),
     HttpModule.registerAsync({
       useClass: HttpConfigService,
       imports: [ConfigModule.forFeature(tmdbConfig)],

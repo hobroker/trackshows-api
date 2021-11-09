@@ -31,6 +31,16 @@ export class SyncShowService {
   private async createShow(externalId: number) {
     const { status, seasons, genres, keywords, productionCompanies, ...show } =
       await this.tmdbShowService.getDetails(externalId);
+    const connectMany = (array) =>
+      array.map(({ externalId, ...rest }) => ({
+        where: {
+          externalId,
+        },
+        create: {
+          externalId,
+          ...rest,
+        },
+      }));
 
     return this.prismaService.show.create({
       data: {
@@ -45,43 +55,17 @@ export class SyncShowService {
             },
           },
         },
-        genres: {
-          connectOrCreate: genres.map(({ externalId, ...rest }) => ({
-            where: {
-              externalId,
-            },
-            create: {
-              externalId,
-              ...rest,
-            },
-          })),
-        },
-        keywords: {
-          connectOrCreate: keywords.map(({ externalId, ...rest }) => ({
-            where: {
-              externalId,
-            },
-            create: {
-              externalId,
-              ...rest,
-            },
-          })),
-        },
-        productionCompanies: {
-          connectOrCreate: productionCompanies.map(
-            ({ externalId, ...rest }) => ({
-              where: {
-                externalId,
-              },
-              create: {
-                externalId,
-                ...rest,
-              },
-            }),
-          ),
-        },
         seasons: {
           create: seasons,
+        },
+        genres: {
+          connectOrCreate: connectMany(genres),
+        },
+        keywords: {
+          connectOrCreate: connectMany(keywords),
+        },
+        productionCompanies: {
+          connectOrCreate: connectMany(productionCompanies),
         },
       },
     });
