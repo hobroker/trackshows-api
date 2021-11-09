@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { assoc, prop } from 'rambda';
+import { assoc, map, prop } from 'rambda';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 
@@ -21,6 +21,7 @@ export class SyncShowService {
     }
 
     await this.createShowEpisodes(showExternalId);
+    await this.createCredits(showExternalId);
   }
 
   async deleteAll() {
@@ -86,30 +87,100 @@ export class SyncShowService {
     });
   }
 
-  private async createShowEpisodes(showExternalId: number) {
-    const showId = await this.prismaService.show
+  private getShowIdByExternalId(externalId: number) {
+    return this.prismaService.show
       .findUnique({
-        where: { externalId: showExternalId },
+        where: { externalId },
         select: { id: true },
       })
       .then(prop('id'));
-    const seasonIdsMapByNumbers = await this.prismaService.season.findMany({
+  }
+
+  private async createShowEpisodes(showExternalId: number) {
+    const showId = await this.getShowIdByExternalId(showExternalId);
+    const seasons = await this.prismaService.season.findMany({
       where: { showId },
       select: { id: true, number: true, showId: true },
     });
 
     await Promise.all(
-      seasonIdsMapByNumbers.map(async ({ id, number }) => {
-        const episodes = await this.tmdbShowService.getSeasonEpisodes(
-          showExternalId,
-          number,
-        );
+      seasons.map(async ({ id, number }) => {
+        const episodes = await this.tmdbShowService
+          .getSeasonEpisodes(showExternalId, number)
+          .then(map(assoc('seasonId', id)));
 
         await this.prismaService.episode.createMany({
-          data: episodes.map(assoc('seasonId', id)),
+          data: episodes,
           skipDuplicates: true,
         });
       }),
+    );
+  }
+
+  private async createCredits(showExternalId: number) {
+    const showId = await this.getShowIdByExternalId(showExternalId);
+    const { cast, crew } = await this.tmdbShowService.getCredits(
+      showExternalId,
+    );
+
+    await Promise.all(
+      cast.map(({ person: { externalGenderId, ...person }, ...rest }) =>
+        this.prismaService.cast.create({
+          data: {
+            ...rest,
+            show: {
+              connect: {
+                id: showId,
+              },
+            },
+            person: {
+              connectOrCreate: {
+                where: {
+                  externalId: person.externalId,
+                },
+                create: {
+                  ...person,
+                  gender: {
+                    connect: {
+                      externalId: externalGenderId,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }),
+      ),
+    );
+
+    await Promise.all(
+      crew.map(({ person: { externalGenderId, ...person }, ...rest }) =>
+        this.prismaService.crew.create({
+          data: {
+            ...rest,
+            show: {
+              connect: {
+                id: showId,
+              },
+            },
+            person: {
+              connectOrCreate: {
+                where: {
+                  externalId: person.externalId,
+                },
+                create: {
+                  ...person,
+                  gender: {
+                    connect: {
+                      externalId: externalGenderId,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }),
+      ),
     );
   }
 }

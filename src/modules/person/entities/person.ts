@@ -13,10 +13,10 @@ export class Person {
   @Field(() => String, { defaultValue: '' })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   image: string;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   birthday: Date;
 
   @Field(() => Date, { nullable: true })
@@ -24,9 +24,6 @@ export class Person {
 
   @Field(() => Gender)
   gender: Gender;
-
-  @Field(() => Int)
-  externalId: number;
 
   @Field(() => Date)
   createdAt: Date;
