@@ -23,7 +23,7 @@ export class ConsoleService {
 
     await this.syncGenderService.insert(gendersSeed);
 
-    await this.addShows([showIdsSeed[0]]);
+    await this.addShows(showIdsSeed);
   }
 
   @Command({
@@ -34,11 +34,11 @@ export class ConsoleService {
     await this.syncShowService.deleteAll();
   }
 
-  private addShows(showIds: number[]) {
+  private async addShows(showIds: number[]) {
     const promiseFns = showIds.map(
       (showId) => () => this.syncShowService.syncOne(showId),
     );
 
-    return serial(promiseFns);
+    await serial(promiseFns);
   }
 }

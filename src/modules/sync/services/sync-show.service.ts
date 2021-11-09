@@ -123,25 +123,10 @@ export class SyncShowService {
     const { cast, crew } = await this.tmdbShowService.getCredits(
       showExternalId,
     );
-    const genderIdMap = {};
-    const getGenderId = async (externalGenderId) => {
-      if (!genderIdMap[externalGenderId]) {
-        genderIdMap[externalGenderId] = await this.prismaService.gender
-          .findUnique({
-            where: { externalId: externalGenderId },
-            select: { id: true },
-          })
-          .then(prop('id'));
-      }
-
-      return genderIdMap[externalGenderId];
-    };
 
     await Promise.all(
-      cast.map(async ({ person: { externalGenderId, ...person }, ...rest }) => {
-        const genderId = await getGenderId(externalGenderId);
-
-        return this.prismaService.cast.create({
+      cast.map(({ person: { externalGenderId, ...person }, ...rest }) =>
+        this.prismaService.cast.create({
           data: {
             ...rest,
             show: {
@@ -156,20 +141,22 @@ export class SyncShowService {
                 },
                 create: {
                   ...person,
-                  genderId,
+                  gender: {
+                    connect: {
+                      externalId: externalGenderId,
+                    },
+                  },
                 },
               },
             },
           },
-        });
-      }),
+        }),
+      ),
     );
 
     await Promise.all(
-      crew.map(async ({ person: { externalGenderId, ...person }, ...rest }) => {
-        const genderId = await getGenderId(externalGenderId);
-
-        return this.prismaService.crew.create({
+      crew.map(({ person: { externalGenderId, ...person }, ...rest }) =>
+        this.prismaService.crew.create({
           data: {
             ...rest,
             show: {
@@ -184,13 +171,17 @@ export class SyncShowService {
                 },
                 create: {
                   ...person,
-                  genderId,
+                  gender: {
+                    connect: {
+                      externalId: externalGenderId,
+                    },
+                  },
                 },
               },
             },
           },
-        });
-      }),
+        }),
+      ),
     );
   }
 }

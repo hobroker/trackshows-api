@@ -127,23 +127,21 @@ model ProductionCompany {
 }
 
 model Cast {
+  id        Int    @id @default(autoincrement())
   person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
   personId  Int
   show      Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId    Int
   order     Int
   character String
-
-  @@id([personId, showId])
 }
 
 model Crew {
+  id         Int    @id @default(autoincrement())
   person     Person @relation(fields: [personId], references: [id], onDelete: Cascade)
   personId   Int
   show       Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId     Int
   department String
   job        String
-
-  @@id([personId, showId])
 }
