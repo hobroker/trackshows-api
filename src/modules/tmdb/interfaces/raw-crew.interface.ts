@@ -1,5 +1,8 @@
+import { RawPersonInterface } from './raw-person.interface';
+
 export interface RawCrewInterface {
-  personId: number;
+  showId: number;
+  person: RawPersonInterface;
   department: string;
   job: string;
 }

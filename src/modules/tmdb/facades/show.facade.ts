@@ -5,8 +5,6 @@ import { keywordFacade } from './keyword.facade';
 import { statusFacade } from './status.facade';
 import { seasonFacade } from './season.facade';
 import { productionCompanyFacade } from './production-company.facade';
-import { castFacade } from './cast.facade';
-import { crewFacade } from './crew.facade';
 
 export const showFacade = applySpec<RawShowInterface>({
   externalId: prop('id'),
@@ -20,8 +18,6 @@ export const showFacade = applySpec<RawShowInterface>({
   genres: compose(map(genreFacade), prop('genres')),
   keywords: compose(map(keywordFacade), path(['keywords', 'results'])),
   seasons: compose(map(seasonFacade), prop('seasons')),
-  cast: compose(map(castFacade), path(['credits', 'cast'])),
-  crew: compose(map(crewFacade), path(['credits', 'crew'])),
   productionCompanies: compose(
     map(productionCompanyFacade),
     filter(compose(Boolean, prop('logo_path'))),

@@ -1,5 +1,8 @@
+import { RawPersonInterface } from './raw-person.interface';
+
 export interface RawCastInterface {
-  personId: number;
+  showId: number;
+  person: RawPersonInterface;
   order: number;
   character: string;
 }

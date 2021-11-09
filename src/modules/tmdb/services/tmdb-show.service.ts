@@ -1,8 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '../../http';
-import { episodeFacade, showFacade } from '../facades';
-import { RawEpisodeInterface } from '../interfaces';
+import { castFacade, episodeFacade, showFacade, crewFacade } from '../facades';
+import {
+  RawCastInterface,
+  RawCrewInterface,
+  RawEpisodeInterface,
+} from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
+import { serial } from '../../../util/promise';
 
 @Injectable()
 export class TmdbShowService {
@@ -15,7 +20,7 @@ export class TmdbShowService {
   async getDetails(tvId: number) {
     const { data } = await this.httpService.get(`/tv/${tvId}`, {
       params: {
-        append_to_response: 'keywords,credits',
+        append_to_response: 'keywords',
       },
     });
 
@@ -31,5 +36,47 @@ export class TmdbShowService {
     );
 
     return data.episodes.map(episodeFacade);
+  }
+
+  async getCredits(externalId: any): Promise<{
+    crew: RawCrewInterface[];
+    cast: RawCastInterface[];
+  }> {
+    const { data } = await this.httpService.get(`/tv/${externalId}/credits`);
+
+    const crew = await this.linkPersonToCredits<RawCrewInterface>(
+      externalId,
+      data.crew,
+      crewFacade,
+    );
+    const cast = await this.linkPersonToCredits<RawCastInterface>(
+      externalId,
+      data.cast,
+      castFacade,
+    );
+
+    return { cast, crew };
+  }
+
+  private async linkPersonToCredits<T>(
+    showExternalId,
+    credits,
+    creditFacade,
+  ): Promise<T[]> {
+    const showId = showExternalId;
+
+    return serial(
+      credits.map((credit) => async () => {
+        const { id } = credit;
+        const person = await this.tmdbPersonService.getDetails(id);
+
+        return creditFacade({
+          ...credit,
+          person,
+          showId,
+        });
+      }),
+      10,
+    );
   }
 }

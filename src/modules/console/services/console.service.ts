@@ -1,7 +1,7 @@
 import { Command, Console } from 'nestjs-console';
 import { Inject } from '@nestjs/common';
 import { SyncShowService } from '../../sync';
-import { serial } from '../../../util/serial';
+import { serial } from '../../../util/promise';
 import { showIdsSeed } from '../data/seed';
 
 @Console()
