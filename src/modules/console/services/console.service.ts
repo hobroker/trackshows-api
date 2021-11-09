@@ -39,6 +39,6 @@ export class ConsoleService {
       (showId) => () => this.syncShowService.syncOne(showId),
     );
 
-    await serial(promiseFns);
+    await serial(promiseFns, 2);
   }
 }
