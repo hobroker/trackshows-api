@@ -98,13 +98,13 @@ export class SyncShowService {
 
   private async createShowEpisodes(showExternalId: number) {
     const showId = await this.getShowIdByExternalId(showExternalId);
-    const seasonIdsMapByNumbers = await this.prismaService.season.findMany({
+    const seasons = await this.prismaService.season.findMany({
       where: { showId },
       select: { id: true, number: true, showId: true },
     });
 
     await Promise.all(
-      seasonIdsMapByNumbers.map(async ({ id, number }) => {
+      seasons.map(async ({ id, number }) => {
         const episodes = await this.tmdbShowService.getSeasonEpisodes(
           showExternalId,
           number,
