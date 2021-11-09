@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { assoc, prop } from 'rambda';
+import { assoc, map, prop } from 'rambda';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 
@@ -105,13 +105,12 @@ export class SyncShowService {
 
     await Promise.all(
       seasons.map(async ({ id, number }) => {
-        const episodes = await this.tmdbShowService.getSeasonEpisodes(
-          showExternalId,
-          number,
-        );
+        const episodes = await this.tmdbShowService
+          .getSeasonEpisodes(showExternalId, number)
+          .then(map(assoc('seasonId', id)));
 
         await this.prismaService.episode.createMany({
-          data: episodes.map(assoc('seasonId', id)),
+          data: episodes,
           skipDuplicates: true,
         });
       }),
