@@ -9,7 +9,7 @@ export class HttpConfigService implements HttpModuleOptionsFactory {
   private config: ConfigType<typeof tmdbConfig>;
 
   createHttpOptions(): HttpModuleOptions {
-    const { baseURL, apiKey } = this.config;
+    const { baseURL, apiKey } = this.config.api;
 
     return {
       baseURL,

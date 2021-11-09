@@ -1,4 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { always, compose, evolve, prop } from 'rambda';
+import { filter, when } from 'rambda/immutable';
+import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
 import { castFacade, episodeFacade, showFacade, crewFacade } from '../facades';
 import {
@@ -8,9 +11,13 @@ import {
 } from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
 import { serial } from '../../../util/promise';
+import { tmdbConfig } from '../tmdb.config';
 
 @Injectable()
 export class TmdbShowService {
+  @Inject(tmdbConfig.KEY)
+  private config: ConfigType<typeof tmdbConfig>;
+
   @Inject(HttpService)
   private httpService: HttpService;
 
@@ -18,11 +25,22 @@ export class TmdbShowService {
   private tmdbPersonService: TmdbPersonService;
 
   async getDetails(tvId: number) {
-    const { data } = await this.httpService.get(`/tv/${tvId}`, {
-      params: {
-        append_to_response: 'keywords',
-      },
-    });
+    const { skipSpecials } = this.config;
+    const data = await this.httpService
+      .get(`/tv/${tvId}`, {
+        params: {
+          append_to_response: 'keywords',
+        },
+      })
+      .then(prop('data'))
+      .then(
+        when(
+          always(skipSpecials),
+          evolve({
+            seasons: filter(compose(Boolean, prop('season_number'))),
+          }),
+        ),
+      );
 
     return showFacade(data);
   }
