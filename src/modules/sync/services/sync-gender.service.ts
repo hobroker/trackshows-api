@@ -12,4 +12,8 @@ export class SyncGenderService {
       skipDuplicates: true,
     });
   }
+
+  async deleteAll() {
+    return this.prismaService.gender.deleteMany();
+  }
 }

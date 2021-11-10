@@ -12,16 +12,18 @@ export class SyncShowService {
   private prismaService: PrismaService;
 
   async syncOne(showExternalId: number) {
-    const record = await this.prismaService.show.findUnique({
+    let show = await this.prismaService.show.findUnique({
       where: { externalId: showExternalId },
     });
 
-    if (!record) {
-      await this.createShow(showExternalId);
+    if (!show) {
+      show = await this.createShow(showExternalId);
     }
 
     await this.createShowEpisodes(showExternalId);
     await this.createCredits(showExternalId);
+
+    return show;
   }
 
   async deleteAll() {
