@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { assoc, map, prop } from 'rambda';
+import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 
@@ -73,7 +74,7 @@ export class SyncShowService {
     });
   }
 
-  private getShowIdByExternalId(externalId: number) {
+  private getShowIdByExternalId(externalId: number): Promise<number> {
     return this.prismaService.show
       .findUnique({
         where: { externalId },
@@ -108,65 +109,59 @@ export class SyncShowService {
     const { cast, crew } = await this.tmdbShowService.getCredits(
       showExternalId,
     );
-
-    await Promise.all(
-      cast.map(({ person: { externalGenderId, ...person }, ...rest }) =>
-        this.prismaService.cast.create({
-          data: {
-            ...rest,
-            show: {
-              connect: {
-                id: showId,
-              },
-            },
-            person: {
-              connectOrCreate: {
-                where: {
-                  externalId: person.externalId,
-                },
-                create: {
-                  ...person,
-                  gender: {
-                    connect: {
-                      externalId: externalGenderId,
-                    },
-                  },
-                },
-              },
-            },
-          },
+    const createMap = (data) =>
+      data.reduce(
+        (acc, item) => ({
+          ...acc,
+          [item.externalId]: item.id,
         }),
-      ),
-    );
+        {},
+      );
 
-    await Promise.all(
-      crew.map(({ person: { externalGenderId, ...person }, ...rest }) =>
-        this.prismaService.crew.create({
-          data: {
-            ...rest,
-            show: {
-              connect: {
-                id: showId,
-              },
-            },
-            person: {
-              connectOrCreate: {
-                where: {
-                  externalId: person.externalId,
-                },
-                create: {
-                  ...person,
-                  gender: {
-                    connect: {
-                      externalId: externalGenderId,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        }),
-      ),
+    const gendersMap = await this.prismaService.gender
+      .findMany({ select: { id: true, externalId: true } })
+      .then(createMap);
+    const personsToInsert = [...crew, ...cast].map(
+      ({ person: { externalGenderId, ...person } }) => ({
+        ...person,
+        genderId: gendersMap[externalGenderId],
+      }),
     );
+    await this.prismaService.person.createMany({
+      data: personsToInsert,
+      skipDuplicates: true,
+    });
+    const personIds = [...crew, ...cast].map(
+      ({ person: { externalId } }) => externalId,
+    );
+    const personsMap = await this.prismaService.person
+      .findMany({
+        where: {
+          externalId: { in: personIds },
+        },
+        select: { id: true, externalId: true },
+      })
+      .then(createMap);
+
+    await serial([
+      () =>
+        this.prismaService.cast.createMany({
+          data: cast.map(({ person, ...rest }) => ({
+            ...rest,
+            showId,
+            personId: personsMap[person.externalId],
+          })),
+          skipDuplicates: true,
+        }),
+      () =>
+        this.prismaService.crew.createMany({
+          data: crew.map(({ person, ...rest }) => ({
+            ...rest,
+            showId,
+            personId: personsMap[person.externalId],
+          })),
+          skipDuplicates: true,
+        }),
+    ]);
   }
 }

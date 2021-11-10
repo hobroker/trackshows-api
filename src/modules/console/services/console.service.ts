@@ -1,13 +1,13 @@
 import { Command, Console } from 'nestjs-console';
 import { Inject, Logger } from '@nestjs/common';
-import { SyncGenderService, SyncShowService } from '../../sync';
+import { SyncPersonService, SyncShowService } from '../../sync';
 import { serial } from '../../../util/promise';
 import { gendersSeed, showIdsSeed } from '../data/seed';
 
 @Console()
 export class ConsoleService {
-  @Inject(SyncGenderService)
-  private readonly syncGenderService: SyncGenderService;
+  @Inject(SyncPersonService)
+  private readonly syncPersonService: SyncPersonService;
 
   @Inject(SyncShowService)
   private readonly syncShowService: SyncShowService;
@@ -23,7 +23,10 @@ export class ConsoleService {
       await this.clean();
     }
 
-    await this.wrap(this.syncGenderService.insert(gendersSeed), 'genders');
+    await this.wrap(
+      this.syncPersonService.insertGenders(gendersSeed),
+      'genders',
+    );
 
     await this.wrap(this.addShows(showIdsSeed), 'shows');
   }
@@ -33,7 +36,8 @@ export class ConsoleService {
     description: 'Remove seed data from the DB',
   })
   async clean() {
-    await this.syncGenderService.deleteAll();
+    await this.syncPersonService.deleteAllPersons();
+    await this.syncPersonService.deleteAllGenders();
     await this.syncShowService.deleteAll();
   }
 
@@ -53,10 +57,15 @@ export class ConsoleService {
   }
 
   private wrap(promise: Promise<any>, subject = '') {
+    const startTime = Number(new Date());
     this.logger.log(`Syncing ${subject}`);
 
     return promise
-      .then(() => this.logger.log(`Done syncing ${subject}`))
+      .then(() => {
+        const endTime = Number(new Date());
+        const ms = endTime - startTime;
+        this.logger.log(`Done syncing ${subject} in ${ms}ms`);
+      })
       .catch((err) => {
         this.logger.error(`Error syncing ${subject}`);
         this.logger.error(err);
