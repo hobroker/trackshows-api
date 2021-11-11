@@ -85,7 +85,7 @@ export class TmdbShowService {
           person,
         });
       }),
-      10,
+      15,
     );
   }
 }
