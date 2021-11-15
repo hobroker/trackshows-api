@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import {
-  SyncGenreService,
   SyncPersonService,
   SyncShowService,
   SyncCreditsService,
@@ -13,7 +12,6 @@ import { TmdbModule } from '../tmdb';
 @Module({
   imports: [PrismaModule, TmdbModule],
   exports: [
-    SyncGenreService,
     SyncPersonService,
     SyncShowService,
     SyncCreditsService,
@@ -21,7 +19,6 @@ import { TmdbModule } from '../tmdb';
     SyncCleanService,
   ],
   providers: [
-    SyncGenreService,
     SyncPersonService,
     SyncShowService,
     SyncCreditsService,

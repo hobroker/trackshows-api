@@ -5,7 +5,6 @@ import {
   SyncPersonService,
   SyncShowService,
 } from '../../sync';
-import { serial } from '../../../util/promise';
 import { gendersSeed, showIdsSeed } from '../data/seed';
 
 @Console()
@@ -47,15 +46,16 @@ export class ConsoleService {
   }
 
   private async addShows(showIds: number[]) {
-    const promiseFns = showIds.map(
-      (showId) => () =>
-        this.syncShowService.syncOne(showId).catch((err) => {
-          this.logger.error(`\tError on showId=${showId}`);
-          this.logger.error(err);
-        }),
-    );
-
-    await serial(promiseFns, 10);
+    await this.syncShowService.syncMany(showIds);
+    // const promiseFns = showIds.map(
+    //   (showId) => () =>
+    //     this.syncShowService.syncOne(showId).catch((err) => {
+    //       this.logger.error(`\tError on showId=${showId}`);
+    //       this.logger.error(err);
+    //     }),
+    // );
+    //
+    // await serial(promiseFns, 10);
   }
 
   private wrap(promise: Promise<any>, subject = '') {

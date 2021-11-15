@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { prop } from 'rambda';
 import { PrismaService } from '../../prisma';
-import { TmdbShowService } from '../../tmdb';
+import {
+  RawCastInterface,
+  RawCrewInterface,
+  TmdbShowService,
+} from '../../tmdb';
 import { SyncCacheService } from './sync-cache.service';
-import { SyncPersonService } from './sync-person.service';
 
 @Injectable()
 export class SyncCreditsService {
@@ -13,37 +15,34 @@ export class SyncCreditsService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  @Inject(SyncPersonService)
-  private syncPersonService: SyncPersonService;
-
   @Inject(SyncCacheService)
   private syncCacheService: SyncCacheService;
 
-  async sync(showId: number, showExternalId: number) {
-    const { cast, crew } = await this.tmdbShowService.getCredits(
-      showExternalId,
-    );
-    const personsToInsert = [...cast, ...crew].map(prop('person'));
+  async sync(
+    showId: number,
+    { cast, crew }: { crew: RawCrewInterface[]; cast: RawCastInterface[] },
+  ) {
+    const { personMap } = this.syncCacheService;
 
-    await this.syncPersonService.insertPersons(personsToInsert);
+    const crewToInsert = crew.map(({ externalId, ...item }) => ({
+      ...item,
+      showId,
+      personId: personMap[externalId],
+    }));
 
-    const personsMap = this.syncCacheService.getPersonsMap();
+    const castToInsert = cast.map(({ externalId, ...item }) => ({
+      ...item,
+      showId,
+      personId: personMap[externalId],
+    }));
 
     await Promise.all([
       this.prismaService.cast.createMany({
-        data: cast.map(({ person, ...rest }) => ({
-          ...rest,
-          showId,
-          personId: personsMap[person.externalId],
-        })),
+        data: castToInsert,
         skipDuplicates: true,
       }),
       this.prismaService.crew.createMany({
-        data: crew.map(({ person, ...rest }) => ({
-          ...rest,
-          showId,
-          personId: personsMap[person.externalId],
-        })),
+        data: crewToInsert,
         skipDuplicates: true,
       }),
     ]);
