@@ -3,7 +3,7 @@ import { always, compose, evolve, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
-import { castFacade, episodeFacade, showFacade, crewFacade } from '../facades';
+import { castFacade, crewFacade, episodeFacade, showFacade } from '../facades';
 import {
   RawCastInterface,
   RawCrewInterface,
@@ -24,12 +24,32 @@ export class TmdbShowService {
   @Inject(TmdbPersonService)
   private tmdbPersonService: TmdbPersonService;
 
+  async getFullDetails(showExternalId: number) {
+    const show = await this.getDetails(showExternalId);
+    // const { crew, cast } = await this.getCredits(showExternalId);
+    //
+    // show.crew = crew;
+    // show.cast = cast;
+    show.seasons = await Promise.all(
+      show.seasons.map(async (season) => {
+        season.episodes = await this.getSeasonEpisodes(
+          showExternalId,
+          season.number,
+        );
+
+        return season;
+      }),
+    );
+
+    return show;
+  }
+
   async getDetails(tvId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService
       .get(`/tv/${tvId}`, {
         params: {
-          append_to_response: 'keywords',
+          append_to_response: 'keywords,credits',
         },
       })
       .then(prop('data'))
@@ -76,7 +96,7 @@ export class TmdbShowService {
 
   private async linkPersonToCredits<T>(credits, creditFacade): Promise<T[]> {
     return serial<T>(
-      credits.map((credit) => async () => {
+      credits.filter(prop('profile_path')).map((credit) => async () => {
         const { id } = credit;
         const person = await this.tmdbPersonService.getDetails(id);
 
@@ -85,7 +105,6 @@ export class TmdbShowService {
           person,
         });
       }),
-      10,
     );
   }
 }

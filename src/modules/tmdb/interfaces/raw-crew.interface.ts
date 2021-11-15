@@ -1,7 +1,6 @@
-import { RawPersonInterface } from './raw-person.interface';
+import { RawCreditInterface } from './raw-credit.interface';
 
-export interface RawCrewInterface {
-  person: RawPersonInterface;
+export interface RawCrewInterface extends RawCreditInterface {
   department: string;
   job: string;
 }

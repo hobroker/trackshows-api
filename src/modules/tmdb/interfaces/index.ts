@@ -9,3 +9,4 @@ export { RawShowInterface } from './raw-show.interface';
 export { RawProductionCompanyInterface } from './raw-production-company.interface';
 export { RawCastInterface } from './raw-cast.interface';
 export { RawCrewInterface } from './raw-crew.interface';
+export { RawCreditInterface } from './raw-credit.interface';

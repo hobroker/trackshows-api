@@ -1,15 +1,29 @@
 import { Module } from '@nestjs/common';
 import {
-  SyncGenreService,
-  SyncGenderService,
+  SyncPersonService,
   SyncShowService,
+  SyncCreditsService,
+  SyncCacheService,
+  SyncCleanService,
 } from './services';
 import { PrismaModule } from '../prisma';
 import { TmdbModule } from '../tmdb';
 
 @Module({
   imports: [PrismaModule, TmdbModule],
-  exports: [SyncGenreService, SyncGenderService, SyncShowService],
-  providers: [SyncGenreService, SyncGenderService, SyncShowService],
+  exports: [
+    SyncPersonService,
+    SyncShowService,
+    SyncCreditsService,
+    SyncCacheService,
+    SyncCleanService,
+  ],
+  providers: [
+    SyncPersonService,
+    SyncShowService,
+    SyncCreditsService,
+    SyncCacheService,
+    SyncCleanService,
+  ],
 })
 export class SyncModule {}

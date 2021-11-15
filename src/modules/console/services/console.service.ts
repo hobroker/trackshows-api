@@ -1,16 +1,24 @@
 import { Command, Console } from 'nestjs-console';
-import { Inject } from '@nestjs/common';
-import { SyncGenderService, SyncShowService } from '../../sync';
-import { serial } from '../../../util/promise';
+import { Inject, Logger } from '@nestjs/common';
+import {
+  SyncCleanService,
+  SyncPersonService,
+  SyncShowService,
+} from '../../sync';
 import { gendersSeed, showIdsSeed } from '../data/seed';
 
 @Console()
 export class ConsoleService {
-  @Inject(SyncGenderService)
-  private readonly syncGenderService: SyncGenderService;
+  @Inject(SyncPersonService)
+  private readonly syncPersonService: SyncPersonService;
 
   @Inject(SyncShowService)
   private readonly syncShowService: SyncShowService;
+
+  @Inject(SyncCleanService)
+  private readonly syncCleanService: SyncCleanService;
+
+  private readonly logger = new Logger(ConsoleService.name);
 
   @Command({
     command: 'seed [option]',
@@ -21,9 +29,12 @@ export class ConsoleService {
       await this.clean();
     }
 
-    await this.syncGenderService.insert(gendersSeed);
+    await this.wrap(
+      this.syncPersonService.insertGenders(gendersSeed),
+      'genders',
+    );
 
-    await this.addShows(showIdsSeed);
+    await this.wrap(this.addShows(showIdsSeed), 'shows');
   }
 
   @Command({
@@ -31,14 +42,32 @@ export class ConsoleService {
     description: 'Remove seed data from the DB',
   })
   async clean() {
-    await this.syncShowService.deleteAll();
+    await this.syncCleanService.deleteAll();
   }
 
   private async addShows(showIds: number[]) {
-    const promiseFns = showIds.map(
-      (showId) => () => this.syncShowService.syncOne(showId),
-    );
+    await this.syncShowService.syncMany(showIds);
+    // const promiseFns = showIds.map(
+    //   (showId) => () =>
+    //     this.syncShowService.syncOne(showId).catch((err) => {
+    //       this.logger.error(`\tError on showId=${showId}`);
+    //       this.logger.error(err);
+    //     }),
+    // );
+    //
+    // await serial(promiseFns, 10);
+  }
 
-    await serial(promiseFns, 4);
+  private wrap(promise: Promise<any>, subject = '') {
+    this.logger.log(`Syncing ${subject}`);
+
+    return promise
+      .then(() => {
+        this.logger.log(`Done syncing ${subject}`);
+      })
+      .catch((err) => {
+        this.logger.error(`Error syncing ${subject}`);
+        this.logger.error(err);
+      });
   }
 }

@@ -2,7 +2,7 @@ import { applySpec, prop } from 'rambda';
 import { RawCrewInterface } from '../interfaces';
 
 export const crewFacade = applySpec<RawCrewInterface>({
-  person: prop('person'),
+  externalId: prop('id'),
   department: prop('department'),
   job: prop('job'),
 });
