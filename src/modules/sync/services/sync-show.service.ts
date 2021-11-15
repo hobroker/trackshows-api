@@ -49,120 +49,120 @@ export class SyncShowService {
   private prismaService: PrismaService;
 
   async syncMany(showExternalIds: number[]) {
-    const shows = await serial<RawShowInterface>(
-      showExternalIds.map(
-        (id) => () => this.tmdbShowService.getFullDetails(id),
-      ),
-      10,
-    );
-
-    const statuses = compose(
-      uniqWithProp<RawStatusInterface>('name'),
-      map(prop('status')),
-    )(shows);
-    const genres = compose(
-      uniqWithProp<RawGenreInterface>('externalId'),
-      flatten,
-      map(prop('genres')),
-    )(shows);
-    const keywords = compose(
-      uniqWithProp<RawKeywordInterface>('externalId'),
-      flatten,
-      map(prop('keywords')),
-    )(shows);
-    const productionCompanies = compose(
-      uniqWithProp<RawProductionCompanyInterface>('externalId'),
-      flatten,
-      map(prop('productionCompanies')),
-    )(shows);
-    const personIds: number[] = converge(concat, [
-      compose(map(prop('externalId')), flatten, map(prop('crew'))),
-      compose(map(prop('externalId')), flatten, map(prop('cast'))),
-    ])(shows);
-
-    await this.addStatuses(statuses);
-    await this.addGenres(genres);
-    await this.addKeywords(keywords);
-    await this.addProductionCompanies(productionCompanies);
-    await this.addPersons(personIds);
-
-    await Promise.all(
-      shows.map(async ({ cast, crew, ...show }) => {
-        const episodesMap: {
-          [x: string]: {
-            episodes: RawEpisodeInterface[];
-            id?: number;
-          };
-        } = show.seasons.reduce(
-          (acc, { episodes, externalId }) => ({
-            ...acc,
-            [externalId]: { episodes },
-          }),
-          {},
-        );
-        const { id, seasons } = await this.addShow(show);
-        const seasonsMap = mapExternalIdToId(seasons);
-        Object.entries(episodesMap).forEach(([externalId]) => {
-          episodesMap[externalId].id = seasonsMap[externalId];
-        });
-
-        const episodes: RawEpisodeInterface[] = flatten(
-          Object.values(episodesMap).map(({ id, episodes }) =>
-            episodes.map((episode) => ({
-              seasonId: id,
-              ...episode,
-            })),
-          ),
-        );
-
-        await this.prismaService.episode.createMany({
-          data: episodes,
-          skipDuplicates: true,
-        });
-        await this.syncCreditsService.sync(id, { cast, crew });
-      }),
-    );
+    // const shows = await serial<RawShowInterface>(
+    //   showExternalIds.map(
+    //     (id) => () => this.tmdbShowService.getFullDetails(id),
+    //   ),
+    //   10,
+    // );
+    //
+    // const statuses = compose(
+    //   uniqWithProp<RawStatusInterface>('name'),
+    //   map(prop('status')),
+    // )(shows);
+    // const genres = compose(
+    //   uniqWithProp<RawGenreInterface>('externalId'),
+    //   flatten,
+    //   map(prop('genres')),
+    // )(shows);
+    // const keywords = compose(
+    //   uniqWithProp<RawKeywordInterface>('externalId'),
+    //   flatten,
+    //   map(prop('keywords')),
+    // )(shows);
+    // const productionCompanies = compose(
+    //   uniqWithProp<RawProductionCompanyInterface>('externalId'),
+    //   flatten,
+    //   map(prop('productionCompanies')),
+    // )(shows);
+    // const personIds: number[] = converge(concat, [
+    //   compose(map(prop('externalId')), flatten, map(prop('crew'))),
+    //   compose(map(prop('externalId')), flatten, map(prop('cast'))),
+    // ])(shows);
+    //
+    // await this.addStatuses(statuses);
+    // await this.addGenres(genres);
+    // await this.addKeywords(keywords);
+    // await this.addProductionCompanies(productionCompanies);
+    // await this.addPersons(personIds);
+    //
+    // await Promise.all(
+    //   shows.map(async ({ cast, crew, ...show }) => {
+    //     const episodesMap: {
+    //       [x: string]: {
+    //         episodes: RawEpisodeInterface[];
+    //         id?: number;
+    //       };
+    //     } = show.seasons.reduce(
+    //       (acc, { episodes, externalId }) => ({
+    //         ...acc,
+    //         [externalId]: { episodes },
+    //       }),
+    //       {},
+    //     );
+    //     const { id, seasons } = await this.addShow(show);
+    //     const seasonsMap = mapExternalIdToId(seasons);
+    //     Object.entries(episodesMap).forEach(([externalId]) => {
+    //       episodesMap[externalId].id = seasonsMap[externalId];
+    //     });
+    //
+    //     const episodes: RawEpisodeInterface[] = flatten(
+    //       Object.values(episodesMap).map(({ id, episodes }) =>
+    //         episodes.map((episode) => ({
+    //           seasonId: id,
+    //           ...episode,
+    //         })),
+    //       ),
+    //     );
+    //
+    //     await this.prismaService.episode.createMany({
+    //       data: episodes,
+    //       skipDuplicates: true,
+    //     });
+    //     await this.syncCreditsService.sync(id, { cast, crew });
+    //   }),
+    // );
   }
 
   async addShow(show: Omit<RawShowInterface, 'cast' | 'crew'>) {
-    const { status, seasons, genres, keywords, productionCompanies, ...data } =
-      show;
-
-    return this.prismaService.show.create({
-      data: {
-        ...data,
-        status: {
-          connect: {
-            name: status.name,
-          },
-        },
-        genres: {
-          connect: genres.map(({ externalId }) => ({ externalId })),
-        },
-        keywords: {
-          connect: keywords.map(({ externalId }) => ({ externalId })),
-        },
-        productionCompanies: {
-          connect: productionCompanies.map(({ externalId }) => ({
-            externalId,
-          })),
-        },
-        seasons: {
-          createMany: {
-            data: seasons.map(dissoc('episodes')),
-          },
-        },
-      },
-      select: {
-        id: true,
-        seasons: {
-          select: {
-            id: true,
-            externalId: true,
-          },
-        },
-      },
-    });
+    // const { status, seasons, genres, keywords, productionCompanies, ...data } =
+    //   show;
+    //
+    // return this.prismaService.show.create({
+    //   data: {
+    //     ...data,
+    //     status: {
+    //       connect: {
+    //         name: status.name,
+    //       },
+    //     },
+    //     genres: {
+    //       connect: genres.map(({ externalId }) => ({ externalId })),
+    //     },
+    //     keywords: {
+    //       connect: keywords.map(({ externalId }) => ({ externalId })),
+    //     },
+    //     productionCompanies: {
+    //       connect: productionCompanies.map(({ externalId }) => ({
+    //         externalId,
+    //       })),
+    //     },
+    //     seasons: {
+    //       createMany: {
+    //         data: seasons.map(dissoc('episodes')),
+    //       },
+    //     },
+    //   },
+    //   select: {
+    //     id: true,
+    //     seasons: {
+    //       select: {
+    //         id: true,
+    //         externalId: true,
+    //       },
+    //     },
+    //   },
+    // });
   }
 
   async addStatuses(statuses: RawStatusInterface[]) {

@@ -24,22 +24,34 @@ export class TmdbShowService {
   @Inject(TmdbPersonService)
   private tmdbPersonService: TmdbPersonService;
 
+  async getTrending({ page = 1 }: { page?: number } = {}) {
+    const {
+      data: { results },
+    } = await this.httpService.get(`/trending/tv/week`, {
+      params: {
+        page,
+      },
+    });
+
+    return results.map(showFacade);
+  }
+
   async getFullDetails(showExternalId: number) {
     const show = await this.getDetails(showExternalId);
     // const { crew, cast } = await this.getCredits(showExternalId);
     //
     // show.crew = crew;
     // show.cast = cast;
-    show.seasons = await Promise.all(
-      show.seasons.map(async (season) => {
-        season.episodes = await this.getSeasonEpisodes(
-          showExternalId,
-          season.number,
-        );
-
-        return season;
-      }),
-    );
+    // show.seasons = await Promise.all(
+    //   show.seasons.map(async (season) => {
+    //     season.episodes = await this.getSeasonEpisodes(
+    //       showExternalId,
+    //       season.number,
+    //     );
+    //
+    //     return season;
+    //   }),
+    // );
 
     return show;
   }
@@ -47,11 +59,7 @@ export class TmdbShowService {
   async getDetails(tvId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService
-      .get(`/tv/${tvId}`, {
-        params: {
-          append_to_response: 'keywords,credits',
-        },
-      })
+      .get(`/tv/${tvId}`, {})
       .then(prop('data'))
       .then(
         when(
