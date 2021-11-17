@@ -1,29 +1,26 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import {
+  SyncCleanService,
   SyncPersonService,
   SyncShowService,
-  SyncCreditsService,
-  SyncCacheService,
-  SyncCleanService,
+  SyncTrendingService,
 } from './services';
 import { PrismaModule } from '../prisma';
 import { TmdbModule } from '../tmdb';
 
 @Module({
-  imports: [PrismaModule, TmdbModule],
+  imports: [forwardRef(() => TmdbModule), PrismaModule],
   exports: [
     SyncPersonService,
     SyncShowService,
-    SyncCreditsService,
-    SyncCacheService,
     SyncCleanService,
+    SyncTrendingService,
   ],
   providers: [
     SyncPersonService,
     SyncShowService,
-    SyncCreditsService,
-    SyncCacheService,
     SyncCleanService,
+    SyncTrendingService,
   ],
 })
 export class SyncModule {}

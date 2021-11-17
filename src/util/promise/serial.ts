@@ -2,7 +2,7 @@ import { splitEvery } from 'rambda';
 import { call } from '../fp';
 
 export async function serial<T>(
-  fns: (() => Promise<any>)[],
+  fns: (() => Promise<T>)[],
   parallel = Infinity,
 ): Promise<T[]> {
   const results = [];

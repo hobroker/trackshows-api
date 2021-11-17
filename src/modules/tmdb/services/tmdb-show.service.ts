@@ -1,17 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, prop } from 'rambda';
+import { always, compose, evolve, indexBy, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
-import { castFacade, crewFacade, episodeFacade, showFacade } from '../facades';
-import {
-  RawCastInterface,
-  RawCrewInterface,
-  RawEpisodeInterface,
-} from '../interfaces';
+import { episodeFacade, showFacade } from '../facades';
+import { RawEpisodeInterface, RawPartialShowInterface } from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
-import { serial } from '../../../util/promise';
 import { tmdbConfig } from '../tmdb.config';
+import { partialShowFacade } from '../facades/show.facade';
+import { PrismaService } from '../../prisma';
+
+type IdMapType = { [x: string]: object };
 
 @Injectable()
 export class TmdbShowService {
@@ -24,7 +23,12 @@ export class TmdbShowService {
   @Inject(TmdbPersonService)
   private tmdbPersonService: TmdbPersonService;
 
-  async getTrending({ page = 1 }: { page?: number } = {}) {
+  @Inject(PrismaService)
+  private prismaService: PrismaService;
+
+  async getTrending({ page = 1 }: { page?: number } = {}): Promise<
+    RawPartialShowInterface[]
+  > {
     const {
       data: { results },
     } = await this.httpService.get(`/trending/tv/week`, {
@@ -33,33 +37,29 @@ export class TmdbShowService {
       },
     });
 
-    return results.map(showFacade);
+    return results.map(partialShowFacade);
   }
 
-  async getFullDetails(showExternalId: number) {
-    const show = await this.getDetails(showExternalId);
-    // const { crew, cast } = await this.getCredits(showExternalId);
-    //
-    // show.crew = crew;
-    // show.cast = cast;
-    // show.seasons = await Promise.all(
-    //   show.seasons.map(async (season) => {
-    //     season.episodes = await this.getSeasonEpisodes(
-    //       showExternalId,
-    //       season.number,
-    //     );
-    //
-    //     return season;
-    //   }),
-    // );
+  private _genreMap: IdMapType;
 
-    return show;
+  async getGenresMap() {
+    if (!this._genreMap) {
+      this._genreMap = await this.prismaService.genre
+        .findMany()
+        .then(indexBy(prop('externalId')));
+    }
+
+    return this._genreMap;
   }
 
   async getDetails(tvId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService
-      .get(`/tv/${tvId}`, {})
+      .get(`/tv/${tvId}`, {
+        params: {
+          append_to_response: 'keywords,credits',
+        },
+      })
       .then(prop('data'))
       .then(
         when(
@@ -82,37 +82,5 @@ export class TmdbShowService {
     );
 
     return data.episodes.map(episodeFacade);
-  }
-
-  async getCredits(externalId: any): Promise<{
-    crew: RawCrewInterface[];
-    cast: RawCastInterface[];
-  }> {
-    const { data } = await this.httpService.get(`/tv/${externalId}/credits`);
-
-    const crew = await this.linkPersonToCredits<RawCrewInterface>(
-      data.crew,
-      crewFacade,
-    );
-    const cast = await this.linkPersonToCredits<RawCastInterface>(
-      data.cast,
-      castFacade,
-    );
-
-    return { cast, crew };
-  }
-
-  private async linkPersonToCredits<T>(credits, creditFacade): Promise<T[]> {
-    return serial<T>(
-      credits.filter(prop('profile_path')).map((credit) => async () => {
-        const { id } = credit;
-        const person = await this.tmdbPersonService.getDetails(id);
-
-        return creditFacade({
-          ...credit,
-          person,
-        });
-      }),
-    );
   }
 }

@@ -1,24 +1,23 @@
 import { Command, Console } from 'nestjs-console';
-import { Inject, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import {
   SyncCleanService,
   SyncPersonService,
   SyncShowService,
+  SyncTrendingService,
 } from '../../sync';
-import { gendersSeed, showIdsSeed } from '../data/seed';
+import { gendersSeed } from '../data/seed';
 
 @Console()
 export class ConsoleService {
-  @Inject(SyncPersonService)
-  private readonly syncPersonService: SyncPersonService;
-
-  @Inject(SyncShowService)
-  private readonly syncShowService: SyncShowService;
-
-  @Inject(SyncCleanService)
-  private readonly syncCleanService: SyncCleanService;
-
   private readonly logger = new Logger(ConsoleService.name);
+
+  constructor(
+    private readonly syncPersonService: SyncPersonService,
+    private readonly syncShowService: SyncShowService,
+    private readonly syncTrendingService: SyncTrendingService,
+    private readonly syncCleanService: SyncCleanService,
+  ) {}
 
   @Command({
     command: 'seed [option]',
@@ -30,11 +29,12 @@ export class ConsoleService {
     }
 
     await this.wrap(
-      this.syncPersonService.insertGenders(gendersSeed),
+      () => this.syncPersonService.insertGenders(gendersSeed),
       'genders',
     );
+    await this.wrap(() => this.syncShowService.syncAllGenres(), 'genres');
 
-    await this.wrap(this.addShows(showIdsSeed), 'shows');
+    await this.wrap(() => this.syncTrendingService.sync(1, 10), 'trending');
   }
 
   @Command({
@@ -42,31 +42,28 @@ export class ConsoleService {
     description: 'Remove seed data from the DB',
   })
   async clean() {
-    await this.syncCleanService.deleteAll();
+    await this.wrap(
+      () => this.syncCleanService.deleteAll(),
+      'everything',
+      'deleting',
+    );
   }
 
-  private async addShows(showIds: number[]) {
-    await this.syncShowService.syncMany(showIds);
-    // const promiseFns = showIds.map(
-    //   (showId) => () =>
-    //     this.syncShowService.syncOne(showId).catch((err) => {
-    //       this.logger.error(`\tError on showId=${showId}`);
-    //       this.logger.error(err);
-    //     }),
-    // );
-    //
-    // await serial(promiseFns, 10);
-  }
-
-  private wrap(promise: Promise<any>, subject = '') {
+  private wrap(
+    promiseFn: () => Promise<any>,
+    subject = '',
+    action = 'syncing',
+  ) {
+    const startTime = Number(new Date());
     this.logger.log(`Syncing ${subject}`);
 
-    return promise
+    return promiseFn()
       .then(() => {
-        this.logger.log(`Done syncing ${subject}`);
+        const ms = Number(new Date()) - startTime;
+        this.logger.log(`Done ${action} ${subject}. Took ${ms}ms`);
       })
       .catch((err) => {
-        this.logger.error(`Error syncing ${subject}`);
+        this.logger.error(`Error ${action} ${subject}`);
         this.logger.error(err);
       });
   }

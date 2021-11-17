@@ -5,7 +5,10 @@ export { RawKeywordInterface } from './raw-keyword.interface';
 export { RawStatusInterface } from './raw-status.interface';
 export { RawEpisodeInterface } from './raw-episode.interface';
 export { RawSeasonInterface } from './raw-season.interface';
-export { RawShowInterface } from './raw-show.interface';
+export {
+  RawShowInterface,
+  RawPartialShowInterface,
+} from './raw-show.interface';
 export { RawProductionCompanyInterface } from './raw-production-company.interface';
 export { RawCastInterface } from './raw-cast.interface';
 export { RawCrewInterface } from './raw-crew.interface';
