@@ -4,6 +4,5 @@ export { keywordFacade } from './keyword.facade';
 export { statusFacade } from './status.facade';
 export { seasonFacade } from './season.facade';
 export { episodeFacade } from './episode.facade';
-export { showFacade } from './show.facade';
-export { castFacade } from './cast.facade';
-export { crewFacade } from './crew.facade';
+export { showDetailsFacade } from './show.facade';
+export { castFacade, crewFacade } from './credits.facade';

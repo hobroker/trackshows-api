@@ -25,9 +25,14 @@ export class SyncCommand implements CommandRunner {
   async run(_, { start, end, clean }: SyncCommandOptions) {
     if (clean) await this.runClean();
 
-    await this.logger.wrap<{ data: number[] }>(
+    await this.logger.wrap(
       () => this.syncTrendingService.syncTrending(start, end),
       'partial trending shows',
+    );
+
+    await this.logger.wrap(
+      () => this.syncTrendingService.linkDetails([93405]),
+      'show details',
     );
   }
 
@@ -53,7 +58,7 @@ export class SyncCommand implements CommandRunner {
     flags: '--end [end]',
     description: 'End page exclusive',
     required: true,
-    defaultValue: 10,
+    defaultValue: 2,
   })
   parseEndOption(value: string): SyncCommandOptions['end'] {
     return Number(value);

@@ -3,7 +3,7 @@ import { always, compose, evolve, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
-import { episodeFacade, showFacade } from '../facades';
+import { episodeFacade, showDetailsFacade } from '../facades';
 import { EpisodeInterface, PartialShowInterface } from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
@@ -59,7 +59,7 @@ export class TmdbShowService {
         ),
       );
 
-    return showFacade(data);
+    return showDetailsFacade(data);
   }
 
   async getSeasonEpisodes(
