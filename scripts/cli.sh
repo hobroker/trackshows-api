@@ -2,12 +2,12 @@
 
 set -e
 
-execConsole() {
+execCli() {
   if [ "$NODE_ENV" == "production" ]; then
-    npm run console "$@"
+    npm run cli "$@"
   else
-    npm run console:dev "$@"
+    npm run cli:dev "$@"
   fi
 }
 
-execConsole "$@"
+execCli "$@"

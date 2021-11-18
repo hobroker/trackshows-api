@@ -90,6 +90,6 @@
     ]
   },
   "prisma": {
-    "seed": "bash ./scripts/console.sh seed"
+    "seed": "bash ./scripts/cli.sh seed"
   }
 }
