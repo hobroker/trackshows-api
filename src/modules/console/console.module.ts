@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConsoleModule as NestConsoleModule } from 'nestjs-console';
 import { ConfigModule } from '@nestjs/config';
-import { ConsoleService, ConsoleSetupService } from './services';
+import {
+  ConsoleCleanService,
+  ConsoleSeedService,
+  ConsoleSetupService,
+} from './services';
 import { SyncModule } from '../sync';
 import { PrismaModule } from '../prisma';
 import { consoleConfig } from './console.config';
@@ -13,7 +17,7 @@ import { consoleConfig } from './console.config';
     SyncModule,
     PrismaModule,
   ],
-  providers: [ConsoleSetupService, ConsoleService],
-  exports: [ConsoleService],
+  providers: [ConsoleSetupService, ConsoleSeedService, ConsoleCleanService],
+  exports: [],
 })
 export class ConsoleModule {}

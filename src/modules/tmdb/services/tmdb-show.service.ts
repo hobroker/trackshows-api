@@ -3,15 +3,12 @@ import { always, compose, evolve, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
-import { castFacade, crewFacade, episodeFacade, showFacade } from '../facades';
-import {
-  RawCastInterface,
-  RawCrewInterface,
-  RawEpisodeInterface,
-} from '../interfaces';
+import { episodeFacade, showFacade } from '../facades';
+import { RawEpisodeInterface, RawPartialShowInterface } from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
-import { serial } from '../../../util/promise';
 import { tmdbConfig } from '../tmdb.config';
+import { partialShowFacade } from '../facades/show.facade';
+import { PrismaService } from '../../prisma';
 
 @Injectable()
 export class TmdbShowService {
@@ -24,30 +21,30 @@ export class TmdbShowService {
   @Inject(TmdbPersonService)
   private tmdbPersonService: TmdbPersonService;
 
-  async getFullDetails(showExternalId: number) {
-    const show = await this.getDetails(showExternalId);
-    // const { crew, cast } = await this.getCredits(showExternalId);
-    //
-    // show.crew = crew;
-    // show.cast = cast;
-    show.seasons = await Promise.all(
-      show.seasons.map(async (season) => {
-        season.episodes = await this.getSeasonEpisodes(
-          showExternalId,
-          season.number,
-        );
+  @Inject(PrismaService)
+  private prismaService: PrismaService;
 
-        return season;
-      }),
-    );
+  async getTrending({
+    page = 1,
+    period = 'week',
+  }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
+    RawPartialShowInterface[]
+  > {
+    const {
+      data: { results },
+    } = await this.httpService.get(`/trending/tv/${period}`, {
+      params: {
+        page,
+      },
+    });
 
-    return show;
+    return results.map(partialShowFacade);
   }
 
-  async getDetails(tvId: number) {
+  async getDetails(externalId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService
-      .get(`/tv/${tvId}`, {
+      .get(`/tv/${externalId}`, {
         params: {
           append_to_response: 'keywords,credits',
         },
@@ -74,37 +71,5 @@ export class TmdbShowService {
     );
 
     return data.episodes.map(episodeFacade);
-  }
-
-  async getCredits(externalId: any): Promise<{
-    crew: RawCrewInterface[];
-    cast: RawCastInterface[];
-  }> {
-    const { data } = await this.httpService.get(`/tv/${externalId}/credits`);
-
-    const crew = await this.linkPersonToCredits<RawCrewInterface>(
-      data.crew,
-      crewFacade,
-    );
-    const cast = await this.linkPersonToCredits<RawCastInterface>(
-      data.cast,
-      castFacade,
-    );
-
-    return { cast, crew };
-  }
-
-  private async linkPersonToCredits<T>(credits, creditFacade): Promise<T[]> {
-    return serial<T>(
-      credits.filter(prop('profile_path')).map((credit) => async () => {
-        const { id } = credit;
-        const person = await this.tmdbPersonService.getDetails(id);
-
-        return creditFacade({
-          ...credit,
-          person,
-        });
-      }),
-    );
   }
 }

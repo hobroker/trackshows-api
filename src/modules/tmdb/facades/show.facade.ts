@@ -1,13 +1,15 @@
-import { applySpec, compose, filter, head, map, path, prop } from 'rambda';
+import { applySpec, compose, prop } from 'rambda';
 import { sanitize } from '../../../util/fp';
-import { RawShowInterface } from '../interfaces';
-import { genreFacade } from './genre.facade';
-import { keywordFacade } from './keyword.facade';
-import { statusFacade } from './status.facade';
-import { seasonFacade } from './season.facade';
-import { productionCompanyFacade } from './production-company.facade';
-import { crewFacade } from './crew.facade';
-import { castFacade } from './cast.facade';
+import { RawPartialShowInterface, RawShowInterface } from '../interfaces';
+
+export const partialShowFacade = applySpec<RawPartialShowInterface>({
+  externalId: prop('id'),
+  name: prop('name'),
+  description: compose(sanitize, prop('overview')),
+  wideImage: prop('poster_path'),
+  tallImage: prop('poster_path'),
+  externalGenresIds: prop('genre_ids'),
+});
 
 export const showFacade = applySpec<RawShowInterface>({
   externalId: prop('id'),
@@ -15,17 +17,6 @@ export const showFacade = applySpec<RawShowInterface>({
   description: compose(sanitize, prop('overview')),
   wideImage: prop('poster_path'),
   tallImage: prop('poster_path'),
-  episodeRuntime: compose(head, prop('episode_run_time')),
   isInProduction: prop('in_production'),
-  status: statusFacade,
-  genres: compose(map(genreFacade), prop('genres')),
-  keywords: compose(map(keywordFacade), path(['keywords', 'results'])),
-  seasons: compose(map(seasonFacade), prop('seasons')),
-  productionCompanies: compose(
-    map(productionCompanyFacade),
-    filter(compose(Boolean, prop('logo_path'))),
-    prop('production_companies'),
-  ),
-  crew: compose(map(crewFacade), path(['credits', 'crew'])),
-  cast: compose(map(castFacade), path(['credits', 'cast'])),
+  status: prop('status'),
 });

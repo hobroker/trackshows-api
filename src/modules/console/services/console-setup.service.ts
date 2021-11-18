@@ -6,8 +6,7 @@ import { consoleConfig } from '../console.config';
 
 @Console()
 export class ConsoleSetupService implements OnModuleInit {
-  @Inject(PrismaService)
-  private readonly prismaService: PrismaService;
+  constructor(private readonly prismaService: PrismaService) {}
 
   @Inject(consoleConfig.KEY)
   private config: ConfigType<typeof consoleConfig>;

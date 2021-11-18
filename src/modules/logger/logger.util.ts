@@ -1,3 +1,5 @@
+import { timer } from '../../util/timer';
+
 const RESET = '\x1b[0m';
 const BRIGHT = '\x1b[5m';
 const BOLD = '\x1b[1m';
@@ -24,18 +26,25 @@ const loggerColors = {
   verbose: CYAN,
 };
 
-let prevTime = Number(new Date());
+let time = timer();
 const createLogger = (level: string, color: string) => {
   const start = formatLevel(color, level);
 
   return (context: string, ...messages: any[]) => {
-    const suffix = `${start} ${formatContext(context)}`;
-    const currTime = Number(new Date());
-    const ms = currTime - (prevTime || currTime);
-    const timer = prevTime ? formatMs(ms) : '';
-    prevTime = currTime;
+    let ms: number;
+    const rest = [...messages];
+    const options = rest.pop();
 
-    console.log(`${suffix}`, ...messages, timer);
+    if (options.ms !== undefined) {
+      ms = options.ms;
+    } else {
+      ms = time();
+      rest.push(options);
+    }
+    time = timer();
+
+    const suffix = `${start} ${formatContext(context)}`;
+    console.log(`${suffix}`, ...rest, formatMs(ms));
   };
 };
 

@@ -5,13 +5,11 @@ import { Keyword } from './keyword';
 import { Genre } from './genre';
 import { Season } from './season';
 import { ProductionCompany } from './production-company';
-import { Cast } from './cast';
-import { Crew } from './crew';
 
 @ObjectType()
 export class Show {
   @Field(() => Int)
-  id: number;
+  externalId: number;
 
   @Field()
   name: string;
@@ -45,12 +43,6 @@ export class Show {
 
   @Field(() => [ProductionCompany])
   productionCompanies: [ProductionCompany];
-
-  @Field(() => Cast)
-  casts: [Cast];
-
-  @Field(() => Crew)
-  crews: [Crew];
 
   @Field(() => Date)
   createdAt: Date;

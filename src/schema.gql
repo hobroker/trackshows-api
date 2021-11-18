@@ -64,28 +64,8 @@ type ProductionCompany {
   updatedAt: Timestamp!
 }
 
-type Cast {
-  id: Int!
-  character: String!
-  order: Int!
-  person: Person!
-  show: Show!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type Crew {
-  id: Int!
-  department: String!
-  job: String!
-  person: Person!
-  show: Show!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
 type Show {
-  id: Int!
+  externalId: Int!
   name: String!
   description: String!
   wideImage: String!
@@ -97,8 +77,6 @@ type Show {
   keywords: [Keyword!]!
   seasons: [Season!]!
   productionCompanies: [ProductionCompany!]!
-  casts: Cast!
-  crews: Crew!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -119,7 +97,7 @@ type Query {
   genders: [Gender!]
   persons: [Person!]
   keywords: [Keyword!]!
-  shows: [Show!]!
+  trending: [Show!]!
   genres: [Genre!]
 }
 

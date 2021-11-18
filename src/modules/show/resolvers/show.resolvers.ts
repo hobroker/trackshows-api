@@ -15,7 +15,7 @@ export class ShowResolver {
   }
 
   @Query(() => [Show])
-  shows() {
-    return this.showService.listShows();
+  trending() {
+    return this.showService.listTrending();
   }
 }
