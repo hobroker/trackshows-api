@@ -11,8 +11,8 @@ export class CliSetupService implements OnModuleInit {
   private config: ConfigType<typeof cliConfig>;
 
   onModuleInit(): any {
-    const { debug } = this.config;
+    const { logs } = this.config;
 
-    this.prismaService.setDebug(debug);
+    this.prismaService.setDebug(logs);
   }
 }

@@ -9,14 +9,14 @@ export class HttpConfigService implements HttpModuleOptionsFactory {
   private config: ConfigType<typeof tmdbConfig>;
 
   createHttpOptions(): HttpModuleOptions {
-    const { baseURL, apiKey } = this.config.api;
+    const { baseUrl, key } = this.config.api;
 
     return {
-      baseURL,
+      baseURL: baseUrl,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${key}`,
       },
     };
   }
