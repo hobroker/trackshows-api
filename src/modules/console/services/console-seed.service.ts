@@ -9,7 +9,9 @@ import { ConsoleLogger } from '../util';
 
 @Console()
 export class ConsoleSeedService {
-  private logger = new ConsoleLogger(ConsoleSeedService.name);
+  private logger = new ConsoleLogger(this.constructor.name, {
+    action: 'syncing',
+  });
 
   constructor(
     private readonly syncPersonService: SyncPersonService,
@@ -30,7 +32,13 @@ export class ConsoleSeedService {
       () => this.syncShowService.syncAllGenres(),
       'genres',
     );
+  }
 
+  @Command({
+    command: 'seed-trending',
+    description: 'Seed trending shows',
+  })
+  async seedTrending() {
     await this.logger.wrap(
       () => this.syncTrendingService.syncTrending(1, 10),
       'partial trending shows',

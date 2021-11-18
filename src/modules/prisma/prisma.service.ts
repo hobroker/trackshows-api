@@ -15,7 +15,7 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   private isDebugEnabled = false;
-  private readonly logger = new Logger(PrismaService.name);
+  private readonly logger = new Logger(this.constructor.name);
 
   @Inject(prismaConfig.KEY)
   private config: ConfigType<typeof prismaConfig>;

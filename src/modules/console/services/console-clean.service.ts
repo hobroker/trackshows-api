@@ -4,7 +4,9 @@ import { ConsoleLogger } from '../util';
 
 @Console()
 export class ConsoleCleanService {
-  private logger = new ConsoleLogger(ConsoleCleanService.name);
+  private logger = new ConsoleLogger(this.constructor.name, {
+    action: 'deleting',
+  });
 
   constructor(private readonly syncCleanService: SyncCleanService) {}
 
@@ -13,10 +15,6 @@ export class ConsoleCleanService {
     description: 'Remove seed data from the DB',
   })
   async clean() {
-    await this.logger.wrap(
-      () => this.syncCleanService.deleteAll(),
-      'entities',
-      'deleting',
-    );
+    await this.logger.wrap(() => this.syncCleanService.deleteAll(), 'entities');
   }
 }
