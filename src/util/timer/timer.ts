@@ -1,7 +1,9 @@
+const currentMs = () => new Date().getTime();
+
 export const timer = () => {
-  const startTime = Number(new Date());
+  const startTime = currentMs();
 
   return () => {
-    return Number(new Date()) - startTime;
+    return currentMs() - startTime;
   };
 };
