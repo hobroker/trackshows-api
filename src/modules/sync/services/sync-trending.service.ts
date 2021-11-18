@@ -71,8 +71,6 @@ export class SyncTrendingService {
       seasons,
     } = await this.tmdbShowService.getDetails(externalId);
 
-    console.log('episodeRuntime', episodeRuntime);
-
     await this.prismaService.show.update({
       where: { externalId },
       data: {
