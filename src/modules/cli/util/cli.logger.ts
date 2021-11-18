@@ -6,7 +6,7 @@ type Options = {
   action: string;
 };
 
-export class ConsoleLogger {
+export class CliLogger {
   private logger: Logger;
 
   constructor(context: string, private options: Options) {
