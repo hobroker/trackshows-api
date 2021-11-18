@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { compose, dissoc, map, objOf, prop, range, sum } from 'rambda';
+import { concat, dissoc, map, objOf, prop, range, reduce } from 'rambda';
 import { PrismaService } from '../../prisma';
 import { RawPartialShowInterface, TmdbShowService } from '../../tmdb';
 import { serial } from '../../../util/promise';
@@ -22,15 +22,18 @@ export class SyncTrendingService {
     const pages = range(startPageInclusive, endPageExclusive);
 
     await this.setAllExternalGenresIds();
-    const count = await serial<{ count: number }>(
+    const results = await serial<number[]>(
       pages.map(
         (page) => async () =>
           this.tmdbShowService.getTrending({ page }).then(this.addShows),
       ),
       10,
-    ).then(compose(sum, map(prop('count'))));
+    ).then(reduce<number[], number[]>(concat, []));
 
-    return { count };
+    return {
+      count: results.length,
+      data: results,
+    };
   }
 
   private async addShows(shows: RawPartialShowInterface[]) {
@@ -45,9 +48,7 @@ export class SyncTrendingService {
 
     await this.linkGenres(shows);
 
-    return {
-      count: showsToInsert.length,
-    };
+    return showsToInsert.map(prop('externalId'));
   }
 
   private async setAllExternalGenresIds() {
@@ -56,27 +57,24 @@ export class SyncTrendingService {
       .then(map(prop('externalId')));
   }
 
+  private excludeMissingGenreIds(externalGenresIds: number[]) {
+    return externalGenresIds
+      .filter((externalId) => this.allExternalGenresIds.includes(externalId))
+      .map(objOf('externalId'));
+  }
+
   private async linkGenres(shows: RawPartialShowInterface[]) {
     await Promise.all(
-      shows
-        .map(({ externalId, externalGenresIds }) => ({
-          externalId,
-          genresInput: externalGenresIds
-            .map(objOf('externalId'))
-            .filter(({ externalId }) =>
-              this.allExternalGenresIds.includes(externalId),
-            ),
-        }))
-        .map(({ externalId, genresInput }) =>
-          this.prismaService.show.update({
-            where: { externalId },
-            data: {
-              genres: {
-                connect: genresInput,
-              },
+      shows.map(({ externalId, externalGenresIds }) =>
+        this.prismaService.show.update({
+          where: { externalId },
+          data: {
+            genres: {
+              connect: this.excludeMissingGenreIds(externalGenresIds),
             },
-          }),
-        ),
+          },
+        }),
+      ),
     );
   }
 
