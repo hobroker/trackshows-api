@@ -1,8 +1,8 @@
 import { applySpec, compose, prop } from 'rambda';
 import { sanitize } from '../../../util/fp';
-import { RawPartialShowInterface, RawShowInterface } from '../interfaces';
+import { PartialShowInterface, ShowDetailsInterface } from '../interfaces';
 
-export const partialShowFacade = applySpec<RawPartialShowInterface>({
+export const partialShowFacade = applySpec<PartialShowInterface>({
   externalId: prop('id'),
   name: prop('name'),
   description: compose(sanitize, prop('overview')),
@@ -11,7 +11,7 @@ export const partialShowFacade = applySpec<RawPartialShowInterface>({
   externalGenresIds: prop('genre_ids'),
 });
 
-export const showFacade = applySpec<RawShowInterface>({
+export const showFacade = applySpec<ShowDetailsInterface>({
   externalId: prop('id'),
   name: prop('name'),
   description: compose(sanitize, prop('overview')),

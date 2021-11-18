@@ -1,7 +1,7 @@
 import { applySpec, prop } from 'rambda';
-import { RawCastInterface } from '../interfaces';
+import { CastInterface } from '../interfaces';
 
-export const castFacade = applySpec<RawCastInterface>({
+export const castFacade = applySpec<CastInterface>({
   externalId: prop('id'),
   character: prop('character'),
   order: prop('order'),

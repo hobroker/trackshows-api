@@ -1,8 +1,8 @@
 import { applySpec, compose, prop } from 'rambda';
-import { RawEpisodeInterface } from '../interfaces';
+import { EpisodeInterface } from '../interfaces';
 import { toDate } from '../../../util/fp';
 
-export const episodeFacade = applySpec<RawEpisodeInterface>({
+export const episodeFacade = applySpec<EpisodeInterface>({
   externalId: prop('id'),
   name: prop('name'),
   description: prop('overview'),

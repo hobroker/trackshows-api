@@ -1,7 +1,7 @@
 import { applySpec, prop } from 'rambda';
-import { RawGenreInterface } from '../interfaces';
+import { GenreInterface } from '../interfaces';
 
-export const genreFacade = applySpec<RawGenreInterface>({
+export const genreFacade = applySpec<GenreInterface>({
   externalId: prop('id'),
   name: prop('name'),
 });

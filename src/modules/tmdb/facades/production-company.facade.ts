@@ -1,10 +1,8 @@
 import { applySpec, prop } from 'rambda';
-import { RawProductionCompanyInterface } from '../interfaces';
+import { ProductionCompanyInterface } from '../interfaces';
 
-export const productionCompanyFacade = applySpec<RawProductionCompanyInterface>(
-  {
-    externalId: prop('id'),
-    name: prop('name'),
-    logo: prop('logo_path'),
-  },
-);
+export const productionCompanyFacade = applySpec<ProductionCompanyInterface>({
+  externalId: prop('id'),
+  name: prop('name'),
+  logo: prop('logo_path'),
+});

@@ -1,4 +1,4 @@
-export interface RawPartialShowInterface {
+export interface PartialShowInterface {
   externalId: number;
   name: string;
   description: string;
@@ -7,7 +7,7 @@ export interface RawPartialShowInterface {
   externalGenresIds?: number[];
 }
 
-export interface RawShowInterface extends RawPartialShowInterface {
+export interface ShowDetailsInterface extends PartialShowInterface {
   episodeRuntime: number;
   isInProduction: boolean;
   status: string;

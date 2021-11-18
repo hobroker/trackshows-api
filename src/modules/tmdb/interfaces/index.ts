@@ -1,15 +1,12 @@
-export { RawPersonInterface } from './raw-person.interface';
-export { RawGenderInterface } from './raw-gender.interface';
-export { RawGenreInterface } from './raw-genre.interface';
-export { RawKeywordInterface } from './raw-keyword.interface';
-export { RawStatusInterface } from './raw-status.interface';
-export { RawEpisodeInterface } from './raw-episode.interface';
-export { RawSeasonInterface } from './raw-season.interface';
-export {
-  RawShowInterface,
-  RawPartialShowInterface,
-} from './raw-show.interface';
-export { RawProductionCompanyInterface } from './raw-production-company.interface';
-export { RawCastInterface } from './raw-cast.interface';
-export { RawCrewInterface } from './raw-crew.interface';
-export { RawCreditInterface } from './raw-credit.interface';
+export { PersonInterface } from './person.interface';
+export { GenderInterface } from './gender.interface';
+export { GenreInterface } from './genre.interface';
+export { KeywordInterface } from './keyword.interface';
+export { StatusInterface } from './status.interface';
+export { EpisodeInterface } from './episode.interface';
+export { SeasonInterface } from './season.interface';
+export { ShowDetailsInterface, PartialShowInterface } from './show.interface';
+export { ProductionCompanyInterface } from './production-company.interface';
+export { CastInterface } from './cast.interface';
+export { CrewInterface } from './crew.interface';
+export { CreditInterface } from './credit.interface';

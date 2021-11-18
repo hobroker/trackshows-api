@@ -1,7 +1,7 @@
 import { applySpec, prop } from 'rambda';
-import { RawKeywordInterface } from '../interfaces';
+import { KeywordInterface } from '../interfaces';
 
-export const keywordFacade = applySpec<RawKeywordInterface>({
+export const keywordFacade = applySpec<KeywordInterface>({
   externalId: prop('id'),
   name: prop('name'),
 });

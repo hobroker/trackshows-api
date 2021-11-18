@@ -1,6 +1,6 @@
 import { applySpec, prop } from 'rambda';
-import { RawStatusInterface } from '../interfaces';
+import { StatusInterface } from '../interfaces';
 
-export const statusFacade = applySpec<RawStatusInterface>({
+export const statusFacade = applySpec<StatusInterface>({
   name: prop('status'),
 });

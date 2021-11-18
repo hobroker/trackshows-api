@@ -1,4 +1,4 @@
-export interface RawCreditInterface {
+export interface CreditInterface {
   externalId: number;
   personId?: number;
   showId?: number;

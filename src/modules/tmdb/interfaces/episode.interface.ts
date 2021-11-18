@@ -1,4 +1,4 @@
-export interface RawEpisodeInterface {
+export interface EpisodeInterface {
   externalId: number;
   seasonId: number;
   name: string;

@@ -4,7 +4,7 @@ import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
 import { episodeFacade, showFacade } from '../facades';
-import { RawEpisodeInterface, RawPartialShowInterface } from '../interfaces';
+import { EpisodeInterface, PartialShowInterface } from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
@@ -28,7 +28,7 @@ export class TmdbShowService {
     page = 1,
     period = 'week',
   }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
-    RawPartialShowInterface[]
+    PartialShowInterface[]
   > {
     const {
       data: { results },
@@ -65,7 +65,7 @@ export class TmdbShowService {
   async getSeasonEpisodes(
     externalId: number,
     seasonNumber: number,
-  ): Promise<RawEpisodeInterface[]> {
+  ): Promise<EpisodeInterface[]> {
     const { data } = await this.httpService.get(
       `/tv/${externalId}/season/${seasonNumber}`,
     );

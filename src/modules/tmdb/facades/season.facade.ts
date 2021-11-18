@@ -1,7 +1,7 @@
 import { applySpec, prop } from 'rambda';
-import { RawSeasonInterface } from '../interfaces';
+import { SeasonInterface } from '../interfaces';
 
-export const seasonFacade = applySpec<RawSeasonInterface>({
+export const seasonFacade = applySpec<SeasonInterface>({
   externalId: prop('id'),
   name: prop('name'),
   description: prop('overview'),

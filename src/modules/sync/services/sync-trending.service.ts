@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { concat, dissoc, map, objOf, prop, range, reduce } from 'rambda';
 import { PrismaService } from '../../prisma';
-import { RawPartialShowInterface, TmdbShowService } from '../../tmdb';
+import { PartialShowInterface, TmdbShowService } from '../../tmdb';
 import { serial } from '../../../util/promise';
 
 @Injectable()
@@ -36,9 +36,9 @@ export class SyncTrendingService {
     };
   }
 
-  private async addShows(shows: RawPartialShowInterface[]) {
+  private async addShows(shows: PartialShowInterface[]) {
     const showsToInsert = await this.excludeExistingShows(shows).then(
-      map<RawPartialShowInterface>(dissoc('externalGenresIds')),
+      map<PartialShowInterface>(dissoc('externalGenresIds')),
     );
 
     await this.prismaService.show.createMany({
@@ -63,7 +63,7 @@ export class SyncTrendingService {
       .map(objOf('externalId'));
   }
 
-  private async linkGenres(shows: RawPartialShowInterface[]) {
+  private async linkGenres(shows: PartialShowInterface[]) {
     await Promise.all(
       shows.map(({ externalId, externalGenresIds }) =>
         this.prismaService.show.update({
@@ -79,8 +79,8 @@ export class SyncTrendingService {
   }
 
   private excludeExistingShows(
-    shows: RawPartialShowInterface[],
-  ): Promise<RawPartialShowInterface[]> {
+    shows: PartialShowInterface[],
+  ): Promise<PartialShowInterface[]> {
     return this.prismaService.show
       .findMany({
         where: {
