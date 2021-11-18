@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, indexBy, prop } from 'rambda';
+import { always, compose, evolve, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
@@ -9,8 +9,6 @@ import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
 import { PrismaService } from '../../prisma';
-
-type IdMapType = { [x: string]: object };
 
 @Injectable()
 export class TmdbShowService {
@@ -26,12 +24,15 @@ export class TmdbShowService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async getTrending({ page = 1 }: { page?: number } = {}): Promise<
+  async getTrending({
+    page = 1,
+    period = 'week',
+  }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
     RawPartialShowInterface[]
   > {
     const {
       data: { results },
-    } = await this.httpService.get(`/trending/tv/week`, {
+    } = await this.httpService.get(`/trending/tv/${period}`, {
       params: {
         page,
       },
@@ -40,22 +41,10 @@ export class TmdbShowService {
     return results.map(partialShowFacade);
   }
 
-  private _genreMap: IdMapType;
-
-  async getGenresMap() {
-    if (!this._genreMap) {
-      this._genreMap = await this.prismaService.genre
-        .findMany()
-        .then(indexBy(prop('externalId')));
-    }
-
-    return this._genreMap;
-  }
-
-  async getDetails(tvId: number) {
+  async getDetails(externalId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService
-      .get(`/tv/${tvId}`, {
+      .get(`/tv/${externalId}`, {
         params: {
           append_to_response: 'keywords,credits',
         },

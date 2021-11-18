@@ -12,7 +12,7 @@ export class SyncShowService {
   async syncAllGenres() {
     const genres = await this.tmdbGenreService.list();
 
-    await this.prismaService.genre.createMany({
+    return this.prismaService.genre.createMany({
       data: genres,
       skipDuplicates: true,
     });

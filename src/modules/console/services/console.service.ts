@@ -7,6 +7,7 @@ import {
   SyncTrendingService,
 } from '../../sync';
 import { gendersSeed } from '../data/seed';
+import { timer } from '../../../util/timer';
 
 @Console()
 export class ConsoleService {
@@ -34,7 +35,10 @@ export class ConsoleService {
     );
     await this.wrap(() => this.syncShowService.syncAllGenres(), 'genres');
 
-    await this.wrap(() => this.syncTrendingService.sync(1, 10), 'trending');
+    await this.wrap(
+      () => this.syncTrendingService.syncTrending(1, 10),
+      'partial trending shows',
+    );
   }
 
   @Command({
@@ -44,7 +48,7 @@ export class ConsoleService {
   async clean() {
     await this.wrap(
       () => this.syncCleanService.deleteAll(),
-      'everything',
+      'entities',
       'deleting',
     );
   }
@@ -54,13 +58,12 @@ export class ConsoleService {
     subject = '',
     action = 'syncing',
   ) {
-    const startTime = Number(new Date());
+    const ms = timer();
     this.logger.log(`Syncing ${subject}`);
 
     return promiseFn()
-      .then(() => {
-        const ms = Number(new Date()) - startTime;
-        this.logger.log(`Done ${action} ${subject}. Took ${ms}ms`);
+      .then(({ count } = {}) => {
+        this.logger.log(`Done ${action} ${count} ${subject}`, { ms: ms() });
       })
       .catch((err) => {
         this.logger.error(`Error ${action} ${subject}`);

@@ -29,13 +29,23 @@ const createLogger = (level: string, color: string) => {
   const start = formatLevel(color, level);
 
   return (context: string, ...messages: any[]) => {
+    let ms: number;
+    const rest = [...messages];
     const suffix = `${start} ${formatContext(context)}`;
     const currTime = Number(new Date());
-    const ms = currTime - (prevTime || currTime);
-    const timer = prevTime ? formatMs(ms) : '';
-    prevTime = currTime;
 
-    console.log(`${suffix}`, ...messages, timer);
+    const options = rest.pop();
+    if (options.ms !== undefined) {
+      ms = options.ms;
+    } else {
+      ms = currTime - (prevTime || currTime);
+      rest.push(options);
+    }
+
+    const timer = prevTime ? formatMs(ms) : '';
+
+    prevTime = currTime;
+    console.log(`${suffix}`, ...rest, timer);
   };
 };
 
