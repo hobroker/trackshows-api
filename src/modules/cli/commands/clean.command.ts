@@ -9,11 +9,12 @@ import { SyncCleanService } from '../../sync';
 export class CleanCommand implements CommandRunner {
   private readonly logger = new CliLogger(this.constructor.name, {
     action: 'deleting',
+    subject: 'entities',
   });
 
   constructor(private readonly syncCleanService: SyncCleanService) {}
 
   async run() {
-    await this.logger.wrap(() => this.syncCleanService.deleteAll(), 'entities');
+    await this.logger.wrap(() => this.syncCleanService.deleteAll());
   }
 }
