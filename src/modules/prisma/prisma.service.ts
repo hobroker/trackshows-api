@@ -32,7 +32,7 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    this.setDebug(this.config.debug);
+    this.setDebug(this.config.logs);
     this.registerEvents();
 
     await this.$connect();

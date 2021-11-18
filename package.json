@@ -17,8 +17,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "prepare": "husky install",
-    "console:dev": "ts-node -r tsconfig-paths/register src/console/index.ts",
-    "console": "node dist/console/index.js"
+    "cli:dev": "ts-node -r tsconfig-paths/register src/cli/index.ts",
+    "cli": "node dist/cli/index.js"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -52,7 +52,7 @@
     "commander": "^8.3.0",
     "graphql": "^15.7.2",
     "graphql-tools": "8.2.0",
-    "nestjs-console": "^7.0.0",
+    "nest-commander": "^2.3.4",
     "rambda": "^6.9.0",
     "reflect-metadata": "0.1.13"
   },
@@ -90,6 +90,6 @@
     ]
   },
   "prisma": {
-    "seed": "bash ./scripts/console.sh seed"
+    "seed": "bash ./scripts/cli.sh seed"
   }
 }

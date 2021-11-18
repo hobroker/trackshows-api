@@ -17,4 +17,8 @@ export class SyncShowService {
       skipDuplicates: true,
     });
   }
+
+  // async linkDetails(externalShowIds: number[]) {
+  //
+  // }
 }
