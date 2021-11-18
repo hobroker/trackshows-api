@@ -7,3 +7,7 @@ export interface PersonInterface {
   deathday: Date | null;
   externalGenderId: number;
 }
+
+export interface GenderInterface {
+  externalId: number;
+}
