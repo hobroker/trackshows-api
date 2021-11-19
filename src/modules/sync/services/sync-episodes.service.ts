@@ -18,8 +18,9 @@ export class SyncEpisodesService {
   ) {}
 
   async syncEpisodes(whereShow: Prisma.ShowWhereInput = {}) {
-    const externalShowIds: number[] =
-      await this.syncHelperService.findExternalShowIds(whereShow);
+    const externalShowIds = await this.syncHelperService.findExternalShowIds(
+      whereShow,
+    );
 
     return await serial(
       externalShowIds.map(

@@ -6,17 +6,17 @@ import {
 } from '../../sync';
 import { CliLogger, Option } from '../util';
 
-interface SyncCommandOptions {
+interface Options {
   clean: boolean;
   start: number;
   end: number;
 }
 
 @Command({
-  name: 'sync',
+  name: 'sync:shows',
   description: 'Sync data',
 })
-export class SyncCommand implements CommandRunner {
+export class SyncShowsCommand implements CommandRunner {
   private readonly logger = new CliLogger(this.constructor.name, {
     action: 'syncing',
   });
@@ -27,7 +27,7 @@ export class SyncCommand implements CommandRunner {
     private readonly syncCleanService: SyncCleanService,
   ) {}
 
-  async run(_, { start, end, clean }: SyncCommandOptions) {
+  async run(_, { start, end, clean }: Options) {
     if (clean) await this.runClean();
 
     await this.logger.wrap(
@@ -41,7 +41,16 @@ export class SyncCommand implements CommandRunner {
     );
 
     await this.logger.wrap(
-      () => this.syncEpisodesService.syncEpisodes(),
+      () =>
+        this.syncEpisodesService.syncEpisodes({
+          seasons: {
+            some: {
+              updatedAt: {
+                lt: new Date(new Date().getTime() - 60 * 60 * 1000),
+              },
+            },
+          },
+        }),
       'episodes',
     );
   }
@@ -51,7 +60,7 @@ export class SyncCommand implements CommandRunner {
     description: 'If should delete shows from DB',
     defaultValue: false,
   })
-  parseCleanOption(): SyncCommandOptions['clean'] {
+  parseCleanOption(): Options['clean'] {
     return true;
   }
 
@@ -60,7 +69,7 @@ export class SyncCommand implements CommandRunner {
     description: 'Start page inclusive',
     defaultValue: 1,
   })
-  parseStartOption(value: string): SyncCommandOptions['start'] {
+  parseStartOption(value: string): Options['start'] {
     return Number(value);
   }
 
@@ -70,7 +79,7 @@ export class SyncCommand implements CommandRunner {
     required: true,
     defaultValue: 2,
   })
-  parseEndOption(value: string): SyncCommandOptions['end'] {
+  parseEndOption(value: string): Options['end'] {
     return Number(value);
   }
 
