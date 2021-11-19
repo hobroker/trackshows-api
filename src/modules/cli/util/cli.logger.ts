@@ -13,7 +13,7 @@ export class CliLogger {
     this.logger = new Logger(context);
   }
 
-  wrap<T>(
+  wrap(
     promiseFn: () => Promise<any>,
     subject = this.options.subject || '',
     action = this.options.action,
@@ -23,10 +23,10 @@ export class CliLogger {
 
     return promiseFn()
       .then((results) => {
-        const { count } = results || {};
+        const { count } = results || { count: '-' };
         this.logger.log(`Done ${action} ${count} ${subject}`, { ms: time() });
 
-        return results as T;
+        return results;
       })
       .catch((err) => {
         this.logger.error(`Error ${action} ${subject}`);

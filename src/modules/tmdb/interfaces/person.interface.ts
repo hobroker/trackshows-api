@@ -1,4 +1,4 @@
-export interface RawPersonInterface {
+export interface PersonInterface {
   externalId: number;
   name: string;
   description: string | null;
@@ -6,4 +6,8 @@ export interface RawPersonInterface {
   birthday: Date | null;
   deathday: Date | null;
   externalGenderId: number;
+}
+
+export interface GenderInterface {
+  externalId: number;
 }

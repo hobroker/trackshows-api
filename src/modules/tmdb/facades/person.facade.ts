@@ -1,8 +1,8 @@
 import { applySpec, compose, prop } from 'rambda';
-import { RawPersonInterface } from '../interfaces';
+import { PersonInterface } from '../interfaces';
 import { sanitize, toDate } from '../../../util/fp';
 
-export const personFacade = applySpec<RawPersonInterface>({
+export const personFacade = applySpec<PersonInterface>({
   name: prop('name'),
   description: compose(sanitize, prop('biography')),
   image: prop('profile_path'),

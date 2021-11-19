@@ -1,4 +1,4 @@
-export interface RawKeywordInterface {
+export interface GenreInterface {
   externalId: number;
   name: string;
 }

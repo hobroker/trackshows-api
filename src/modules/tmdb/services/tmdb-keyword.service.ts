@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '../../http';
 import { keywordFacade } from '../facades';
-import { RawKeywordInterface } from '../interfaces';
+import { KeywordInterface } from '../interfaces';
 
 @Injectable()
 export class TmdbPersonService {
   @Inject(HttpService)
   private httpService: HttpService;
 
-  async findMany(seriesId: number): Promise<RawKeywordInterface[]> {
+  async findMany(seriesId: number): Promise<KeywordInterface[]> {
     const { data } = await this.httpService.get(`/tv/${seriesId}/keywords`);
 
     return data.results.map(keywordFacade);

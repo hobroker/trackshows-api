@@ -1,33 +1,43 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { SyncCleanService, SyncTrendingService } from '../../sync';
+import {
+  SyncCleanService,
+  SyncEpisodesService,
+  SyncShowService,
+} from '../../sync';
 import { CliLogger, Option } from '../util';
 
-interface SyncCommandOptions {
+interface Options {
   clean: boolean;
   start: number;
   end: number;
 }
 
 @Command({
-  name: 'sync',
+  name: 'sync:shows',
   description: 'Sync data',
 })
-export class SyncCommand implements CommandRunner {
+export class SyncShowsCommand implements CommandRunner {
   private readonly logger = new CliLogger(this.constructor.name, {
     action: 'syncing',
   });
 
   constructor(
-    private readonly syncTrendingService: SyncTrendingService,
+    private readonly syncShowService: SyncShowService,
+    private readonly syncEpisodesService: SyncEpisodesService,
     private readonly syncCleanService: SyncCleanService,
   ) {}
 
-  async run(_, { start, end, clean }: SyncCommandOptions) {
+  async run(_, { start, end, clean }: Options) {
     if (clean) await this.runClean();
 
-    await this.logger.wrap<{ data: number[] }>(
-      () => this.syncTrendingService.syncTrending(start, end),
+    await this.logger.wrap(
+      () => this.syncShowService.syncTrending(start, end),
       'partial trending shows',
+    );
+
+    await this.logger.wrap(
+      () => this.syncShowService.linkMissingDetails({ statusId: null }),
+      'show details',
     );
   }
 
@@ -36,7 +46,7 @@ export class SyncCommand implements CommandRunner {
     description: 'If should delete shows from DB',
     defaultValue: false,
   })
-  parseCleanOption(): SyncCommandOptions['clean'] {
+  parseCleanOption(): Options['clean'] {
     return true;
   }
 
@@ -45,7 +55,7 @@ export class SyncCommand implements CommandRunner {
     description: 'Start page inclusive',
     defaultValue: 1,
   })
-  parseStartOption(value: string): SyncCommandOptions['start'] {
+  parseStartOption(value: string): Options['start'] {
     return Number(value);
   }
 
@@ -53,9 +63,9 @@ export class SyncCommand implements CommandRunner {
     flags: '--end [end]',
     description: 'End page exclusive',
     required: true,
-    defaultValue: 10,
+    defaultValue: 2,
   })
-  parseEndOption(value: string): SyncCommandOptions['end'] {
+  parseEndOption(value: string): Options['end'] {
     return Number(value);
   }
 

@@ -1,4 +1,4 @@
-export interface RawProductionCompanyInterface {
+export interface ProductionCompanyInterface {
   externalId: number;
   name: string;
   logo: string;

@@ -3,12 +3,13 @@ import { always, compose, evolve, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { HttpService } from '../../http';
-import { episodeFacade, showFacade } from '../facades';
-import { RawEpisodeInterface, RawPartialShowInterface } from '../interfaces';
+import { episodeFacade, showDetailsFacade } from '../facades';
+import { EpisodeInterface, PartialShowInterface } from '../interfaces';
 import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
 import { PrismaService } from '../../prisma';
+import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 
 @Injectable()
 export class TmdbShowService {
@@ -28,7 +29,7 @@ export class TmdbShowService {
     page = 1,
     period = 'week',
   }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
-    RawPartialShowInterface[]
+    PartialShowInterface[]
   > {
     const {
       data: { results },
@@ -59,17 +60,26 @@ export class TmdbShowService {
         ),
       );
 
-    return showFacade(data);
+    return showDetailsFacade(data);
   }
 
-  async getSeasonEpisodes(
+  async getEpisodesMap(
     externalId: number,
-    seasonNumber: number,
-  ): Promise<RawEpisodeInterface[]> {
-    const { data } = await this.httpService.get(
-      `/tv/${externalId}/season/${seasonNumber}`,
+    seasonNumbers: number[],
+  ): Promise<Record<string, EpisodeInterface[]>> {
+    const data = await Promise.all(
+      seasonNumbers.map(async (seasonNumber) => {
+        const { data } = await this.httpService.get(
+          `/tv/${externalId}/season/${seasonNumber}`,
+        );
+
+        return {
+          seasonExternalId: data.id,
+          episodes: data.episodes.map(episodeFacade),
+        };
+      }),
     );
 
-    return data.episodes.map(episodeFacade);
+    return indexByAndMap(prop('seasonExternalId'), prop('episodes'), data);
   }
 }
