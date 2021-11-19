@@ -1,5 +1,9 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { SyncCleanService, SyncTrendingService } from '../../sync';
+import {
+  SyncCleanService,
+  SyncEpisodesService,
+  SyncShowService,
+} from '../../sync';
 import { CliLogger, Option } from '../util';
 
 interface SyncCommandOptions {
@@ -18,7 +22,8 @@ export class SyncCommand implements CommandRunner {
   });
 
   constructor(
-    private readonly syncTrendingService: SyncTrendingService,
+    private readonly syncShowService: SyncShowService,
+    private readonly syncEpisodesService: SyncEpisodesService,
     private readonly syncCleanService: SyncCleanService,
   ) {}
 
@@ -26,17 +31,17 @@ export class SyncCommand implements CommandRunner {
     if (clean) await this.runClean();
 
     await this.logger.wrap(
-      () => this.syncTrendingService.syncTrending(start, end),
+      () => this.syncShowService.syncTrending(start, end),
       'partial trending shows',
     );
 
     await this.logger.wrap(
-      () => this.syncTrendingService.linkDetails([93405]),
+      () => this.syncShowService.linkDetails([93405]),
       'show details',
     );
 
     await this.logger.wrap(
-      () => this.syncTrendingService.syncEpisodes([93405]),
+      () => this.syncEpisodesService.syncEpisodes([93405]),
       'episodes',
     );
   }
