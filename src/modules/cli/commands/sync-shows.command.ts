@@ -39,20 +39,6 @@ export class SyncShowsCommand implements CommandRunner {
       () => this.syncShowService.linkMissingDetails({ statusId: null }),
       'show details',
     );
-
-    await this.logger.wrap(
-      () =>
-        this.syncEpisodesService.syncEpisodes({
-          seasons: {
-            some: {
-              updatedAt: {
-                lt: new Date(new Date().getTime() - 60 * 60 * 1000),
-              },
-            },
-          },
-        }),
-      'episodes',
-    );
   }
 
   @Option({

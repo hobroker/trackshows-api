@@ -8,7 +8,7 @@ import {
   TmdbGenreService,
   TmdbShowService,
 } from '../../tmdb';
-import { SyncHelperService } from './sync-helper.service';
+import { SyncHelper } from '../helpers';
 
 const PARALLEL_LIMIT = 10;
 
@@ -18,7 +18,7 @@ export class SyncShowService {
 
   constructor(
     private prismaService: PrismaService,
-    private syncHelperService: SyncHelperService,
+    private syncHelper: SyncHelper,
     private tmdbShowService: TmdbShowService,
     private tmdbGenreService: TmdbGenreService,
   ) {}
@@ -55,8 +55,9 @@ export class SyncShowService {
   }
 
   async linkMissingDetails(where: Prisma.ShowWhereInput) {
-    const externalShowIds: number[] =
-      await this.syncHelperService.findExternalShowIds(where);
+    const externalShowIds: number[] = await this.syncHelper.findShowExternalIds(
+      where,
+    );
 
     await serial(
       externalShowIds.map(

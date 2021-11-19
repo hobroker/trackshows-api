@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 import { serial } from '../../../util/promise';
-import { SyncHelperService } from './sync-helper.service';
+import { SyncHelper } from '../helpers';
 
 const PARALLEL_LIMIT = 10;
 const createCount = compose(objOf('count'), sum, map(prop('count')));
@@ -13,35 +13,31 @@ const createCount = compose(objOf('count'), sum, map(prop('count')));
 export class SyncEpisodesService {
   constructor(
     private prismaService: PrismaService,
-    private syncHelperService: SyncHelperService,
+    private syncHelper: SyncHelper,
     private tmdbShowService: TmdbShowService,
   ) {}
 
   async syncEpisodes(whereShow: Prisma.ShowWhereInput = {}) {
-    const externalShowIds = await this.syncHelperService.findExternalShowIds(
-      whereShow,
-    );
+    const showIds = await this.syncHelper.findShowIds(whereShow);
 
     return await serial(
-      externalShowIds.map(
-        (externalShowId) => () => this.updateShowEpisodes(externalShowId),
-      ),
+      showIds.map((showId) => () => this.updateShowEpisodes(showId)),
       PARALLEL_LIMIT,
     ).then(createCount);
   }
 
-  private async updateShowEpisodes(externalId: number) {
-    const seasonNumbers: number[] = await this.prismaService.show
-      .findFirst({
-        where: { externalId },
-        select: {
-          seasons: {
-            select: { number: true },
-          },
+  private async updateShowEpisodes(showId: number) {
+    const { externalId, seasons } = await this.prismaService.show.findFirst({
+      where: { id: showId },
+      select: {
+        externalId: true,
+        seasons: {
+          select: { number: true },
         },
-      })
-      .then(prop('seasons'))
-      .then(map(prop('number')));
+      },
+    });
+
+    const seasonNumbers: number[] = seasons.map(prop('number'));
 
     const episodesMap = await this.tmdbShowService.getEpisodesMap(
       externalId,
