@@ -34,6 +34,11 @@ export class SyncCommand implements CommandRunner {
       () => this.syncTrendingService.linkDetails([93405]),
       'show details',
     );
+
+    await this.logger.wrap(
+      () => this.syncTrendingService.syncEpisodes([93405]),
+      'episodes',
+    );
   }
 
   @Option({

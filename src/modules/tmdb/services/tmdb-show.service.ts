@@ -9,6 +9,7 @@ import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
 import { PrismaService } from '../../prisma';
+import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 
 @Injectable()
 export class TmdbShowService {
@@ -62,14 +63,23 @@ export class TmdbShowService {
     return showDetailsFacade(data);
   }
 
-  async getSeasonEpisodes(
+  async getEpisodesMap(
     externalId: number,
-    seasonNumber: number,
-  ): Promise<EpisodeInterface[]> {
-    const { data } = await this.httpService.get(
-      `/tv/${externalId}/season/${seasonNumber}`,
+    seasonNumbers: number[],
+  ): Promise<Record<string, EpisodeInterface[]>> {
+    const data = await Promise.all(
+      seasonNumbers.map(async (seasonNumber) => {
+        const { data } = await this.httpService.get(
+          `/tv/${externalId}/season/${seasonNumber}`,
+        );
+
+        return {
+          seasonExternalId: data.id,
+          episodes: data.episodes.map(episodeFacade),
+        };
+      }),
     );
 
-    return data.episodes.map(episodeFacade);
+    return indexByAndMap(prop('seasonExternalId'), prop('episodes'), data);
   }
 }
