@@ -1,3 +1,4 @@
+export { SyncHelperService } from './sync-helper.service';
 export { SyncPersonService } from './sync-person.service';
 export { SyncCleanService } from './sync-clean.service';
 export { SyncShowService } from './sync-show.service';

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { concat, dissoc, map, objOf, prop, range, reduce } from 'rambda';
+import { Prisma } from '@prisma/client';
+import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
 import {
   PartialShowInterface,
   TmdbGenreService,
   TmdbShowService,
 } from '../../tmdb';
-import { serial } from '../../../util/promise';
+import { SyncHelperService } from './sync-helper.service';
 
 const PARALLEL_LIMIT = 10;
 
@@ -16,12 +18,10 @@ export class SyncShowService {
 
   constructor(
     private prismaService: PrismaService,
+    private syncHelperService: SyncHelperService,
     private tmdbShowService: TmdbShowService,
     private tmdbGenreService: TmdbGenreService,
-  ) {
-    this.addPartialShows = this.addPartialShows.bind(this);
-    this.updateShowDetails = this.updateShowDetails.bind(this);
-  }
+  ) {}
 
   async syncAllGenres() {
     const genres = await this.tmdbGenreService.list();
@@ -40,10 +40,11 @@ export class SyncShowService {
 
     await this.setAllExternalGenresIds();
     const results = await serial<number[]>(
-      pages.map(
-        (page) => async () =>
-          this.tmdbShowService.getTrending({ page }).then(this.addPartialShows),
-      ),
+      pages.map((page) => async () => {
+        const shows = await this.tmdbShowService.getTrending({ page });
+
+        return this.addPartialShows(shows);
+      }),
       PARALLEL_LIMIT,
     ).then(reduce<number[], number[]>(concat, []));
 
@@ -53,7 +54,10 @@ export class SyncShowService {
     };
   }
 
-  async linkDetails(externalShowIds: number[]) {
+  async linkMissingDetails(where: Prisma.ShowWhereInput) {
+    const externalShowIds: number[] =
+      await this.syncHelperService.findExternalShowIds(where);
+
     await serial(
       externalShowIds.map(
         (externalShowId) => () => this.updateShowDetails(externalShowId),
@@ -62,7 +66,7 @@ export class SyncShowService {
     );
 
     return {
-      count: 1,
+      count: externalShowIds.length,
     };
   }
 

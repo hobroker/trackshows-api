@@ -36,12 +36,12 @@ export class SyncCommand implements CommandRunner {
     );
 
     await this.logger.wrap(
-      () => this.syncShowService.linkDetails([93405]),
+      () => this.syncShowService.linkMissingDetails({ statusId: null }),
       'show details',
     );
 
     await this.logger.wrap(
-      () => this.syncEpisodesService.syncEpisodes([93405]),
+      () => this.syncEpisodesService.syncEpisodes(),
       'episodes',
     );
   }
