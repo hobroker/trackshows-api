@@ -3,6 +3,7 @@ import {
   SyncCleanService,
   SyncEpisodesService,
   SyncShowService,
+  SyncTrendingService,
 } from '../../sync';
 import { CliLogger, Option } from '../util';
 
@@ -22,6 +23,7 @@ export class SyncShowsCommand implements CommandRunner {
   });
 
   constructor(
+    private readonly syncTrendingService: SyncTrendingService,
     private readonly syncShowService: SyncShowService,
     private readonly syncEpisodesService: SyncEpisodesService,
     private readonly syncCleanService: SyncCleanService,
@@ -31,12 +33,12 @@ export class SyncShowsCommand implements CommandRunner {
     if (clean) await this.runClean();
 
     await this.logger.wrap(
-      () => this.syncShowService.syncTrending(start, end),
+      () => this.syncTrendingService.syncTrending(start, end),
       'partial trending shows',
     );
 
     await this.logger.wrap(
-      () => this.syncShowService.linkMissingDetails({ statusId: null }),
+      () => this.syncShowService.syncDetails({ statusId: null }),
       'show details',
     );
   }

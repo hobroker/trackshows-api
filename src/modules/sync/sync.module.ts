@@ -4,10 +4,11 @@ import {
   SyncEpisodesService,
   SyncPersonService,
   SyncShowService,
-  SyncHelper,
+  SyncTrendingService,
 } from './services';
 import { PrismaModule } from '../prisma';
 import { TmdbModule } from '../tmdb';
+import { SyncHelper } from './helpers';
 
 @Module({
   imports: [TmdbModule, PrismaModule],
@@ -16,6 +17,7 @@ import { TmdbModule } from '../tmdb';
     SyncShowService,
     SyncCleanService,
     SyncShowService,
+    SyncTrendingService,
     SyncEpisodesService,
   ],
   providers: [
@@ -24,6 +26,7 @@ import { TmdbModule } from '../tmdb';
     SyncShowService,
     SyncCleanService,
     SyncShowService,
+    SyncTrendingService,
     SyncEpisodesService,
   ],
 })
