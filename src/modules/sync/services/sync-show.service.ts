@@ -68,10 +68,9 @@ export class SyncShowService {
           ),
         },
         seasons: {
-          upsert: seasons.map(({ externalId, ...rest }) => ({
+          connectOrCreate: seasons.map(({ externalId, ...rest }) => ({
             where: { externalId },
             create: { externalId, ...rest },
-            update: rest,
           })),
         },
       },
