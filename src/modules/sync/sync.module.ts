@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import {
   SyncCleanService,
   SyncEpisodesService,
+  SyncGenreService,
   SyncPersonService,
   SyncShowService,
   SyncTrendingService,
@@ -19,6 +20,7 @@ import { SyncHelper } from './helpers';
     SyncShowService,
     SyncTrendingService,
     SyncEpisodesService,
+    SyncGenreService,
   ],
   providers: [
     SyncHelper,
@@ -28,6 +30,7 @@ import { SyncHelper } from './helpers';
     SyncShowService,
     SyncTrendingService,
     SyncEpisodesService,
+    SyncGenreService,
   ],
 })
 export class SyncModule {}

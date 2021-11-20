@@ -1,6 +1,10 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { SyncShowService } from '../../sync';
-import { CliLogger } from '../util';
+import { CliLogger, Option } from '../util';
+
+interface Options {
+  force: boolean;
+}
 
 @Command({
   name: 'sync:shows',
@@ -13,10 +17,21 @@ export class SyncShowsCommand implements CommandRunner {
 
   constructor(private readonly syncShowService: SyncShowService) {}
 
-  async run() {
+  async run(_, { force }: Options) {
+    const where = force ? {} : { statusId: null };
+
     await this.logger.wrap(
-      () => this.syncShowService.syncDetails({ statusId: null }),
+      () => this.syncShowService.syncDetails(where),
       'show details',
     );
+  }
+
+  @Option({
+    flags: '--force',
+    description: 'If should force sync all shows',
+    defaultValue: false,
+  })
+  parseCleanOption(): Options['force'] {
+    return true;
   }
 }

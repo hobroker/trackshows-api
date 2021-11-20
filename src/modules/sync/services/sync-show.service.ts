@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
-import { TmdbGenreService, TmdbShowService } from '../../tmdb';
+import { TmdbShowService } from '../../tmdb';
 import { SyncHelper } from '../helpers';
 
 const PARALLEL_LIMIT = 10;
@@ -13,17 +13,7 @@ export class SyncShowService {
     private prismaService: PrismaService,
     private syncHelper: SyncHelper,
     private tmdbShowService: TmdbShowService,
-    private tmdbGenreService: TmdbGenreService,
   ) {}
-
-  async syncAllGenres() {
-    const genres = await this.tmdbGenreService.list();
-
-    return this.prismaService.genre.createMany({
-      data: genres,
-      skipDuplicates: true,
-    });
-  }
 
   async syncDetails(where: Prisma.ShowWhereInput) {
     const externalShowIds: number[] = await this.syncHelper.findShowExternalIds(

@@ -1,5 +1,5 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { SyncPersonService, SyncShowService } from '../../sync';
+import { SyncGenreService, SyncPersonService } from '../../sync';
 import { gendersSeed } from '../data/seed';
 import { CliLogger } from '../util';
 
@@ -14,7 +14,7 @@ export class SeedCommand implements CommandRunner {
 
   constructor(
     private readonly syncPersonService: SyncPersonService,
-    private readonly syncShowService: SyncShowService,
+    private readonly syncGenreService: SyncGenreService,
   ) {}
 
   async run() {
@@ -23,7 +23,7 @@ export class SeedCommand implements CommandRunner {
       'genders',
     );
     await this.logger.wrap(
-      () => this.syncShowService.syncAllGenres(),
+      () => this.syncGenreService.syncAllGenres(),
       'genres',
     );
   }

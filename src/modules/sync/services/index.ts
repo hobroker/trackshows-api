@@ -3,3 +3,4 @@ export { SyncCleanService } from './sync-clean.service';
 export { SyncShowService } from './sync-show.service';
 export { SyncTrendingService } from './sync-trending.service';
 export { SyncEpisodesService } from './sync-episodes.service';
+export { SyncGenreService } from './sync-genre.service';
