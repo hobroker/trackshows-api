@@ -1,5 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { concat, dissoc, map, objOf, prop, range, reduce } from 'rambda';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  compose,
+  concat,
+  dissoc,
+  map,
+  objOf,
+  prop,
+  range,
+  reduce,
+} from 'rambda';
 import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
 import {
@@ -8,11 +17,14 @@ import {
   TmdbShowService,
 } from '../../tmdb';
 import { SyncHelper } from '../helpers';
+import { handleError } from '../../logger/util';
 
 const PARALLEL_LIMIT = 10;
 
 @Injectable()
 export class SyncTrendingService {
+  private readonly logger = new Logger(this.constructor.name);
+
   private allExternalGenresIds: number[];
 
   constructor(
@@ -20,15 +32,22 @@ export class SyncTrendingService {
     private syncHelper: SyncHelper,
     private tmdbShowService: TmdbShowService,
     private tmdbGenreService: TmdbGenreService,
-  ) {}
+  ) {
+    this.addPartialShows = this.addPartialShows.bind(this);
+  }
 
   async syncAllGenres() {
+    this.logger.log('Adding genres');
+
     const genres = await this.tmdbGenreService.list();
 
-    return this.prismaService.genre.createMany({
-      data: genres,
-      skipDuplicates: true,
-    });
+    return this.prismaService.genre
+      .createMany({
+        data: genres,
+        skipDuplicates: true,
+      })
+      .then(({ count }) => this.logger.log(`Added ${count} genres`))
+      .catch(handleError(this.logger));
   }
 
   async syncTrending(
@@ -38,19 +57,19 @@ export class SyncTrendingService {
     const pages = range(startPageInclusive, endPageExclusive);
 
     await this.setAllExternalGenresIds();
-    const results = await serial<number[]>(
-      pages.map((page) => async () => {
-        const shows = await this.tmdbShowService.getTrending({ page });
-
-        return this.addPartialShows(shows);
-      }),
+    await serial(
+      pages.map(
+        (page) => () =>
+          this.tmdbShowService
+            .getTrending({ page })
+            .then(this.addPartialShows)
+            .catch(handleError(this.logger)),
+      ),
       PARALLEL_LIMIT,
-    ).then(reduce<number[], number[]>(concat, []));
-
-    return {
-      count: results.length,
-      data: results,
-    };
+    )
+      .then(compose(prop('length'), reduce<number[], number[]>(concat, [])))
+      .then((count) => this.logger.log(`Added ${count} partial shows`))
+      .catch(handleError(this.logger));
   }
 
   private async addPartialShows(shows: PartialShowInterface[]) {

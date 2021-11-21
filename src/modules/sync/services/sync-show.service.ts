@@ -1,35 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 import { SyncHelper } from '../helpers';
+import { handleError } from '../../logger/util';
 
-const PARALLEL_LIMIT = 10;
+const PARALLEL_LIMIT = 15;
 
 @Injectable()
 export class SyncShowService {
+  private readonly logger = new Logger(this.constructor.name);
+
   constructor(
-    private prismaService: PrismaService,
-    private syncHelper: SyncHelper,
-    private tmdbShowService: TmdbShowService,
+    private readonly prismaService: PrismaService,
+    private readonly syncHelper: SyncHelper,
+    private readonly tmdbShowService: TmdbShowService,
   ) {}
 
   async syncDetails(where: Prisma.ShowWhereInput) {
+    this.logger.log('Syncing show details');
+
     const externalShowIds: number[] = await this.syncHelper.findShowExternalIds(
       where,
     );
 
     await serial(
       externalShowIds.map(
-        (externalShowId) => () => this.updateShowDetails(externalShowId),
+        (externalShowId) => () =>
+          this.updateShowDetails(externalShowId).catch(
+            handleError(this.logger),
+          ),
       ),
       PARALLEL_LIMIT,
     );
 
-    return {
-      count: externalShowIds.length,
-    };
+    this.logger.log(`Updated ${externalShowIds.length} shows`);
   }
 
   private async updateShowDetails(externalId: number) {

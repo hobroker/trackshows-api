@@ -1,16 +1,16 @@
+import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
 import { SyncGenreService, SyncPersonService } from '../../sync';
 import { gendersSeed } from '../data/seed';
-import { CliLogger } from '../util';
+import { createActionWrapper } from '../util';
 
 @Command({
   name: 'seed',
   description: 'Seed the DB',
 })
 export class SeedCommand implements CommandRunner {
-  private readonly logger = new CliLogger(this.constructor.name, {
-    action: 'syncing',
-  });
+  private readonly logger = new Logger(this.constructor.name);
+  private wrapper = createActionWrapper(this.logger);
 
   constructor(
     private readonly syncPersonService: SyncPersonService,
@@ -18,13 +18,7 @@ export class SeedCommand implements CommandRunner {
   ) {}
 
   async run() {
-    await this.logger.wrap(
-      () => this.syncPersonService.insertGenders(gendersSeed),
-      'genders',
-    );
-    await this.logger.wrap(
-      () => this.syncGenreService.syncAllGenres(),
-      'genres',
-    );
+    await this.wrapper(() => this.syncPersonService.insertGenders(gendersSeed));
+    await this.wrapper(() => this.syncGenreService.syncAllGenres());
   }
 }

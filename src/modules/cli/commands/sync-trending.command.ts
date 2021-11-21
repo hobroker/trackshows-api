@@ -1,10 +1,11 @@
 import { Command, CommandRunner } from 'nest-commander';
+import { Logger } from '@nestjs/common';
 import {
   SyncCleanService,
   SyncEpisodesService,
   SyncTrendingService,
 } from '../../sync';
-import { CliLogger, Option } from '../util';
+import { Option, createActionWrapper } from '../util';
 
 interface Options {
   clean: boolean;
@@ -17,9 +18,8 @@ interface Options {
   description: 'Sync trending shows on TMDB (partial data only)',
 })
 export class SyncTrendingCommand implements CommandRunner {
-  private readonly logger = new CliLogger(this.constructor.name, {
-    action: 'syncing',
-  });
+  private readonly logger = new Logger(this.constructor.name);
+  private wrapper = createActionWrapper(this.logger);
 
   constructor(
     private readonly syncTrendingService: SyncTrendingService,
@@ -30,10 +30,11 @@ export class SyncTrendingCommand implements CommandRunner {
   async run(_, { start, end, clean }: Options) {
     if (clean) await this.runClean();
 
-    await this.logger.wrap(
-      () => this.syncTrendingService.syncTrending(start, end),
-      'partial trending shows',
-    );
+    await this.wrapper(() => this.syncTrendingService.syncTrending(start, end));
+  }
+
+  private async runClean() {
+    await this.wrapper(() => this.syncCleanService.deleteShows());
   }
 
   @Option({
@@ -62,13 +63,5 @@ export class SyncTrendingCommand implements CommandRunner {
   })
   parseEndOption(value: string): Options['end'] {
     return Number(value);
-  }
-
-  private async runClean() {
-    await this.logger.wrap(
-      () => this.syncCleanService.deleteShows(),
-      'shows',
-      'deleting',
-    );
   }
 }

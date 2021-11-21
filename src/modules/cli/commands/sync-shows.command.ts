@@ -1,6 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
+import { Logger } from '@nestjs/common';
 import { SyncShowService } from '../../sync';
-import { CliLogger, Option } from '../util';
+import { Option, createActionWrapper } from '../util';
 
 interface Options {
   force: boolean;
@@ -11,19 +12,15 @@ interface Options {
   description: 'Sync data',
 })
 export class SyncShowsCommand implements CommandRunner {
-  private readonly logger = new CliLogger(this.constructor.name, {
-    action: 'syncing',
-  });
+  private readonly logger = new Logger(this.constructor.name);
+  private wrapper = createActionWrapper(this.logger);
 
   constructor(private readonly syncShowService: SyncShowService) {}
 
   async run(_, { force }: Options) {
     const where = force ? {} : { statusId: null };
 
-    await this.logger.wrap(
-      () => this.syncShowService.syncDetails(where),
-      'show details',
-    );
+    await this.wrapper(() => this.syncShowService.syncDetails(where));
   }
 
   @Option({

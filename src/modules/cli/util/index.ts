@@ -1,2 +1,2 @@
-export { CliLogger } from './cli.logger';
+export { createActionWrapper } from './action-wrapper';
 export { Option } from './option.decorator';

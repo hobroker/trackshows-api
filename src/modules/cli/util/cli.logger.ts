@@ -1,36 +1,23 @@
 import { Logger } from '@nestjs/common';
+import { handleError } from '../../logger/util';
 import { timer } from '../../../util/timer';
 
-type Options = {
-  subject?: string;
-  action: string;
-};
-
 export class CliLogger {
-  private logger: Logger;
+  private readonly logger: Logger;
 
-  constructor(context: string, private options: Options) {
+  constructor(context: string) {
     this.logger = new Logger(context);
   }
 
-  wrap(
-    promiseFn: () => Promise<any>,
-    subject = this.options.subject || '',
-    action = this.options.action,
-  ) {
+  wrap(promiseFn: () => Promise<any>) {
     const time = timer();
-    this.logger.log(`Syncing ${subject}`);
 
     return promiseFn()
-      .then((results) => {
-        const { count } = results || { count: '-' };
-        this.logger.log(`Done ${action} ${count} ${subject}`, { ms: time() });
+      .then((data) => {
+        this.logger.log(`Done`, { ms: time() });
 
-        return results;
+        return data;
       })
-      .catch((err) => {
-        this.logger.error(`Error ${action} ${subject}`);
-        this.logger.error(err);
-      });
+      .catch(handleError(this.logger));
   }
 }

@@ -1,6 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
+import { Logger } from '@nestjs/common';
 import { SyncEpisodesService } from '../../sync';
-import { CliLogger, Option } from '../util';
+import { Option, createActionWrapper } from '../util';
 
 interface Options {
   minutes: number;
@@ -11,27 +12,24 @@ interface Options {
   description: 'Sync data',
 })
 export class SyncEpisodesCommand implements CommandRunner {
-  private readonly logger = new CliLogger(this.constructor.name, {
-    action: 'syncing',
-  });
+  private readonly logger = new Logger(this.constructor.name);
+  private wrapper = createActionWrapper(this.logger);
 
   constructor(private readonly syncEpisodesService: SyncEpisodesService) {}
 
   async run(_, { minutes }: Options) {
     const olderThan = new Date(new Date().getTime() - minutes * 60 * 1000);
 
-    await this.logger.wrap(
-      () =>
-        this.syncEpisodesService.syncEpisodes({
-          seasons: {
-            some: {
-              updatedAt: {
-                lt: olderThan,
-              },
+    await this.wrapper(() =>
+      this.syncEpisodesService.syncEpisodes({
+        seasons: {
+          some: {
+            updatedAt: {
+              lt: olderThan,
             },
           },
-        }),
-      'episodes',
+        },
+      }),
     );
   }
 
