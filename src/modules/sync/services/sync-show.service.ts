@@ -1,90 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { concat, dissoc, map, objOf, prop, range, reduce } from 'rambda';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
-import {
-  PartialShowInterface,
-  TmdbGenreService,
-  TmdbShowService,
-} from '../../tmdb';
+import { TmdbShowService } from '../../tmdb';
 import { SyncHelper } from '../helpers';
+import { handleError } from '../../logger/util';
 
-const PARALLEL_LIMIT = 10;
+const PARALLEL_LIMIT = 15;
 
 @Injectable()
 export class SyncShowService {
-  private allExternalGenresIds: number[];
+  private readonly logger = new Logger(this.constructor.name);
 
   constructor(
-    private prismaService: PrismaService,
-    private syncHelper: SyncHelper,
-    private tmdbShowService: TmdbShowService,
-    private tmdbGenreService: TmdbGenreService,
+    private readonly prismaService: PrismaService,
+    private readonly syncHelper: SyncHelper,
+    private readonly tmdbShowService: TmdbShowService,
   ) {}
 
-  async syncAllGenres() {
-    const genres = await this.tmdbGenreService.list();
+  async syncDetails(where: Prisma.ShowWhereInput) {
+    this.logger.log('Syncing show details...');
 
-    return this.prismaService.genre.createMany({
-      data: genres,
-      skipDuplicates: true,
-    });
-  }
-
-  async syncTrending(
-    startPageInclusive = 1,
-    endPageExclusive = startPageInclusive + 1,
-  ) {
-    const pages = range(startPageInclusive, endPageExclusive);
-
-    await this.setAllExternalGenresIds();
-    const results = await serial<number[]>(
-      pages.map((page) => async () => {
-        const shows = await this.tmdbShowService.getTrending({ page });
-
-        return this.addPartialShows(shows);
-      }),
-      PARALLEL_LIMIT,
-    ).then(reduce<number[], number[]>(concat, []));
-
-    return {
-      count: results.length,
-      data: results,
-    };
-  }
-
-  async linkMissingDetails(where: Prisma.ShowWhereInput) {
     const externalShowIds: number[] = await this.syncHelper.findShowExternalIds(
       where,
     );
 
     await serial(
       externalShowIds.map(
-        (externalShowId) => () => this.updateShowDetails(externalShowId),
+        (externalShowId) => () =>
+          this.updateShowDetails(externalShowId).catch(
+            handleError(this.logger),
+          ),
       ),
       PARALLEL_LIMIT,
     );
 
-    return {
-      count: externalShowIds.length,
-    };
-  }
-
-  private async addPartialShows(shows: PartialShowInterface[]) {
-    const showsToInsert: Omit<PartialShowInterface, 'externalGenresIds'>[] =
-      await this.excludeExistingShows(shows).then(
-        map(dissoc('externalGenresIds')),
-      );
-
-    await this.prismaService.show.createMany({
-      data: showsToInsert,
-      skipDuplicates: true,
-    });
-
-    await this.linkGenres(shows);
-
-    return showsToInsert.map(prop('externalId'));
+    this.logger.log(`Updated ${externalShowIds.length} shows`);
   }
 
   private async updateShowDetails(externalId: number) {
@@ -93,6 +44,7 @@ export class SyncShowService {
       isInProduction,
       status,
       keywords,
+      genres,
       productionCompanies,
       seasons,
     } = await this.tmdbShowService.getDetails(externalId);
@@ -114,6 +66,12 @@ export class SyncShowService {
             create: { externalId, ...rest },
           })),
         },
+        genres: {
+          connectOrCreate: genres.map(({ externalId, ...rest }) => ({
+            where: { externalId },
+            create: { externalId, ...rest },
+          })),
+        },
         productionCompanies: {
           connectOrCreate: productionCompanies.map(
             ({ externalId, ...rest }) => ({
@@ -123,60 +81,13 @@ export class SyncShowService {
           ),
         },
         seasons: {
-          upsert: seasons.map(({ externalId, ...rest }) => ({
+          connectOrCreate: seasons.map(({ externalId, ...rest }) => ({
             where: { externalId },
             create: { externalId, ...rest },
-            update: rest,
           })),
         },
       },
       select: { id: true },
     });
-  }
-
-  private async setAllExternalGenresIds() {
-    this.allExternalGenresIds = await this.prismaService.genre
-      .findMany({ select: { externalId: true } })
-      .then(map(prop('externalId')));
-  }
-
-  private excludeMissingGenreIds(externalGenresIds: number[]) {
-    return externalGenresIds
-      .filter((externalId) => this.allExternalGenresIds.includes(externalId))
-      .map(objOf('externalId'));
-  }
-
-  private async linkGenres(shows: PartialShowInterface[]) {
-    await Promise.all(
-      shows.map(({ externalId, externalGenresIds }) =>
-        this.prismaService.show.update({
-          where: { externalId },
-          data: {
-            genres: {
-              connect: this.excludeMissingGenreIds(externalGenresIds),
-            },
-          },
-          select: { id: true },
-        }),
-      ),
-    );
-  }
-
-  private excludeExistingShows(
-    shows: PartialShowInterface[],
-  ): Promise<PartialShowInterface[]> {
-    return this.prismaService.show
-      .findMany({
-        where: {
-          externalId: { in: shows.map(prop('externalId')) },
-        },
-        select: {
-          externalId: true,
-        },
-      })
-      .then(map(prop('externalId')))
-      .then((existingShows) =>
-        shows.filter(({ externalId }) => !existingShows.includes(externalId)),
-      );
   }
 }

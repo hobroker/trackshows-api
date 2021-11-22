@@ -1,6 +1,6 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { SyncEpisodesService } from '../../sync';
-import { CliLogger, Option } from '../util';
+import { Option, WithDuration } from '../util';
 
 interface Options {
   minutes: number;
@@ -11,28 +11,21 @@ interface Options {
   description: 'Sync data',
 })
 export class SyncEpisodesCommand implements CommandRunner {
-  private readonly logger = new CliLogger(this.constructor.name, {
-    action: 'syncing',
-  });
-
   constructor(private readonly syncEpisodesService: SyncEpisodesService) {}
 
+  @WithDuration()
   async run(_, { minutes }: Options) {
     const olderThan = new Date(new Date().getTime() - minutes * 60 * 1000);
 
-    await this.logger.wrap(
-      () =>
-        this.syncEpisodesService.syncEpisodes({
-          seasons: {
-            some: {
-              updatedAt: {
-                lt: olderThan,
-              },
-            },
+    await this.syncEpisodesService.syncEpisodes({
+      seasons: {
+        some: {
+          updatedAt: {
+            lt: olderThan,
           },
-        }),
-      'episodes',
-    );
+        },
+      },
+    });
   }
 
   @Option({

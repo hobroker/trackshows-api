@@ -1,1 +1,1 @@
-export { SyncHelper } from './sync-helper.service';
+export { SyncHelper } from './sync.helper';

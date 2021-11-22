@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { compose, map, objOf, prop, sum } from 'rambda';
+import { Injectable, Logger } from '@nestjs/common';
+import { prop, sum } from 'rambda';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
 import { serial } from '../../../util/promise';
 import { SyncHelper } from '../helpers';
+import { handleError } from '../../logger/util';
 
 const PARALLEL_LIMIT = 10;
-const createCount = compose(objOf('count'), sum, map(prop('count')));
 
 @Injectable()
 export class SyncEpisodesService {
+  private readonly logger = new Logger(this.constructor.name);
+
   constructor(
     private prismaService: PrismaService,
     private syncHelper: SyncHelper,
@@ -18,12 +20,21 @@ export class SyncEpisodesService {
   ) {}
 
   async syncEpisodes(whereShow: Prisma.ShowWhereInput = {}) {
+    this.logger.log('Syncing episodes...');
+
     const showIds = await this.syncHelper.findShowIds(whereShow);
 
+    this.logger.log('showIds', showIds);
+
     return await serial(
-      showIds.map((showId) => () => this.updateShowEpisodes(showId)),
+      showIds.map(
+        (showId) => () =>
+          this.updateShowEpisodes(showId).catch(handleError(this.logger)),
+      ),
       PARALLEL_LIMIT,
-    ).then(createCount);
+    )
+      .then(sum)
+      .then((count) => this.logger.log(`Synced ${count} episodes`));
   }
 
   private async updateShowEpisodes(showId: number) {
@@ -63,11 +74,9 @@ export class SyncEpisodesService {
       ),
     );
 
-    return {
-      count: Object.values(episodesMap).reduce(
-        (acc, curr) => acc + curr.length,
-        0,
-      ),
-    };
+    return Object.values(episodesMap).reduce(
+      (acc, curr) => acc + curr.length,
+      0,
+    );
   }
 }

@@ -11,7 +11,6 @@ export interface PartialShowInterface {
   description: string;
   wideImage: string;
   tallImage: string;
-  externalGenresIds: number[];
 }
 
 export interface ShowDetailsInterface {

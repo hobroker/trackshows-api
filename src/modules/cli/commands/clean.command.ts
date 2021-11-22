@@ -1,20 +1,16 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { CliLogger } from '../util';
 import { SyncCleanService } from '../../sync';
+import { WithDuration } from '../util';
 
 @Command({
   name: 'clean',
   description: 'Clean database',
 })
 export class CleanCommand implements CommandRunner {
-  private readonly logger = new CliLogger(this.constructor.name, {
-    action: 'deleting',
-    subject: 'entities',
-  });
-
   constructor(private readonly syncCleanService: SyncCleanService) {}
 
+  @WithDuration()
   async run() {
-    await this.logger.wrap(() => this.syncCleanService.deleteAll());
+    await this.syncCleanService.deleteAll();
   }
 }
