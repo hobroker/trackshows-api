@@ -1,14 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  compose,
-  concat,
-  dissoc,
-  map,
-  objOf,
-  prop,
-  range,
-  reduce,
-} from 'rambda';
+import { compose, concat, dissoc, map, prop, range, reduce } from 'rambda';
 import { serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
 import {
@@ -24,8 +15,6 @@ const PARALLEL_LIMIT = 10;
 @Injectable()
 export class SyncTrendingService {
   private readonly logger = new Logger(this.constructor.name);
-
-  private allExternalGenresIds: number[];
 
   constructor(
     private prismaService: PrismaService,
@@ -54,9 +43,10 @@ export class SyncTrendingService {
     startPageInclusive = 1,
     endPageExclusive = startPageInclusive + 1,
   ) {
+    this.logger.log(`Syncing partial show details`);
+
     const pages = range(startPageInclusive, endPageExclusive);
 
-    await this.setAllExternalGenresIds();
     await serial(
       pages.map(
         (page) => () =>
@@ -68,8 +58,7 @@ export class SyncTrendingService {
       PARALLEL_LIMIT,
     )
       .then(compose(prop('length'), reduce<number[], number[]>(concat, [])))
-      .then((count) => this.logger.log(`Added ${count} partial shows`))
-      .catch(handleError(this.logger));
+      .then((count) => this.logger.log(`Added ${count} partial shows`));
   }
 
   private async addPartialShows(shows: PartialShowInterface[]) {
@@ -83,37 +72,7 @@ export class SyncTrendingService {
       skipDuplicates: true,
     });
 
-    await this.linkGenres(shows);
-
     return showsToInsert.map(prop('externalId'));
-  }
-
-  private async setAllExternalGenresIds() {
-    this.allExternalGenresIds = await this.prismaService.genre
-      .findMany({ select: { externalId: true } })
-      .then(map(prop('externalId')));
-  }
-
-  private excludeMissingGenreIds(externalGenresIds: number[]) {
-    return externalGenresIds
-      .filter((externalId) => this.allExternalGenresIds.includes(externalId))
-      .map(objOf('externalId'));
-  }
-
-  private async linkGenres(shows: PartialShowInterface[]) {
-    await Promise.all(
-      shows.map(({ externalId, externalGenresIds }) =>
-        this.prismaService.show.update({
-          where: { externalId },
-          data: {
-            genres: {
-              connect: this.excludeMissingGenreIds(externalGenresIds),
-            },
-          },
-          select: { id: true },
-        }),
-      ),
-    );
   }
 
   private excludeExistingShows(

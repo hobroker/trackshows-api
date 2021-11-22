@@ -44,6 +44,7 @@ export class SyncShowService {
       isInProduction,
       status,
       keywords,
+      genres,
       productionCompanies,
       seasons,
     } = await this.tmdbShowService.getDetails(externalId);
@@ -61,6 +62,12 @@ export class SyncShowService {
         },
         keywords: {
           connectOrCreate: keywords.map(({ externalId, ...rest }) => ({
+            where: { externalId },
+            create: { externalId, ...rest },
+          })),
+        },
+        genres: {
+          connectOrCreate: genres.map(({ externalId, ...rest }) => ({
             where: { externalId },
             create: { externalId, ...rest },
           })),
