@@ -12,7 +12,7 @@ export class SyncCleanService {
   private prismaService: PrismaService;
 
   async deleteAll() {
-    this.logger.log('Deleting everything');
+    this.logger.log('Deleting everything...');
 
     return Promise.all([
       this.prismaService.show.deleteMany(),
@@ -27,7 +27,7 @@ export class SyncCleanService {
   }
 
   async deleteShows() {
-    this.logger.log('Deleting shows');
+    this.logger.log('Deleting shows...');
 
     return Promise.all([this.prismaService.show.deleteMany()])
       .then(createCount)

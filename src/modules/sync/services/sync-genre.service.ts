@@ -13,7 +13,7 @@ export class SyncGenreService {
   ) {}
 
   async syncAllGenres() {
-    this.logger.log('Adding genres');
+    this.logger.log('Adding genres...');
 
     const genres = await this.tmdbGenreService.list();
 
@@ -22,6 +22,7 @@ export class SyncGenreService {
         data: genres,
         skipDuplicates: true,
       })
+      .then(({ count }) => this.logger.log(`Added ${count} genres`))
       .catch(handleError(this.logger));
   }
 }

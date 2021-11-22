@@ -1,6 +1,6 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { SyncShowService } from '../../sync';
-import { Option } from '../util';
+import { Option, WithDuration } from '../util';
 
 interface Options {
   force: boolean;
@@ -13,6 +13,7 @@ interface Options {
 export class SyncShowsCommand implements CommandRunner {
   constructor(private readonly syncShowService: SyncShowService) {}
 
+  @WithDuration()
   async run(_, { force }: Options) {
     const where = force ? {} : { statusId: null };
 

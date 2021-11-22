@@ -19,7 +19,7 @@ export class SyncShowService {
   ) {}
 
   async syncDetails(where: Prisma.ShowWhereInput) {
-    this.logger.log('Syncing show details');
+    this.logger.log('Syncing show details...');
 
     const externalShowIds: number[] = await this.syncHelper.findShowExternalIds(
       where,

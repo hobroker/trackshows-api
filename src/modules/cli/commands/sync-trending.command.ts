@@ -4,7 +4,7 @@ import {
   SyncEpisodesService,
   SyncTrendingService,
 } from '../../sync';
-import { Option } from '../util';
+import { Option, WithDuration } from '../util';
 
 interface Options {
   clean: boolean;
@@ -23,6 +23,7 @@ export class SyncTrendingCommand implements CommandRunner {
     private readonly syncCleanService: SyncCleanService,
   ) {}
 
+  @WithDuration()
   async run(_, { start, end, clean }: Options) {
     if (clean) await this.runClean();
 

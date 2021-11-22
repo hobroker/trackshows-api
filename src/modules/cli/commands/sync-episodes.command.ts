@@ -1,6 +1,6 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { SyncEpisodesService } from '../../sync';
-import { Option } from '../util';
+import { Option, WithDuration } from '../util';
 
 interface Options {
   minutes: number;
@@ -13,6 +13,7 @@ interface Options {
 export class SyncEpisodesCommand implements CommandRunner {
   constructor(private readonly syncEpisodesService: SyncEpisodesService) {}
 
+  @WithDuration()
   async run(_, { minutes }: Options) {
     const olderThan = new Date(new Date().getTime() - minutes * 60 * 1000);
 

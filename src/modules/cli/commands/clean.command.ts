@@ -1,5 +1,6 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { SyncCleanService } from '../../sync';
+import { WithDuration } from '../util';
 
 @Command({
   name: 'clean',
@@ -8,6 +9,7 @@ import { SyncCleanService } from '../../sync';
 export class CleanCommand implements CommandRunner {
   constructor(private readonly syncCleanService: SyncCleanService) {}
 
+  @WithDuration()
   async run() {
     await this.syncCleanService.deleteAll();
   }

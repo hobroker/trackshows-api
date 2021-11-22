@@ -1,2 +1,2 @@
-export { createActionWrapper } from './action-wrapper';
+export { WithDuration } from './with-duration';
 export { Option } from './option.decorator';

@@ -10,14 +10,14 @@ export class SyncPersonService {
   private prismaService: PrismaService;
 
   async insertGenders(data) {
-    this.logger.log('Adding genders');
+    this.logger.log('Adding genders...');
 
     return this.prismaService.gender
       .createMany({
         data,
         skipDuplicates: true,
       })
-      .then(({ count }) => this.logger.log(`Added ${count} genres`))
+      .then(({ count }) => this.logger.log(`Added ${count} genders`))
       .catch(handleError(this.logger));
   }
 }
