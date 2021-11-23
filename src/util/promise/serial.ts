@@ -1,17 +1,28 @@
-import { splitEvery } from 'rambda';
-import { call } from '../fp';
+export async function serialEvery<T, U>(
+  data: T[][],
+  fn: (item: T) => Promise<U>,
+): Promise<U[]> {
+  const results: U[] = [];
 
-export async function serial<T>(
-  fns: (() => Promise<T>)[],
-  parallel = Infinity,
-): Promise<T[]> {
-  const results = [];
-  const chunks = splitEvery(parallel, fns);
+  for (const items of data) {
+    const subResults = await Promise.all(items.map((item) => fn(item)));
 
-  for (const chunk of chunks) {
-    const chunkResults = await Promise.all(chunk.map(call));
+    results.push(...subResults);
+  }
 
-    results.push(...chunkResults);
+  return results;
+}
+
+export async function serial<T, U>(
+  data: T[],
+  fn: (item: T) => Promise<U>,
+): Promise<U[]> {
+  const results: U[] = [];
+
+  for (const items of data) {
+    const subResults = await fn(items);
+
+    results.push(subResults);
   }
 
   return results;
