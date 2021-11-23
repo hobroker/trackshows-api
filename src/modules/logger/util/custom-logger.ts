@@ -27,11 +27,7 @@ export class CustomLogger {
   public debug = this.createLogger('debug').bind(this);
   public verbose = this.createLogger('verbose').bind(this);
 
-  private time;
-
-  constructor() {
-    this.time = timer();
-  }
+  constructor(private withTime = true, private time = timer()) {}
 
   private createLogger(level: string) {
     const start = this.formatLevel(level);
@@ -41,8 +37,10 @@ export class CustomLogger {
       const rest = [...messages];
       const options = rest.pop();
 
+      let withTime = this.withTime;
       if (options.ms !== undefined) {
         ms = options.ms;
+        withTime = true;
       } else {
         ms = this.time();
         rest.push(options);
@@ -50,7 +48,8 @@ export class CustomLogger {
       this.time = timer();
 
       const suffix = `${start} ${this.formatContext(context)}`;
-      console.log(`${suffix}`, ...rest, this.formatMs(ms));
+      const data = [suffix, ...rest, withTime ? this.formatMs(ms) : ''];
+      console.log(...data);
     };
   }
 

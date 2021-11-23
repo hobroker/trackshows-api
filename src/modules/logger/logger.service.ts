@@ -2,7 +2,11 @@ import { LoggerService as LoggerServiceInterface } from '@nestjs/common';
 import { CustomLogger } from './util';
 
 export class LoggerService implements LoggerServiceInterface {
-  private logger = new CustomLogger();
+  private logger: CustomLogger;
+
+  constructor(withTime = true) {
+    this.logger = new CustomLogger(withTime);
+  }
 
   log(message: any, ...rest: any[]) {
     this.logger.log(rest.pop(), message, ...rest);
