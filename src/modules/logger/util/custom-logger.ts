@@ -21,26 +21,20 @@ const loggerColors = {
 };
 
 export class CustomLogger {
-  public log = this.createLogger('log', loggerColors.log);
-  public error = this.createLogger('error', loggerColors.error);
-  public warn = this.createLogger('warn', loggerColors.warn);
-  public debug = this.createLogger('debug', loggerColors.debug);
-  public verbose = this.createLogger('verbose', loggerColors.verbose);
+  public log = this.createLogger('log').bind(this);
+  public error = this.createLogger('error').bind(this);
+  public warn = this.createLogger('warn').bind(this);
+  public debug = this.createLogger('debug').bind(this);
+  public verbose = this.createLogger('verbose').bind(this);
 
   private time;
 
   constructor() {
-    this.log = this.log.bind(this);
-    this.error = this.error.bind(this);
-    this.warn = this.warn.bind(this);
-    this.debug = this.debug.bind(this);
-    this.verbose = this.verbose.bind(this);
-
     this.time = timer();
   }
 
-  private createLogger(level: string, color: string) {
-    const start = this.formatLevel(color, level);
+  private createLogger(level: string) {
+    const start = this.formatLevel(level);
 
     return (context: string, ...messages: any[]) => {
       let ms: number;
@@ -60,13 +54,16 @@ export class CustomLogger {
     };
   }
 
-  private formatLevel(color: string, level: string) {
+  private formatLevel(level: string) {
+    const color = loggerColors[level];
     return WITH_COLOR ? `${color}${level}` : level;
   }
   private formatContext(context: string) {
-    return WITH_COLOR ? `${BOLD}[${context}]${RESET}` : `[${context}]`;
+    const value = context;
+    return WITH_COLOR ? `${BOLD}${value}${RESET}` : value;
   }
   private formatMs(ms: number) {
-    return WITH_COLOR ? `${BRIGHT}${BLUE}+${ms}ms${RESET}` : `+${ms}ms`;
+    const value = `+${ms}ms`;
+    return WITH_COLOR ? `${BRIGHT}${BLUE}${value}${RESET}` : value;
   }
 }
