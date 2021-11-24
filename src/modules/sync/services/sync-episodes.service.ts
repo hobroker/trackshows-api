@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { prop, sum } from 'rambda';
+import { compose, filter, prop, splitEvery, sum } from 'rambda';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma';
 import { TmdbShowService } from '../../tmdb';
-import { serial } from '../../../util/promise';
+import { serialEvery } from '../../../util/promise';
 import { SyncHelper } from '../helpers';
 import { handleError } from '../../logger/util';
 
@@ -26,14 +26,12 @@ export class SyncEpisodesService {
 
     this.logger.log('showIds', showIds);
 
-    return await serial(
-      showIds.map(
-        (showId) => () =>
-          this.updateShowEpisodes(showId).catch(handleError(this.logger)),
-      ),
-      PARALLEL_LIMIT,
+    return await serialEvery<number, number | void>(
+      splitEvery(PARALLEL_LIMIT, showIds),
+      (showId) =>
+        this.updateShowEpisodes(showId).catch(handleError(this.logger)),
     )
-      .then(sum)
+      .then(compose(sum, filter<number>(Boolean)))
       .then((count) => this.logger.log(`Synced ${count} episodes`));
   }
 

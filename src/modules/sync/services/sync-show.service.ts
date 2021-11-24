@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { serial } from '../../../util/promise';
+import { filter, pick, splitEvery } from 'rambda';
+import { serialEvery, serial } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
-import { TmdbShowService } from '../../tmdb';
+import { ShowDetailsInterface, TmdbShowService } from '../../tmdb';
 import { SyncHelper } from '../helpers';
 import { handleError } from '../../logger/util';
 
-const PARALLEL_LIMIT = 15;
+const API_PARALLEL_LIMIT = 15;
+const DB_PARALLEL_LIMIT = 200;
 
 @Injectable()
 export class SyncShowService {
@@ -16,7 +18,9 @@ export class SyncShowService {
     private readonly prismaService: PrismaService,
     private readonly syncHelper: SyncHelper,
     private readonly tmdbShowService: TmdbShowService,
-  ) {}
+  ) {
+    this.updateShowDetails = this.updateShowDetails.bind(this);
+  }
 
   async syncDetails(where: Prisma.ShowWhereInput) {
     this.logger.log('Syncing show details...');
@@ -25,60 +29,51 @@ export class SyncShowService {
       where,
     );
 
-    await serial(
-      externalShowIds.map(
-        (externalShowId) => () =>
-          this.updateShowDetails(externalShowId).catch(
-            handleError(this.logger),
-          ),
-      ),
-      PARALLEL_LIMIT,
+    const shows = await serialEvery<number, ShowDetailsInterface | void>(
+      splitEvery(API_PARALLEL_LIMIT, externalShowIds),
+      (id) =>
+        this.tmdbShowService.getDetails(id).catch(handleError(this.logger)),
+    ).then(filter<ShowDetailsInterface>(Boolean));
+
+    await serial<ShowDetailsInterface[], void>(
+      splitEvery(DB_PARALLEL_LIMIT, shows),
+      this.syncHelper.syncRelatedEntities,
+    );
+
+    await serialEvery<ShowDetailsInterface, any>(
+      splitEvery(DB_PARALLEL_LIMIT, shows),
+      (show) => this.updateShowDetails(show),
     );
 
     this.logger.log(`Updated ${externalShowIds.length} shows`);
   }
 
-  private async updateShowDetails(externalId: number) {
-    const {
-      episodeRuntime,
-      isInProduction,
-      status,
-      keywords,
-      genres,
-      productionCompanies,
-      seasons,
-    } = await this.tmdbShowService.getDetails(externalId);
-
-    await this.prismaService.show.update({
+  private async updateShowDetails({
+    externalId,
+    episodeRuntime,
+    isInProduction,
+    status,
+    keywords,
+    genres,
+    productionCompanies,
+    seasons,
+  }: ShowDetailsInterface) {
+    return this.prismaService.show.update({
       where: { externalId },
       data: {
         episodeRuntime,
         isInProduction,
         status: {
-          connectOrCreate: {
-            where: { name: status.name },
-            create: { name: status.name },
-          },
+          connect: { name: status.name },
         },
         keywords: {
-          connectOrCreate: keywords.map(({ externalId, ...rest }) => ({
-            where: { externalId },
-            create: { externalId, ...rest },
-          })),
+          connect: keywords.map(pick(['externalId'])),
         },
         genres: {
-          connectOrCreate: genres.map(({ externalId, ...rest }) => ({
-            where: { externalId },
-            create: { externalId, ...rest },
-          })),
+          connect: genres.map(pick(['externalId'])),
         },
         productionCompanies: {
-          connectOrCreate: productionCompanies.map(
-            ({ externalId, ...rest }) => ({
-              where: { externalId },
-              create: { externalId, ...rest },
-            }),
-          ),
+          connect: productionCompanies.map(pick(['externalId'])),
         },
         seasons: {
           connectOrCreate: seasons.map(({ externalId, ...rest }) => ({

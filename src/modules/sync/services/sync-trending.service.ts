@@ -1,6 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { compose, concat, dissoc, map, prop, range, reduce } from 'rambda';
-import { serial } from '../../../util/promise';
+import {
+  compose,
+  dissoc,
+  filter,
+  map,
+  prop,
+  range,
+  splitEvery,
+  sum,
+} from 'rambda';
+import { serialEvery } from '../../../util/promise';
 import { PrismaService } from '../../prisma';
 import {
   PartialShowInterface,
@@ -47,17 +56,13 @@ export class SyncTrendingService {
 
     const pages = range(startPageInclusive, endPageExclusive);
 
-    await serial(
-      pages.map(
-        (page) => () =>
-          this.tmdbShowService
-            .getTrending({ page })
-            .then(this.addPartialShows)
-            .catch(handleError(this.logger)),
-      ),
-      PARALLEL_LIMIT,
+    await serialEvery(splitEvery(PARALLEL_LIMIT, pages), (page) =>
+      this.tmdbShowService
+        .getTrending({ page })
+        .then(this.addPartialShows)
+        .catch(handleError(this.logger)),
     )
-      .then(compose(prop('length'), reduce<number[], number[]>(concat, [])))
+      .then(compose(sum, filter<number>(Boolean)))
       .then((count) => this.logger.log(`Added ${count} partial shows`));
   }
 
@@ -72,7 +77,7 @@ export class SyncTrendingService {
       skipDuplicates: true,
     });
 
-    return showsToInsert.map(prop('externalId'));
+    return showsToInsert.length;
   }
 
   private excludeExistingShows(
