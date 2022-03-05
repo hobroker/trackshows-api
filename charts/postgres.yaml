@@ -1,0 +1,28 @@
+image:
+  repository: postgres
+  tag: 14.0
+  pullPolicy: IfNotPresent
+
+services:
+  - type: LoadBalancer
+    ports:
+      - protocol: TCP
+        port: 5432
+        containerPort: 5432
+
+env:
+  - name: POSTGRES_DB
+    valueFrom:
+      secretKeyRef:
+        name: tshows-api-secret
+        key: POSTGRES_DB
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: tshows-api-secret
+        key: POSTGRES_PASSWORD
+  - name: POSTGRES_USER
+    valueFrom:
+      secretKeyRef:
+        name: tshows-api-secret
+        key: POSTGRES_USER
