@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/hobroker/tshows-api/compare/v1.0.0...v1.1.0) (2022-03-08)
+
+
+### Features
+
+* test util/fp ([#33](https://github.com/hobroker/tshows-api/issues/33)) ([34216fa](https://github.com/hobroker/tshows-api/commit/34216faf0398098316cec91c8ec02e83e5a1a70b))
+
 # 1.0.0 (2022-03-08)
 
 
