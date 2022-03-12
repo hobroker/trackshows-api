@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/hobroker/tshows-api/compare/v1.1.0...v2.0.0) (2022-03-12)
+
+
+### Features
+
+* **deps:** update dependencies ([#35](https://github.com/hobroker/tshows-api/issues/35)) ([4331935](https://github.com/hobroker/tshows-api/commit/4331935ace19ed2f2d64818776afaea3dddbee17))
+
+
+### BREAKING CHANGES
+
+* **deps:** update rambda and GraphQL dependencies
+
 # [1.1.0](https://github.com/hobroker/tshows-api/compare/v1.0.0...v1.1.0) (2022-03-08)
 
 
