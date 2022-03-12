@@ -38,10 +38,11 @@
     }
   },
   "dependencies": {
+    "@nestjs/apollo": "^10.0.6",
     "@nestjs/common": "8.4.0",
     "@nestjs/config": "^1.2.0",
     "@nestjs/core": "8.4.0",
-    "@nestjs/graphql": "^9.1.1",
+    "@nestjs/graphql": "^10.0.6",
     "@nestjs/platform-express": "8.4.0",
     "@prisma/client": "^3.10.0",
     "apollo-server-core": "^3.6.4",
@@ -50,7 +51,7 @@
     "axios-retry": "^3.2.4",
     "class-validator": "0.13.2",
     "commander": "^9.0.0",
-    "graphql": "^15.7.2",
+    "graphql": "^16.3.0",
     "graphql-tools": "8.2.0",
     "nest-commander": "^2.4.0",
     "rambda": "^7.0.3",
