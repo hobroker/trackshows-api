@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/hobroker/tshows-api/compare/v2.0.0...v2.1.0) (2022-03-22)
+
+
+### Features
+
+* chage commit-analyzer preset to conventionalcommits ([#36](https://github.com/hobroker/tshows-api/issues/36)) ([1671421](https://github.com/hobroker/tshows-api/commit/167142168f83228d67d54ef0a2628febbfe46c6a))
+
 # [2.0.0](https://github.com/hobroker/tshows-api/compare/v1.1.0...v2.0.0) (2022-03-12)
 
 
