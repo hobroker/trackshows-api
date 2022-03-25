@@ -9,6 +9,7 @@ import { TmdbModule } from './modules/tmdb';
 import { PersonModule } from './modules/person';
 import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
+import HealthModule from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { GoogleModule } from './modules/google';
     PersonModule,
     ShowModule,
     GoogleModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

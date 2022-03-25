@@ -46,6 +46,7 @@
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "8.4.0",
+    "@nestjs/terminus": "^8.0.6",
     "@prisma/client": "^3.10.0",
     "apollo-server-core": "^3.6.4",
     "apollo-server-express": "^3.6.4",
