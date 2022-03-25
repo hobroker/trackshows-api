@@ -4,7 +4,7 @@ import { google, Auth } from 'googleapis';
 import { User } from '../../user/entities';
 import { UserService } from '../../user/user.service';
 import { googleConfig } from '../google.config';
-import { AuthService } from '../../../auth';
+import { AuthService } from '../../auth';
 
 const { OAuth2 } = google.auth;
 

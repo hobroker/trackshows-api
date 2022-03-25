@@ -10,6 +10,7 @@ import { PersonModule } from './modules/person';
 import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
 import HealthModule from './modules/health/health.module';
+import { AuthModule } from './modules/auth';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import HealthModule from './modules/health/health.module';
     PersonModule,
     ShowModule,
     GoogleModule,
+    AuthModule,
     HealthModule,
   ],
 })
