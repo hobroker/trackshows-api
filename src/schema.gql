@@ -5,7 +5,9 @@
 type User {
   id: Int!
   email: String!
-  name: String
+  username: String!
+  password: String
+  currentHashedRefreshToken: String
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -102,10 +104,11 @@ type Query {
 }
 
 type Mutation {
-  signupUser(data: UserCreateInput!): User!
+  join(data: UserCreateInput!): User!
 }
 
 input UserCreateInput {
   email: String!
-  name: String
+  username: String!
+  password: String
 }

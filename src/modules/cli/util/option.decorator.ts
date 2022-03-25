@@ -9,6 +9,7 @@ const applyMethodMetadata =
     descriptor: PropertyDescriptor,
   ) => {
     Reflect.defineMetadata(metadataKey, options, descriptor.value);
+
     return descriptor;
   };
 

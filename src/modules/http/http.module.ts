@@ -17,6 +17,7 @@ import {
 const createAxiosRetry = (config: HttpModuleOptions) => {
   const axiosInstance = Axios.create(config);
   axiosRetry(axiosInstance, config);
+
   return axiosInstance;
 };
 
