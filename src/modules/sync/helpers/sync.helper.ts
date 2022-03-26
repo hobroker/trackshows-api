@@ -44,6 +44,7 @@ export class SyncHelper {
       data: keywords,
       skipDuplicates: true,
     });
+
     this.logger.log(`Added ${count} keywords`);
 
     this.addedKeywords.push(...keywords.map(prop('externalId')));
@@ -59,6 +60,7 @@ export class SyncHelper {
       data: statuses,
       skipDuplicates: true,
     });
+
     this.logger.log(`Added ${count} statuses`);
 
     this.addedKeywords.push(...statuses.map(prop('name')));
@@ -75,6 +77,7 @@ export class SyncHelper {
       data: genres,
       skipDuplicates: true,
     });
+
     this.logger.log(`Added ${count} genres`);
 
     this.addedKeywords.push(...genres.map(prop('externalId')));
@@ -93,6 +96,7 @@ export class SyncHelper {
       data: productionCompanies,
       skipDuplicates: true,
     });
+
     this.logger.log(`Added ${count} production companies`);
 
     this.addedProductionCompanies.push(

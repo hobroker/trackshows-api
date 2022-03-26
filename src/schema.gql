@@ -5,7 +5,8 @@
 type User {
   id: Int!
   email: String!
-  name: String
+  name: String!
+  avatar: String
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
@@ -92,8 +93,13 @@ type Season {
   updatedAt: Timestamp!
 }
 
+type Void {
+  _: String
+}
+
 type Query {
-  allUsers: [User!]
+  allUsers: User!
+  me: User!
   genders: [Gender!]
   persons: [Person!]
   keywords: [Keyword!]!
@@ -102,10 +108,11 @@ type Query {
 }
 
 type Mutation {
-  signupUser(data: UserCreateInput!): User!
+  joinWithGoogle(input: JoinWithGoogleInput!): User!
+  logout: Void!
+  refresh: User!
 }
 
-input UserCreateInput {
-  email: String!
-  name: String
+input JoinWithGoogleInput {
+  token: String!
 }

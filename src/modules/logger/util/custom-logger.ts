@@ -38,6 +38,7 @@ export class CustomLogger {
       const options = rest.pop();
 
       let withTime = this.withTime;
+
       if (options.ms !== undefined) {
         ms = options.ms;
         withTime = true;
@@ -49,20 +50,24 @@ export class CustomLogger {
 
       const suffix = `${start} ${this.formatContext(context)}`;
       const data = [suffix, ...rest, withTime ? this.formatMs(ms) : ''];
+
       console.log(...data);
     };
   }
 
   private formatLevel(level: string) {
     const color = loggerColors[level];
+
     return WITH_COLOR ? `${color}${level}` : level;
   }
   private formatContext(context: string) {
     const value = context;
+
     return WITH_COLOR ? `${BOLD}${value}${RESET}` : value;
   }
   private formatMs(ms: number) {
     const value = `+${ms}ms`;
+
     return WITH_COLOR ? `${BRIGHT}${BLUE}${value}${RESET}` : value;
   }
 }

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 import { IsEmail } from 'class-validator';
 
 @ObjectType()
@@ -11,8 +11,17 @@ export class User {
   @IsEmail()
   email: string;
 
+  @Field(() => String)
+  name: string;
+
   @Field(() => String, { nullable: true })
-  name?: string | null;
+  avatar?: string;
+
+  @HideField()
+  password?: string;
+
+  @HideField()
+  public currentHashedRefreshToken?: string;
 
   @Field(() => Date)
   createdAt: Date;

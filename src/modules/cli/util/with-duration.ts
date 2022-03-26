@@ -8,6 +8,7 @@ export const WithDuration =
 
     descriptor.value = async function (...args) {
       const time = timer();
+
       logger.log('start');
 
       const result = await fn.apply(this, args);
