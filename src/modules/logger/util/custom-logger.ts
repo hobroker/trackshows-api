@@ -38,6 +38,7 @@ export class CustomLogger {
       const options = rest.pop();
 
       let withTime = this.withTime;
+
       if (options.ms !== undefined) {
         ms = options.ms;
         withTime = true;
@@ -49,6 +50,7 @@ export class CustomLogger {
 
       const suffix = `${start} ${this.formatContext(context)}`;
       const data = [suffix, ...rest, withTime ? this.formatMs(ms) : ''];
+
       console.log(...data);
     };
   }

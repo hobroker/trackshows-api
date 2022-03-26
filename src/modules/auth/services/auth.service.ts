@@ -88,6 +88,7 @@ export class AuthService {
       plainTextPassword,
       hashedPassword,
     );
+
     if (!isPasswordMatching) {
       throw new HttpException(
         'Wrong credentials provided',

@@ -16,6 +16,7 @@ import {
 
 const createAxiosRetry = (config: HttpModuleOptions) => {
   const axiosInstance = Axios.create(config);
+
   axiosRetry(axiosInstance, config);
 
   return axiosInstance;
@@ -98,6 +99,7 @@ export class HttpModule {
     }
 
     let inject;
+
     if (options.useExisting) inject = [options.useExisting];
     else if (options.useClass) inject = [options.useClass];
 
