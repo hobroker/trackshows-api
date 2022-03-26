@@ -31,6 +31,7 @@ export class GoogleService {
     if (!user) {
       return this.registerUser(token, email);
     }
+    await this.updateRegisteredUser(token, user);
 
     return this.handleRegisteredUser(user);
   }
@@ -82,5 +83,16 @@ export class GoogleService {
       refreshTokenCookie,
       user,
     };
+  }
+
+  private async updateRegisteredUser(token: string, user: User) {
+    const userData = await this.getUserData(token);
+    const { name, picture: avatar } = userData;
+
+    await this.userService.update(user.id, {
+      ...user,
+      name,
+      avatar,
+    });
   }
 }

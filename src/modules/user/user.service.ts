@@ -8,14 +8,14 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    return this.prismaService.user.create({
-      data: {
-        email: data.email,
-        name: data.name,
-        password: data.password,
-        avatar: data.avatar,
-      },
-    });
+    return this.prismaService.user.create({ data });
+  }
+
+  update(
+    id: number,
+    data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<User> {
+    return this.prismaService.user.update({ where: { id }, data });
   }
 
   findMany(): Promise<User[]> {
