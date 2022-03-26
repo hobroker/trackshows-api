@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/hobroker/tshows-api/compare/v2.1.0...v2.2.0) (2022-03-26)
+
+
+### Features
+
+* add auth module ([#38](https://github.com/hobroker/tshows-api/issues/38)) ([d2bdd6f](https://github.com/hobroker/tshows-api/commit/d2bdd6f5e83034a193d89bb8d25440173029fbdf))
+
 # [2.1.0](https://github.com/hobroker/tshows-api/compare/v2.0.0...v2.1.0) (2022-03-22)
 
 
