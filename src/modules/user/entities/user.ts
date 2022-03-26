@@ -18,11 +18,9 @@ export class User {
   avatar?: string;
 
   @HideField()
-  @Field(() => String, { nullable: true })
   password?: string;
 
   @HideField()
-  @Field({ nullable: true })
   public currentHashedRefreshToken?: string;
 
   @Field(() => Date)
