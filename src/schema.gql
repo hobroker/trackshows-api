@@ -104,3 +104,11 @@ type Query {
   trending: [Show!]!
   genres: [Genre!]
 }
+
+type Mutation {
+  joinWithGoogle(input: JoinWithGoogleInput!): User!
+}
+
+input JoinWithGoogleInput {
+  token: String!
+}

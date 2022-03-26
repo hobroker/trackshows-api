@@ -10,7 +10,7 @@ import {
   JwtRefreshTokenStrategy,
 } from './strategies';
 import { authConfig } from './auth.config';
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from './controllers';
 
 @Module({
   imports: [
