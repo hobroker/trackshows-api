@@ -11,11 +11,8 @@ export class UserService {
     return this.prismaService.user.create({ data });
   }
 
-  update(
-    id: number,
-    data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,
-  ): Promise<User> {
-    return this.prismaService.user.update({ where: { id }, data });
+  update(userId: number, data: Partial<User>): Promise<User> {
+    return this.prismaService.user.update({ where: { id: userId }, data });
   }
 
   findMany(): Promise<User[]> {
@@ -26,8 +23,8 @@ export class UserService {
     return this.prismaService.user.findFirst({ where: { email } });
   }
 
-  findById(id: number): Promise<User> {
-    return this.prismaService.user.findFirst({ where: { id } });
+  findById(userId: number): Promise<User> {
+    return this.prismaService.user.findFirst({ where: { id: userId } });
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
@@ -47,16 +44,10 @@ export class UserService {
 
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.prismaService.user.update({
-      where: { id: userId },
-      data: { currentHashedRefreshToken },
-    });
+    await this.update(userId, { currentHashedRefreshToken });
   }
 
   async removeRefreshToken(userId: number) {
-    return this.prismaService.user.update({
-      where: { id: userId },
-      data: { currentHashedRefreshToken: null },
-    });
+    return this.update(userId, { currentHashedRefreshToken: null });
   }
 }

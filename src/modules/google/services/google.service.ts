@@ -90,7 +90,6 @@ export class GoogleService {
     const { name, picture: avatar } = userData;
 
     await this.userService.update(user.id, {
-      ...user,
       name,
       avatar,
     });
