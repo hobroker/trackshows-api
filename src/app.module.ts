@@ -11,6 +11,7 @@ import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
 import HealthModule from './modules/health/health.module';
 import { AuthModule } from './modules/auth';
+import { Timestamp } from './util/scalars';
 
 @Module({
   imports: [
@@ -32,5 +33,6 @@ import { AuthModule } from './modules/auth';
     AuthModule,
     HealthModule,
   ],
+  providers: [Timestamp],
 })
 export class AppModule {}

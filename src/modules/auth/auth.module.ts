@@ -11,6 +11,7 @@ import {
 } from './strategies';
 import { authConfig } from './auth.config';
 import { AuthController } from './controllers';
+import { AuthResolver } from './resolvers';
 
 @Module({
   imports: [
@@ -20,7 +21,13 @@ import { AuthController } from './controllers';
     PassportModule,
   ],
   exports: [AuthService],
-  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshTokenStrategy],
+  providers: [
+    AuthResolver,
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

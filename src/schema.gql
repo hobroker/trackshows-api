@@ -95,6 +95,10 @@ type Season {
   updatedAt: Timestamp!
 }
 
+type Void {
+  _: String
+}
+
 type Query {
   allUsers: User!
   me: User!
@@ -107,6 +111,8 @@ type Query {
 
 type Mutation {
   joinWithGoogle(input: JoinWithGoogleInput!): User!
+  logout: Void!
+  refresh: User!
 }
 
 input JoinWithGoogleInput {
