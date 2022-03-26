@@ -1,9 +1,11 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService, ConfigType } from '@nestjs/config';
 import { Request } from 'express';
 import { UserService } from '../../user/user.service';
+import { authConfig } from '../auth.config';
+import { AUTHENTICATION_COOKIE } from '../auth.constants';
 
 interface TokenPayload {
   userId: number;
@@ -12,16 +14,17 @@ interface TokenPayload {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
+    @Inject(authConfig.KEY)
+    private config: ConfigType<typeof authConfig>,
+
     private readonly configService: ConfigService,
     private readonly userService: UserService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          return request?.cookies?.Authentication;
-        },
+        (request: Request) => request?.cookies?.[AUTHENTICATION_COOKIE],
       ]),
-      secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      secretOrKey: config.jwtAccessTokenSecret,
     });
   }
 

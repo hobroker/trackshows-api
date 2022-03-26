@@ -7,30 +7,13 @@ import { User } from './entities';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findOrCreate(
-    data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,
-  ): Promise<User> {
-    const user = await this.findByEmail(data.email);
-
-    if (user) {
-      return user;
-    }
-
-    return this.prismaService.user.create({
-      data: {
-        email: data.email,
-        username: data.username,
-        password: data.password,
-      },
-    });
-  }
-
   create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
     return this.prismaService.user.create({
       data: {
         email: data.email,
-        username: data.username,
+        name: data.name,
         password: data.password,
+        avatar: data.avatar,
       },
     });
   }

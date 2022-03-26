@@ -6,6 +6,8 @@ import { UserService } from '../../user/user.service';
 import { authConfig } from '../auth.config';
 import { RegisterDto } from '../dto';
 import { TokenPayload } from '../interfaces';
+import { createCookie } from '../auth.util';
+import { AUTHENTICATION_COOKIE, REFRESH_COOKIE } from '../auth.constants';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +38,10 @@ export class AuthService {
       expiresIn: `${this.config.jwtAccessTokenExirationTime}s`,
     });
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.config.jwtAccessTokenExirationTime}`;
+    return createCookie(AUTHENTICATION_COOKIE, {
+      value: token,
+      maxAge: this.config.jwtAccessTokenExirationTime,
+    });
   }
 
   public getCookieWithJwtRefreshToken(userId: number) {
@@ -45,7 +50,10 @@ export class AuthService {
       secret: this.config.jwtRefreshTokenSecret,
       expiresIn: `${this.config.jwtRefreshTokenExirationTime}s`,
     });
-    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.config.jwtRefreshTokenExirationTime}`;
+    const cookie = createCookie(REFRESH_COOKIE, {
+      value: token,
+      maxAge: this.config.jwtRefreshTokenExirationTime,
+    });
 
     return {
       cookie,
@@ -69,10 +77,7 @@ export class AuthService {
   }
 
   public getCookiesForLogOut() {
-    return [
-      'Authentication=; HttpOnly; Path=/; Max-Age=0',
-      'Refresh=; HttpOnly; Path=/; Max-Age=0',
-    ];
+    return [createCookie(AUTHENTICATION_COOKIE), createCookie(REFRESH_COOKIE)];
   }
 
   private async verifyPassword(

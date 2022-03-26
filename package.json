@@ -55,6 +55,7 @@
     "bcrypt": "^5.0.1",
     "class-validator": "0.13.2",
     "commander": "^9.0.0",
+    "cookie-parser": "^1.4.6",
     "googleapis": "^98.0.0",
     "graphql": "^16.3.0",
     "graphql-tools": "8.2.0",

@@ -8,16 +8,11 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { UserService } from '../../user/user.service';
-import { User } from '../../user/entities';
 import { JwtAuthGuard, JwtRefreshGuard, LocalAuthGuard } from '../guards';
 import { AuthService } from '../services';
 import { RegisterDto } from '../dto';
-
-interface RequestWithUser extends Request {
-  user: User;
-}
+import { RequestWithUser } from '../interfaces';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)

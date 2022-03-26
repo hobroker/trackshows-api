@@ -19,6 +19,10 @@ import { AuthModule } from './modules/auth';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       buildSchemaOptions: { dateScalarMode: 'timestamp' },
       driver: ApolloDriver,
+      cors: {
+        credentials: true,
+        origin: true,
+      },
     }),
     TmdbModule,
     UserModule,

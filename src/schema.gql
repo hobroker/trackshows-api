@@ -5,7 +5,8 @@
 type User {
   id: Int!
   email: String!
-  username: String!
+  name: String!
+  avatar: String
   password: String
   currentHashedRefreshToken: String
   createdAt: Timestamp!
@@ -95,20 +96,11 @@ type Season {
 }
 
 type Query {
-  allUsers: [User!]
+  allUsers: User!
+  me: User!
   genders: [Gender!]
   persons: [Person!]
   keywords: [Keyword!]!
   trending: [Show!]!
   genres: [Genre!]
-}
-
-type Mutation {
-  join(data: UserCreateInput!): User!
-}
-
-input UserCreateInput {
-  email: String!
-  username: String!
-  password: String
 }

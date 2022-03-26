@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { google, Auth } from 'googleapis';
+import { Auth, google } from 'googleapis';
 import { User } from '../../user/entities';
 import { UserService } from '../../user/user.service';
 import { googleConfig } from '../google.config';
@@ -10,7 +10,7 @@ const { OAuth2 } = google.auth;
 
 @Injectable()
 export class GoogleService {
-  oauthClient: Auth.OAuth2Client;
+  private readonly oauthClient: Auth.OAuth2Client;
 
   constructor(
     @Inject(googleConfig.KEY)
@@ -24,8 +24,7 @@ export class GoogleService {
   }
 
   async authenticate(token: string) {
-    const tokenInfo = await this.oauthClient.getTokenInfo(token);
-    const email = tokenInfo.email;
+    const { email } = await this.oauthClient.getTokenInfo(token);
 
     const user = await this.userService.findByEmail(email);
 
@@ -36,16 +35,16 @@ export class GoogleService {
     return this.handleRegisteredUser(user);
   }
 
-  async registerUser(token: string, email: string) {
+  private async registerUser(token: string, email: string) {
     const userData = await this.getUserData(token);
-    const username = userData.name;
+    const { name, picture: avatar } = userData;
 
-    const user = await this.userService.create({ email, username });
+    const user = await this.userService.create({ email, name, avatar });
 
     return this.handleRegisteredUser(user);
   }
 
-  async getUserData(token: string) {
+  private async getUserData(token: string) {
     const userInfoClient = google.oauth2('v2').userinfo;
 
     this.oauthClient.setCredentials({
@@ -59,7 +58,7 @@ export class GoogleService {
     return userInfoResponse.data;
   }
 
-  async getCookiesForUser(user: User) {
+  private async getCookiesForUser(user: User) {
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
@@ -74,7 +73,7 @@ export class GoogleService {
     };
   }
 
-  async handleRegisteredUser(user: User) {
+  private async handleRegisteredUser(user: User) {
     const { accessTokenCookie, refreshTokenCookie } =
       await this.getCookiesForUser(user);
 

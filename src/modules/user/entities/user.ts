@@ -12,7 +12,10 @@ export class User {
   email: string;
 
   @Field(() => String)
-  username: string;
+  name: string;
+
+  @Field(() => String, { nullable: true })
+  avatar?: string;
 
   @HideField()
   @Field(() => String, { nullable: true })
