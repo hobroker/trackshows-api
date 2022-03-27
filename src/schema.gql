@@ -50,11 +50,8 @@ type Keyword {
 }
 
 type Genre {
-  id: Int!
+  externalId: Int!
   name: String!
-  shows: [Show!]
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
 }
 
 type ProductionCompany {
@@ -97,6 +94,15 @@ type Void {
   _: String
 }
 
+type Preference {
+  id: Int!
+  user: User!
+  genreIds: [Int!]!
+  showIds: [Int!]!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
 type Query {
   allUsers: User!
   me: User!
@@ -104,15 +110,21 @@ type Query {
   persons: [Person!]
   keywords: [Keyword!]!
   trending: [Show!]!
-  genres: [Genre!]
+  listGenres: [Genre!]!
+  getPreferences: Preference
 }
 
 type Mutation {
   joinWithGoogle(input: JoinWithGoogleInput!): User!
   logout: Void!
   refresh: User!
+  savePreferences(input: UpsertPreferenceInput!): Preference!
 }
 
 input JoinWithGoogleInput {
   token: String!
+}
+
+input UpsertPreferenceInput {
+  genreIds: [Int!]!
 }

@@ -9,8 +9,8 @@ export class GenreResolver {
   @Inject(GenreService)
   private genreService: GenreService;
 
-  @Query(() => [Genre], { nullable: true })
-  genres() {
+  @Query(() => [Genre])
+  listGenres() {
     return this.genreService.list();
   }
 }

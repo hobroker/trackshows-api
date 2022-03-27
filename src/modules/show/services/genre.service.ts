@@ -1,14 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma';
+import { Injectable } from '@nestjs/common';
+import { TmdbGenreService } from '../../tmdb';
 
 @Injectable()
 export class GenreService {
-  @Inject(PrismaService)
-  private prismaService: PrismaService;
+  constructor(private tmdbGenreService: TmdbGenreService) {}
 
   async list() {
-    return this.prismaService.genre.findMany({
-      orderBy: [{ name: 'asc' }],
-    });
+    return this.tmdbGenreService.list();
   }
 }
