@@ -58,13 +58,15 @@
     "cookie-parser": "^1.4.6",
     "googleapis": "^98.0.0",
     "graphql": "^16.3.0",
+    "graphql-fields-list": "^2.2.4",
     "graphql-tools": "8.2.0",
     "nest-commander": "^2.4.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "rambda": "^7.0.3",
-    "reflect-metadata": "0.1.13"
+    "reflect-metadata": "0.1.13",
+    "typescript-memoize": "^1.1.0"
   },
   "devDependencies": {
     "@eclass/semantic-release-docker": "^3.0.0",

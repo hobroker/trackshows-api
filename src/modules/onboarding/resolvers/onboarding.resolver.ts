@@ -1,6 +1,8 @@
 import 'reflect-metadata';
-import { Args, Context, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Info, Mutation, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
+import { GraphQLResolveInfo } from 'graphql';
+import { fieldsMap } from 'graphql-fields-list';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { RequestWithUser } from '../../auth/interfaces';
 import { UpsertPreferenceInput } from './input';
@@ -17,16 +19,24 @@ export class OnboardingResolver {
     @Args('input') input: UpsertPreferenceInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
-    const { genreIds } = input;
+    const { genreIds, showIds } = input;
 
     return this.preferenceService.upsert(user.id, {
       genreIds,
+      showIds,
     });
   }
 
   @Query(() => Preference, { nullable: true })
   @UseGuards(GraphqlJwtAuthGuard)
-  async getPreferences(@Context() { req: { user } }: { req: RequestWithUser }) {
-    return this.preferenceService.findByUserId(user.id);
+  async getPreferences(
+    @Info() info: GraphQLResolveInfo,
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ) {
+    const fields = fieldsMap(info);
+
+    return this.preferenceService.findByUserId(user.id, {
+      include: { genres: 'genres' in fields },
+    });
   }
 }

@@ -1,21 +1,41 @@
 import 'reflect-metadata';
-import { Query, Resolver } from '@nestjs/graphql';
-import { Inject } from '@nestjs/common';
-import { ShowService } from '../services';
-import { Keyword, Show } from '../entities';
+import { Args, Info, Query } from '@nestjs/graphql';
+import { Injectable } from '@nestjs/common';
+import { fieldsMap } from 'graphql-fields-list';
+import { GraphQLResolveInfo } from 'graphql';
+import { indexBy, prop } from 'rambda';
+import { PartialShow } from '../entities';
+import { DiscoverShowsInput } from './input';
+import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 
-@Resolver(Show)
+@Injectable()
 export class ShowResolver {
-  @Inject(ShowService)
-  private showService: ShowService;
+  constructor(
+    private readonly tmdbShowService: TmdbShowService,
+    private readonly tmdbGenreService: TmdbGenreService,
+  ) {}
 
-  @Query(() => [Keyword])
-  keywords() {
-    return this.showService.listKeywords();
-  }
+  @Query(() => [PartialShow])
+  async discoverShows(
+    @Args('input') input: DiscoverShowsInput,
+    @Info() info: GraphQLResolveInfo,
+  ) {
+    const { genreIds } = input;
+    const fields = fieldsMap(info);
 
-  @Query(() => [Show])
-  trending() {
-    return this.showService.listTrending();
+    const shows = await this.tmdbShowService.discoverByGenres(genreIds);
+
+    if (!('genres' in fields)) {
+      return shows;
+    }
+
+    const genres = await this.tmdbGenreService
+      .list()
+      .then(indexBy(prop('externalId')));
+
+    return shows.map(({ genreIds, ...show }) => ({
+      ...show,
+      genres: genreIds.map((id) => genres[id]),
+    }));
   }
 }

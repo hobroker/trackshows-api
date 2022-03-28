@@ -1,34 +1,63 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, prop } from 'rambda';
+import { always, compose, evolve, identity, prop } from 'rambda';
 import { filter, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
+import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { episodeFacade, showDetailsFacade } from '../facades';
 import { EpisodeInterface, PartialShowInterface } from '../interfaces';
-import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
-import { PrismaService } from '../../prisma';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
+import { PartialShow } from '../../show';
+
+interface WithPagination {
+  page?: number;
+}
+
+type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
 
 @Injectable()
 export class TmdbShowService {
-  @Inject(tmdbConfig.KEY)
-  private config: ConfigType<typeof tmdbConfig>;
+  constructor(
+    @Inject(tmdbConfig.KEY)
+    private config: ConfigType<typeof tmdbConfig>,
 
-  @Inject(HttpService)
-  private httpService: HttpService;
+    private readonly httpService: HttpService,
+  ) {}
 
-  @Inject(TmdbPersonService)
-  private tmdbPersonService: TmdbPersonService;
+  async discoverByGenres(
+    genreIds: number[] = [],
+  ): Promise<PartialShowWithGenreIds[]> {
+    const data = await Promise.all(
+      genreIds.map((genreId) => this.discoverByGenreId(genreId)),
+    );
 
-  @Inject(PrismaService)
-  private prismaService: PrismaService;
+    return data.flatMap(identity);
+  }
+
+  @Memoize()
+  private async discoverByGenreId(
+    genreId: number,
+    { maxResults = 20 } = {},
+  ): Promise<PartialShowWithGenreIds[]> {
+    const {
+      data: { results },
+    } = await this.httpService.get(`/discover/tv`, {
+      params: {
+        page: 1,
+        with_genres: genreId,
+        with_original_language: 'en',
+      },
+    });
+
+    return results.slice(0, maxResults).map(partialShowFacade);
+  }
 
   async getTrending({
     page = 1,
     period = 'week',
-  }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
+  }: WithPagination & { period?: 'day' | 'week' } = {}): Promise<
     PartialShowInterface[]
   > {
     const {

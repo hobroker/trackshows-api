@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Memoize } from 'typescript-memoize';
 import { PrismaService } from '../../prisma';
 import { HttpService } from '../../http';
-import { GenreInterface } from '../interfaces';
 import { genreFacade } from '../facades';
+import { Genre } from '../../show';
 
 @Injectable()
 export class TmdbGenreService {
@@ -12,9 +13,16 @@ export class TmdbGenreService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
 
-  async list(): Promise<GenreInterface[]> {
+  @Memoize()
+  async list(): Promise<Genre[]> {
     const { data } = await this.httpService.get('/genre/tv/list');
 
     return data.genres.map(genreFacade);
+  }
+
+  async findByExternalIds(externalIds: number[]): Promise<Genre[]> {
+    return this.list().then((genres) =>
+      genres.filter(({ externalId }) => externalIds.includes(externalId)),
+    );
   }
 }

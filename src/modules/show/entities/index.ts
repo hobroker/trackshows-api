@@ -1,6 +1,7 @@
 export { Episode } from './episode';
 export { Keyword } from './keyword';
 export { Show } from './show';
+export { PartialShow } from './partial-show';
 export { Season } from './season';
 export { Status } from './status';
 export { Genre } from './genre';

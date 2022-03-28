@@ -14,7 +14,7 @@ export const partialShowFacade = applySpec<PartialShowInterface>({
   description: compose(sanitize, prop('overview')),
   wideImage: prop('poster_path'),
   tallImage: prop('poster_path'),
-  externalGenresIds: prop('genre_ids'),
+  genreIds: prop('genre_ids'),
 });
 
 export const showDetailsFacade = applySpec<ShowDetailsInterface>({

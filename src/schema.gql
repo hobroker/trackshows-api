@@ -75,8 +75,6 @@ type Show {
   keywords: [Keyword!]!
   seasons: [Season!]!
   productionCompanies: [ProductionCompany!]!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
 }
 
 type Season {
@@ -90,17 +88,23 @@ type Season {
   updatedAt: Timestamp!
 }
 
+type PartialShow {
+  externalId: Int!
+  name: String!
+  description: String!
+  wideImage: String!
+  tallImage: String!
+  genres: [Genre!]!
+}
+
 type Void {
   _: String
 }
 
 type Preference {
   id: Int!
-  user: User!
-  genreIds: [Int!]!
-  showIds: [Int!]!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
+  genres: [Genre!]!
+  shows: [PartialShow!]!
 }
 
 type Query {
@@ -108,10 +112,13 @@ type Query {
   me: User!
   genders: [Gender!]
   persons: [Person!]
-  keywords: [Keyword!]!
-  trending: [Show!]!
+  discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   listGenres: [Genre!]!
   getPreferences: Preference
+}
+
+input DiscoverShowsInput {
+  genreIds: [Int!]!
 }
 
 type Mutation {
@@ -127,4 +134,5 @@ input JoinWithGoogleInput {
 
 input UpsertPreferenceInput {
   genreIds: [Int!]!
+  showIds: [Int!]!
 }

@@ -43,10 +43,4 @@ export class Show {
 
   @Field(() => [ProductionCompany])
   productionCompanies: [ProductionCompany];
-
-  @Field(() => Date)
-  createdAt: Date;
-
-  @Field(() => Date)
-  updatedAt: Date;
 }
