@@ -4,7 +4,4 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 export class UpsertPreferenceInput {
   @Field(() => [Int])
   genreIds: number[];
-
-  @Field(() => [Int])
-  showIds: number[];
 }

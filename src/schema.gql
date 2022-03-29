@@ -44,7 +44,12 @@ type Query {
   allUsers: User!
   me: User!
   listGenres: [Genre!]
+  discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   getPreferences: Preference
+}
+
+input DiscoverShowsInput {
+  genreIds: [Int!]!
 }
 
 type Mutation {
@@ -60,5 +65,4 @@ input JoinWithGoogleInput {
 
 input UpsertPreferenceInput {
   genreIds: [Int!]!
-  showIds: [Int!]!
 }
