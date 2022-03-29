@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ShowService } from './services';
 import { GenreResolver, ShowResolver } from './resolvers';
 import { PrismaModule } from '../prisma';
 import { TmdbModule } from '../tmdb';
 
 @Module({
   imports: [PrismaModule, TmdbModule],
-  exports: [ShowService],
-  providers: [ShowService, GenreResolver, ShowResolver],
+  providers: [GenreResolver, ShowResolver],
 })
 export class ShowModule {}
