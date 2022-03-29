@@ -12,7 +12,7 @@ import { GoogleModule } from './modules/google';
 import HealthModule from './modules/health/health.module';
 import { AuthModule } from './modules/auth';
 import { Timestamp } from './util/scalars';
-import { OnboardingModule } from './modules/onboarding/onboarding.module';
+import { OnboardingModule } from './modules/onboarding';
 
 @Module({
   imports: [
@@ -33,6 +33,7 @@ import { OnboardingModule } from './modules/onboarding/onboarding.module';
     ShowModule,
     GoogleModule,
     AuthModule,
+    HealthModule,
     OnboardingModule,
   ],
   providers: [Timestamp],

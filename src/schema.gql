@@ -54,6 +54,7 @@ type Genre {
   name: String!
 }
 
+<<<<<<< HEAD
 type ProductionCompany {
   id: Int!
   name: String!
@@ -88,6 +89,8 @@ type Season {
   updatedAt: Timestamp!
 }
 
+=======
+>>>>>>> e69ba86 (fix: resolvers)
 type PartialShow {
   externalId: Int!
   name: String!
@@ -104,16 +107,24 @@ type Void {
 type Preference {
   id: Int!
   genres: [Genre!]!
+<<<<<<< HEAD
   shows: [PartialShow!]!
+=======
+>>>>>>> e69ba86 (fix: resolvers)
 }
 
 type Query {
   allUsers: User!
   me: User!
+<<<<<<< HEAD
   genders: [Gender!]
   persons: [Person!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   listGenres: [Genre!]!
+=======
+  listGenres: [Genre!]
+  discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
+>>>>>>> e69ba86 (fix: resolvers)
   getPreferences: Preference
 }
 
@@ -134,5 +145,8 @@ input JoinWithGoogleInput {
 
 input UpsertPreferenceInput {
   genreIds: [Int!]!
+<<<<<<< HEAD
   showIds: [Int!]!
+=======
+>>>>>>> e69ba86 (fix: resolvers)
 }
