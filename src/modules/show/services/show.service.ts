@@ -9,12 +9,6 @@ export class ShowService {
   @Inject(TmdbShowService)
   private tmdbShowService: TmdbShowService;
 
-  async listKeywords() {
-    return this.prismaService.keyword.findMany({
-      orderBy: [{ name: 'asc' }],
-    });
-  }
-
   async listTrending() {
     return this.tmdbShowService.getTrending();
   }

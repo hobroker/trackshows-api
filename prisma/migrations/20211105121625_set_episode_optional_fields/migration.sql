@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Episode" ALTER COLUMN "wideImage" DROP NOT NULL,
-ALTER COLUMN "airDate" DROP NOT NULL;
