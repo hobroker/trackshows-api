@@ -16,81 +16,9 @@ type User {
 """
 scalar Timestamp
 
-type Gender {
-  id: Int!
-  name: String!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type Person {
-  id: Int!
-  name: String!
-  description: String!
-  image: String
-  birthday: Timestamp
-  deathday: Timestamp
-  gender: Gender!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type Status {
-  id: Int!
-  name: String!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type Keyword {
-  id: Int!
-  name: String!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
 type Genre {
-  id: Int!
-  name: String!
-  shows: [Show!]
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type ProductionCompany {
-  id: Int!
-  name: String!
-  logo: String!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type Show {
   externalId: Int!
   name: String!
-  description: String!
-  wideImage: String!
-  tallImage: String!
-  episodeRuntime: Int!
-  isInProduction: Boolean!
-  status: Status!
-  genres: [Genre!]!
-  keywords: [Keyword!]!
-  seasons: [Season!]!
-  productionCompanies: [ProductionCompany!]!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type Season {
-  id: Int!
-  name: String!
-  description: String!
-  tallImage: String!
-  number: Int!
-  show: Show!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
 }
 
 type Void {
@@ -100,10 +28,6 @@ type Void {
 type Query {
   allUsers: User!
   me: User!
-  genders: [Gender!]
-  persons: [Person!]
-  keywords: [Keyword!]!
-  trending: [Show!]!
   genres: [Genre!]
 }
 
