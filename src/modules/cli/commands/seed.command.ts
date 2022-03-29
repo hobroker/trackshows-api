@@ -1,6 +1,5 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { SyncPersonService } from '../../sync';
-import { gendersSeed } from '../data/seed';
+import { Logger } from '@nestjs/common';
 import { WithDuration } from '../util';
 
 @Command({
@@ -8,10 +7,10 @@ import { WithDuration } from '../util';
   description: 'Seed the DB',
 })
 export class SeedCommand implements CommandRunner {
-  constructor(private readonly syncPersonService: SyncPersonService) {}
+  private readonly logger = new Logger(this.constructor.name);
 
   @WithDuration()
   async run() {
-    await this.syncPersonService.insertGenders(gendersSeed);
+    this.logger.error('Nothing to do');
   }
 }

@@ -19,11 +19,10 @@ export class OnboardingResolver {
     @Args('input') input: UpsertPreferenceInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
-    const { genreIds, showIds } = input;
+    const { genreIds } = input;
 
     return this.preferenceService.upsert(user.id, {
       genreIds,
-      showIds,
     });
   }
 

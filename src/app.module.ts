@@ -6,7 +6,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserModule } from './modules/user/user.module';
 import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
-import { PersonModule } from './modules/person';
 import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
 import HealthModule from './modules/health/health.module';
@@ -29,7 +28,6 @@ import { OnboardingModule } from './modules/onboarding';
     HealthModule,
     TmdbModule,
     UserModule,
-    PersonModule,
     ShowModule,
     GoogleModule,
     AuthModule,

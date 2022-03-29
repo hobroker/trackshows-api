@@ -1,3 +1,5 @@
+# [3.0.0](https://github.com/hobroker/tshows-api/compare/v2.2.0...v3.0.0) (2022-03-29)
+
 # [2.2.0](https://github.com/hobroker/tshows-api/compare/v2.1.0...v2.2.0) (2022-03-26)
 
 
