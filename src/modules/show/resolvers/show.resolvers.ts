@@ -33,6 +33,8 @@ export class ShowResolver {
       .list()
       .then(indexBy(prop('externalId')));
 
+    console.log('shows', shows);
+
     return shows.map(({ genreIds, ...show }) => ({
       ...show,
       genres: genreIds.map((id) => genres[id]),

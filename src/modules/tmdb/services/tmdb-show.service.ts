@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, identity, prop } from 'rambda';
-import { filter, when } from 'rambda/immutable';
+import { always, compose, evolve, prop } from 'rambda';
+import { filter, propEq, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
@@ -11,10 +11,6 @@ import { partialShowFacade } from '../facades/show.facade';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 import { PartialShow } from '../../show';
 
-interface WithPagination {
-  page?: number;
-}
-
 type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
 
 @Injectable()
@@ -24,22 +20,37 @@ export class TmdbShowService {
     private config: ConfigType<typeof tmdbConfig>,
 
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    this.discoverByGenreId = this.discoverByGenreId.bind(this);
+  }
 
   async discoverByGenres(
     genreIds: number[] = [],
+    { countPerGenre = 6 } = {},
   ): Promise<PartialShowWithGenreIds[]> {
-    const data = await Promise.all(
-      genreIds.map((genreId) => this.discoverByGenreId(genreId)),
-    );
+    const data = await Promise.all(genreIds.map(this.discoverByGenreId));
 
-    return data.flatMap(identity);
+    return data.reduce((acc, curr) => {
+      let i = 0;
+
+      curr.forEach((item) => {
+        if (
+          i >= countPerGenre ||
+          acc.find(propEq('externalId', item.externalId))
+        ) {
+          return;
+        }
+        acc.push(item);
+        i++;
+      });
+
+      return acc;
+    }, []);
   }
 
   @Memoize()
   private async discoverByGenreId(
     genreId: number,
-    { maxResults = 20 } = {},
   ): Promise<PartialShowWithGenreIds[]> {
     const {
       data: { results },
@@ -51,13 +62,13 @@ export class TmdbShowService {
       },
     });
 
-    return results.slice(0, maxResults).map(partialShowFacade);
+    return results.map(partialShowFacade);
   }
 
   async getTrending({
     page = 1,
     period = 'week',
-  }: WithPagination & { period?: 'day' | 'week' } = {}): Promise<
+  }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
     PartialShowInterface[]
   > {
     const {

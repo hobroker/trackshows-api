@@ -27,6 +27,10 @@ export class PreferenceService {
       where: { userId },
     });
 
+    if (!item) {
+      return null;
+    }
+
     const preference: Preference = {
       ...item,
       shows: [],

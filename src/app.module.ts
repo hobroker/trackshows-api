@@ -10,15 +10,14 @@ import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
 import HealthModule from './modules/health/health.module';
 import { AuthModule } from './modules/auth';
-import { Timestamp } from './util/scalars';
 import { PreferenceModule } from './modules/preference';
+import { WatchlistModule } from './modules/watchlist/watchlist.module';
 
 @Module({
   imports: [
     ConfigModule.forFeature(appConfig),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      buildSchemaOptions: { dateScalarMode: 'timestamp' },
       driver: ApolloDriver,
       cors: {
         credentials: true,
@@ -33,7 +32,7 @@ import { PreferenceModule } from './modules/preference';
     AuthModule,
     HealthModule,
     PreferenceModule,
+    WatchlistModule,
   ],
-  providers: [Timestamp],
 })
 export class AppModule {}
