@@ -10,7 +10,7 @@ import { PreferenceService } from '../services';
 import { Preference } from '../entities';
 
 @Injectable()
-export class OnboardingResolver {
+export class PreferenceResolver {
   constructor(private readonly preferenceService: PreferenceService) {}
 
   @Mutation(() => Preference)

@@ -11,7 +11,7 @@ import { GoogleModule } from './modules/google';
 import HealthModule from './modules/health/health.module';
 import { AuthModule } from './modules/auth';
 import { Timestamp } from './util/scalars';
-import { OnboardingModule } from './modules/onboarding';
+import { PreferenceModule } from './modules/preference';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { OnboardingModule } from './modules/onboarding';
     GoogleModule,
     AuthModule,
     HealthModule,
-    OnboardingModule,
+    PreferenceModule,
   ],
   providers: [Timestamp],
 })
