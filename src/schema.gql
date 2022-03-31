@@ -28,9 +28,7 @@ type Void {
 }
 
 type Preference {
-  id: Int!
   genres: [Genre!]!
-  shows: [PartialShow!]!
 }
 
 type Status {

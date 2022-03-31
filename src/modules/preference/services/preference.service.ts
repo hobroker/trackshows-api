@@ -33,7 +33,6 @@ export class PreferenceService {
 
     const preference: Preference = {
       ...item,
-      shows: [],
       genres: [],
     };
 
