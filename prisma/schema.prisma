@@ -45,7 +45,7 @@ model Watchlist {
   userId    Int
   showId    Int
   status    Status   @relation(fields: [statusId], references: [id], onDelete: Cascade)
-  statusId  Int      @unique
+  statusId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

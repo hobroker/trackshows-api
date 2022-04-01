@@ -31,16 +31,16 @@ type Preference {
   genres: [Genre!]!
 }
 
-type Status {
-  id: Int!
-  name: String!
-}
-
 type Watchlist {
   id: Int!
-  user: User!
   show: PartialShow!
   status: Status!
+}
+
+enum Status {
+  None
+  InWatchlist
+  StoppedWatching
 }
 
 type Query {
@@ -49,6 +49,7 @@ type Query {
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   getPreferences: Preference
+  getWatchlist: Watchlist!
 }
 
 input DiscoverShowsInput {
@@ -60,8 +61,7 @@ type Mutation {
   logout: Void!
   refresh: User!
   savePreferences(input: UpsertPreferenceInput!): Preference!
-  upsertWatchlist(input: [ShowWithStatusInput!]!): Void!
-  getWatchlist: Watchlist!
+  upsertWatchlistItem(input: ShowWithStatusInput!): Watchlist!
 }
 
 input JoinWithGoogleInput {
@@ -74,5 +74,5 @@ input UpsertPreferenceInput {
 
 input ShowWithStatusInput {
   showId: Int!
-  statusId: Int!
+  status: Status!
 }

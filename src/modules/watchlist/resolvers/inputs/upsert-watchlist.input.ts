@@ -1,16 +1,11 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
+import { Status } from '../../entities';
 
 @InputType()
 export class ShowWithStatusInput {
   @Field(() => Int)
   showId: number;
 
-  @Field(() => Int)
-  statusId: number;
+  @Field(() => Status)
+  status: Status;
 }
-//
-// @InputType()
-// export class UpsertWatchlistInput {
-//   @Field(() => [ShowIdWithStatusId])
-//   showsWithStatuses: ShowIdWithStatusId[];
-// }

@@ -1,36 +1,29 @@
 import 'reflect-metadata';
-import { Args, Context, Mutation } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { WatchlistService } from '../services';
 import { ShowWithStatusInput } from './inputs';
 import { RequestWithUser } from '../../auth/interfaces';
-import { Void } from '../../../util/void';
 import { Watchlist } from '../entities';
 
 @Injectable()
 export class WatchlistResolver {
   constructor(private readonly watchlistService: WatchlistService) {}
 
-  @Mutation(() => Void)
+  @Mutation(() => Watchlist)
   @UseGuards(GraphqlJwtAuthGuard)
-  async upsertWatchlist(
-    @Args('input', { type: () => [ShowWithStatusInput] })
-    input: ShowWithStatusInput[],
+  async upsertWatchlistItem(
+    @Args('input') { showId, status }: ShowWithStatusInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
     const userId = user.id;
+    const statusId = status;
 
-    await Promise.all(
-      input.map(({ showId, statusId }) => {
-        return this.watchlistService.upsert({ showId, userId }, { statusId });
-      }),
-    );
-
-    return {};
+    return this.watchlistService.upsert({ showId, userId }, { statusId });
   }
 
-  @Mutation(() => Watchlist)
+  @Query(() => Watchlist)
   @UseGuards(GraphqlJwtAuthGuard)
   async getWatchlist(@Context() { req: { user } }: { req: RequestWithUser }) {
     return this.watchlistService.listByUserId(user.id);

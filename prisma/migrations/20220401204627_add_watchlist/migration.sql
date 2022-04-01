@@ -41,9 +41,6 @@ CREATE TABLE "Watchlist" (
 CREATE UNIQUE INDEX "Status_name_key" ON "Status"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Watchlist_statusId_key" ON "Watchlist"("statusId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Watchlist_userId_showId_key" ON "Watchlist"("userId", "showId");
 
 -- AddForeignKey
