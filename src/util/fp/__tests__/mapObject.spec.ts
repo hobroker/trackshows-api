@@ -1,7 +1,7 @@
 import { mapObject } from '../mapObject';
 
 describe('mapObject', () => {
-  test('should return null if falsy', () => {
+  test('should return the expected object', () => {
     expect(
       mapObject((value, key) => key + value, {
         a: 1,

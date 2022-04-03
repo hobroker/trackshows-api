@@ -1,16 +1,16 @@
 import 'reflect-metadata';
 import { Query, Resolver } from '@nestjs/graphql';
-import { Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TmdbGenreService } from '../../tmdb';
 import { Genre } from '../entities';
 
+@Injectable()
 @Resolver(Genre)
 export class GenreResolver {
-  @Inject(TmdbGenreService)
-  private genreService: TmdbGenreService;
+  constructor(private readonly tmdbGenreService: TmdbGenreService) {}
 
   @Query(() => [Genre], { nullable: true })
-  genres() {
-    return this.genreService.list();
+  listGenres() {
+    return this.tmdbGenreService.list();
   }
 }

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Context, Query, Resolver } from '@nestjs/graphql';
 import { Inject, UseGuards } from '@nestjs/common';
 import { User } from '../entities';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { RequestWithUser } from '../../auth/interfaces';
 

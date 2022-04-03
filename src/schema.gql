@@ -7,36 +7,72 @@ type User {
   email: String!
   name: String!
   avatar: String
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
+type Watchlist {
+  show: PartialShow!
+  status: Status!
+}
+
+enum Status {
+  None
+  InWatchlist
+  StoppedWatching
+}
 
 type Genre {
   externalId: Int!
   name: String!
 }
 
+type PartialShow {
+  externalId: Int!
+  name: String!
+  description: String!
+  wideImage: String!
+  tallImage: String!
+  genres: [Genre!]!
+  status: Status!
+}
+
 type Void {
   _: String
+}
+
+type Preference {
+  genres: [Genre!]!
 }
 
 type Query {
   allUsers: User!
   me: User!
-  genres: [Genre!]
+  listGenres: [Genre!]
+  discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
+  getPreferences: Preference
+  getWatchlist: [Watchlist!]!
+}
+
+input DiscoverShowsInput {
+  genreIds: [Int!]!
 }
 
 type Mutation {
   joinWithGoogle(input: JoinWithGoogleInput!): User!
   logout: Void!
   refresh: User!
+  toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
+  upsertWatchlistItem(input: ShowWithStatusInput!): Watchlist!
 }
 
 input JoinWithGoogleInput {
   token: String!
+}
+
+input ToggleGenrePreferenceInput {
+  genreId: Int!
+}
+
+input ShowWithStatusInput {
+  showId: Int!
+  status: Status!
 }

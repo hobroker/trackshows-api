@@ -22,10 +22,4 @@ export class User {
 
   @HideField()
   public currentHashedRefreshToken?: string;
-
-  @Field(() => Date)
-  createdAt: Date;
-
-  @Field(() => Date)
-  updatedAt: Date;
 }

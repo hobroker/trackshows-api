@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import type { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../prisma';
-import { User } from './entities';
+import { PrismaService } from '../../prisma';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+  create(data: Prisma.UserCreateInput): Promise<User> {
     return this.prismaService.user.create({ data });
   }
 
-  update(userId: number, data: Partial<User>): Promise<User> {
+  update(userId: number, data: Prisma.UserUpdateInput): Promise<User> {
     return this.prismaService.user.update({ where: { id: userId }, data });
   }
 
@@ -30,6 +31,10 @@ export class UserService {
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
     const user = await this.findById(userId);
 
+    if (!user) {
+      return null;
+    }
+
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
       user.currentHashedRefreshToken,
@@ -45,7 +50,7 @@ export class UserService {
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-    await this.update(userId, { currentHashedRefreshToken });
+    return this.update(userId, { currentHashedRefreshToken });
   }
 
   async removeRefreshToken(userId: number) {

@@ -1,29 +1,69 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { always, compose, evolve, prop } from 'rambda';
-import { filter, when } from 'rambda/immutable';
+import { filter, propEq, when } from 'rambda/immutable';
 import { ConfigType } from '@nestjs/config';
+import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { episodeFacade, showDetailsFacade } from '../facades';
 import { EpisodeInterface, PartialShowInterface } from '../interfaces';
-import { TmdbPersonService } from './tmdb-person.service';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
-import { PrismaService } from '../../prisma';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
+import { PartialShow } from '../../show';
+
+type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
 
 @Injectable()
 export class TmdbShowService {
-  @Inject(tmdbConfig.KEY)
-  private config: ConfigType<typeof tmdbConfig>;
+  constructor(
+    @Inject(tmdbConfig.KEY)
+    private config: ConfigType<typeof tmdbConfig>,
 
-  @Inject(HttpService)
-  private httpService: HttpService;
+    private readonly httpService: HttpService,
+  ) {
+    this.discoverByGenreId = this.discoverByGenreId.bind(this);
+  }
 
-  @Inject(TmdbPersonService)
-  private tmdbPersonService: TmdbPersonService;
+  async discoverByGenres(
+    genreIds: number[] = [],
+    { countPerGenre = 6 } = {},
+  ): Promise<PartialShowWithGenreIds[]> {
+    const data = await Promise.all(genreIds.map(this.discoverByGenreId));
 
-  @Inject(PrismaService)
-  private prismaService: PrismaService;
+    return data.reduce((acc, curr) => {
+      let i = 0;
+
+      curr.forEach((item) => {
+        if (
+          i >= countPerGenre ||
+          acc.find(propEq('externalId', item.externalId))
+        ) {
+          return;
+        }
+        acc.push(item);
+        i++;
+      });
+
+      return acc;
+    }, []);
+  }
+
+  @Memoize()
+  private async discoverByGenreId(
+    genreId: number,
+  ): Promise<PartialShowWithGenreIds[]> {
+    const {
+      data: { results },
+    } = await this.httpService.get(`/discover/tv`, {
+      params: {
+        page: 1,
+        with_genres: genreId,
+        with_original_language: 'en',
+      },
+    });
+
+    return results.map(partialShowFacade);
+  }
 
   async getTrending({
     page = 1,

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { Request } from 'express';
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../user/services';
 import { authConfig } from '../auth.config';
 import { AUTHENTICATION_COOKIE } from '../auth.constants';
 

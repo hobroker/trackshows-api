@@ -9,19 +9,44 @@ datasource db {
 }
 
 model User {
-  id                        Int      @id @default(autoincrement())
-  email                     String   @unique
+  id                        Int         @id @default(autoincrement())
+  email                     String      @unique
   name                      String
   avatar                    String?
   password                  String?
   currentHashedRefreshToken String?
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @default(now()) @updatedAt
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @default(now()) @updatedAt
+  preference                Preference?
+  watchlist                 Watchlist[]
 }
 
 model Status {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  watchlist Watchlist[]
+}
+
+model Preference {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @unique
+  genreIds  Int[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Watchlist {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  showId    Int
+  status    Status   @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  statusId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, showId])
 }
