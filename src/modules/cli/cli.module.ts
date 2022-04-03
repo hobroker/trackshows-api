@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { PrismaModule } from '../prisma';
 import { CliSetupService } from './services';
 import { cliConfig } from './cli.config';
 import * as Commands from './commands';
-import { PrismaModule } from '../prisma';
 
 @Module({
   imports: [ConfigModule.forFeature(cliConfig), PrismaModule],

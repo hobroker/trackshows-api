@@ -5,9 +5,9 @@ import { GraphQLResolveInfo } from 'graphql';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { RequestWithUser } from '../../auth/interfaces';
-import { UpsertPreferenceInput } from './input';
 import { PreferenceService } from '../services';
 import { Preference } from '../entities';
+import { UpsertPreferenceInput } from './input';
 
 @Injectable()
 export class PreferenceResolver {

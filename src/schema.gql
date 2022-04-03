@@ -9,6 +9,17 @@ type User {
   avatar: String
 }
 
+type Watchlist {
+  show: PartialShow!
+  status: Status!
+}
+
+enum Status {
+  None
+  InWatchlist
+  StoppedWatching
+}
+
 type Genre {
   externalId: Int!
   name: String!
@@ -21,6 +32,7 @@ type PartialShow {
   wideImage: String!
   tallImage: String!
   genres: [Genre!]!
+  status: Status!
 }
 
 type Void {
@@ -31,25 +43,13 @@ type Preference {
   genres: [Genre!]!
 }
 
-type Watchlist {
-  id: Int!
-  show: PartialShow!
-  status: Status!
-}
-
-enum Status {
-  None
-  InWatchlist
-  StoppedWatching
-}
-
 type Query {
   allUsers: User!
   me: User!
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   getPreferences: Preference
-  getWatchlist: Watchlist!
+  getWatchlist: [Watchlist!]!
 }
 
 input DiscoverShowsInput {

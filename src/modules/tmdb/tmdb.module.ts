@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '../http';
+import { PrismaModule } from '../prisma';
 import { tmdbConfig } from './tmdb.config';
 import { HttpConfigService } from './services/http-config.service';
 import {
@@ -8,7 +9,6 @@ import {
   TmdbShowService,
   TmdbPersonService,
 } from './services';
-import { PrismaModule } from '../prisma';
 
 @Module({
   imports: [

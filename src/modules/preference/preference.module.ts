@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PreferenceService } from './services';
 import { PrismaModule } from '../prisma';
-import { PreferenceResolver } from './resolvers';
 import { TmdbModule } from '../tmdb';
+import { PreferenceService } from './services';
+import { PreferenceResolver } from './resolvers';
 
 @Module({
   imports: [PrismaModule, TmdbModule],

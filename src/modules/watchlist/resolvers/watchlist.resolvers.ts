@@ -3,9 +3,9 @@ import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { WatchlistService } from '../services';
-import { ShowWithStatusInput } from './inputs';
 import { RequestWithUser } from '../../auth/interfaces';
 import { Watchlist } from '../entities';
+import { ShowWithStatusInput } from './inputs';
 
 @Injectable()
 export class WatchlistResolver {
@@ -23,9 +23,9 @@ export class WatchlistResolver {
     return this.watchlistService.upsert({ showId, userId }, { statusId });
   }
 
-  @Query(() => Watchlist)
+  @Query(() => [Watchlist])
   @UseGuards(GraphqlJwtAuthGuard)
   async getWatchlist(@Context() { req: { user } }: { req: RequestWithUser }) {
-    return this.watchlistService.listByUserId(user.id);
+    return await this.watchlistService.listByUserId(user.id);
   }
 }

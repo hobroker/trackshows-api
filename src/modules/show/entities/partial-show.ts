@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Status } from '../../watchlist/entities';
 import { Genre } from './genre';
 
 @ObjectType()
@@ -20,5 +21,8 @@ export class PartialShow {
   tallImage: string;
 
   @Field(() => [Genre])
-  genres: [Genre];
+  genres: Genre[];
+
+  @Field(() => Status)
+  status: Status;
 }
