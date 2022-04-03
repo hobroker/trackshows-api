@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma';
 import { TmdbGenreService } from '../../tmdb';
 import { Preference } from '../entities';
+import { toggleListItem } from '../../../util/fp';
 
 @Injectable()
 export class PreferenceService {
@@ -17,6 +18,20 @@ export class PreferenceService {
       update: { ...data },
       create: { ...data, userId },
     });
+  }
+
+  async toggleGenre(userId: number, genreId: number) {
+    const preference = await this.prismaService.preference.findFirst({
+      where: { userId },
+    });
+
+    if (!preference) {
+      return this.upsert(userId, { genreIds: [genreId] });
+    }
+
+    const genreIds = toggleListItem(genreId, preference.genreIds);
+
+    return this.upsert(userId, { genreIds });
   }
 
   async findByUserId(

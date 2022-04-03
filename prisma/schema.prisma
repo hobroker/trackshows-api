@@ -34,7 +34,6 @@ model Preference {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int      @unique
   genreIds  Int[]
-  showIds   Int[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

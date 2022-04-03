@@ -7,23 +7,20 @@ import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { RequestWithUser } from '../../auth/interfaces';
 import { PreferenceService } from '../services';
 import { Preference } from '../entities';
-import { UpsertPreferenceInput } from './input';
+import { Void } from '../../../util/void';
+import { ToggleGenrePreferenceInput } from './input/toggle-genre-preference.input';
 
 @Injectable()
 export class PreferenceResolver {
   constructor(private readonly preferenceService: PreferenceService) {}
 
-  @Mutation(() => Preference)
+  @Mutation(() => Void)
   @UseGuards(GraphqlJwtAuthGuard)
-  async savePreferences(
-    @Args('input') input: UpsertPreferenceInput,
+  async toggleGenrePreference(
+    @Args('input') { genreId }: ToggleGenrePreferenceInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
-    const { genreIds } = input;
-
-    return this.preferenceService.upsert(user.id, {
-      genreIds,
-    });
+    return this.preferenceService.toggleGenre(user.id, genreId);
   }
 
   @Query(() => Preference, { nullable: true })
