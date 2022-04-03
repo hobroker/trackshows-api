@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/hobroker/tshows-api/compare/v3.0.0...v3.1.0) (2022-04-03)
+
+
+### Features
+
+* add onboarding flow ([#39](https://github.com/hobroker/tshows-api/issues/39)) ([a4040e8](https://github.com/hobroker/tshows-api/commit/a4040e8235011f3662d5623d0381daa07407d8f3))
+
 # [3.0.0](https://github.com/hobroker/tshows-api/compare/v2.2.0...v3.0.0) (2022-03-29)
 
 # [2.2.0](https://github.com/hobroker/tshows-api/compare/v2.1.0...v2.2.0) (2022-03-26)
