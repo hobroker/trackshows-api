@@ -1,1 +1,1 @@
-export { UpsertPreferenceInput } from './upsert-preference.input';
+export { ToggleGenrePreferenceInput } from './toggle-genre-preference.input';

@@ -8,7 +8,7 @@ import { RequestWithUser } from '../../auth/interfaces';
 import { PreferenceService } from '../services';
 import { Preference } from '../entities';
 import { Void } from '../../../util/void';
-import { ToggleGenrePreferenceInput } from './input/toggle-genre-preference.input';
+import { ToggleGenrePreferenceInput } from './input';
 
 @Injectable()
 export class PreferenceResolver {
