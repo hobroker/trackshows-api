@@ -5,11 +5,12 @@ import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { episodeFacade, showDetailsFacade } from '../facades';
-import { EpisodeInterface, PartialShowInterface } from '../interfaces';
+import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
 import { partialShowFacade } from '../facades/show.facade';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 import { PartialShow } from '../../show';
+import { Episode } from '../../show/entities/episode';
 
 type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
 
@@ -82,12 +83,13 @@ export class TmdbShowService {
     return results.map(partialShowFacade);
   }
 
+  @Memoize()
   async getDetails(externalId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService
       .get(`/tv/${externalId}`, {
         params: {
-          append_to_response: 'keywords,credits',
+          append_to_response: 'keywords',
         },
       })
       .then(prop('data'))
@@ -106,7 +108,7 @@ export class TmdbShowService {
   async getEpisodesMap(
     externalId: number,
     seasonNumbers: number[],
-  ): Promise<Record<string, EpisodeInterface[]>> {
+  ): Promise<Record<string, Episode[]>> {
     const data = await Promise.all(
       seasonNumbers.map(async (seasonNumber) => {
         const { data } = await this.httpService.get(

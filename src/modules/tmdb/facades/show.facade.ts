@@ -1,10 +1,7 @@
-import { applySpec, compose, filter, head, map, path, prop } from 'rambda';
+import { applySpec, compose, head, map, path, prop } from 'rambda';
 import { sanitize } from '../../../util/fp';
 import { PartialShowInterface, ShowDetailsInterface } from '../interfaces';
-import { castFacade, crewFacade } from './credits.facade';
-import { genreFacade } from './genre.facade';
 import { keywordFacade } from './keyword.facade';
-import { productionCompanyFacade } from './production-company.facade';
 import { seasonFacade } from './season.facade';
 import { statusFacade } from './status.facade';
 
@@ -22,21 +19,6 @@ export const showDetailsFacade = applySpec<ShowDetailsInterface>({
   episodeRuntime: compose(head, prop('episode_run_time')),
   isInProduction: prop('in_production'),
   status: statusFacade,
-  genres: compose(map(genreFacade), prop('genres')),
   keywords: compose(map(keywordFacade), path(['keywords', 'results'])),
   seasons: compose(map(seasonFacade), prop('seasons')),
-  productionCompanies: compose(
-    map(productionCompanyFacade),
-    prop('production_companies'),
-  ),
-  crew: compose(
-    map(crewFacade),
-    filter(compose(Boolean, prop('id'))),
-    path(['credits', 'crew']),
-  ),
-  cast: compose(
-    map(castFacade),
-    filter(compose(Boolean, prop('id'))),
-    path(['credits', 'cast']),
-  ),
 });
