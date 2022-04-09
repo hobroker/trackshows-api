@@ -51,6 +51,7 @@ type Preference {
 }
 
 type Episode {
+  id: Int!
   externalId: Int!
   number: Int!
   seasonNumber: Int!
@@ -87,6 +88,7 @@ type Mutation {
   refresh: User!
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
+  upsertEpisode(input: UpsertEpisodeInput!): [Void!]!
 }
 
 input JoinWithGoogleInput {
@@ -100,4 +102,9 @@ input ToggleGenrePreferenceInput {
 input UpsertWatchlistInput {
   showId: Int!
   status: Status!
+}
+
+input UpsertEpisodeInput {
+  episodeId: Int!
+  isWatched: Boolean!
 }

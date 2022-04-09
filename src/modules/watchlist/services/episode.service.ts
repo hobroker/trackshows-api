@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Watchlist } from '@prisma/client';
+import { assoc } from 'rambda';
 import { PrismaService } from '../../prisma';
 import { TmdbEpisodeService } from '../../tmdb';
 import { Episode } from '../../show/entities/episode';
@@ -21,16 +22,15 @@ export class EpisodeService {
       },
       orderBy: { episodeNumber: 'asc' },
       select: {
+        id: true,
         seasonNumber: true,
         episodeNumber: true,
       },
     });
 
-    return this.tmdbEpisodeService.getDetails(
-      watchlist.showId,
-      episode.seasonNumber,
-      episode.episodeNumber,
-    );
+    return this.tmdbEpisodeService
+      .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
+      .then(assoc('id', episode.id));
   }
 
   async createEpisodes(watchlist: Watchlist) {
@@ -47,5 +47,12 @@ export class EpisodeService {
     );
 
     await this.prismaService.episode.createMany({ data, skipDuplicates: true });
+  }
+
+  async upsertEpisode(episodeId, isWatched) {
+    await this.prismaService.episode.update({
+      where: { id: episodeId },
+      data: { isWatched },
+    });
   }
 }

@@ -13,6 +13,9 @@ export class __ShowChild {
 @ObjectType()
 export class Episode extends __ShowChild {
   @Field(() => Int)
+  id: number;
+
+  @Field(() => Int)
   externalId: number;
 
   @Field(() => Int)
