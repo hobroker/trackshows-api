@@ -10,4 +10,8 @@ export const episodeFacade = applySpec<Episode>({
   description: prop('overview'),
   wideImage: prop('still_path'),
   airDate: compose(toDate, prop('air_date')),
+
+  __meta__: {
+    showId: prop('showId'),
+  },
 });

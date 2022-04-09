@@ -35,6 +35,13 @@ type PartialShow {
   status: Status!
 }
 
+type Season {
+  name: String!
+  description: String
+  tallImage: String!
+  number: Int!
+}
+
 type Void {
   _: String
 }
@@ -48,9 +55,11 @@ type Episode {
   number: Int!
   seasonNumber: Int!
   name: String!
+  isWatched: Boolean!
   description: String
   wideImage: String
   airDate: DateTime
+  show: PartialShow!
 }
 
 """
@@ -77,7 +86,7 @@ type Mutation {
   logout: Void!
   refresh: User!
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
-  upsertWatchlistItem(input: ShowWithStatusInput!): Watchlist!
+  upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
 }
 
 input JoinWithGoogleInput {
@@ -88,7 +97,7 @@ input ToggleGenrePreferenceInput {
   genreId: Int!
 }
 
-input ShowWithStatusInput {
+input UpsertWatchlistInput {
   showId: Int!
   status: Status!
 }

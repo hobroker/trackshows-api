@@ -20,7 +20,9 @@ export class TmdbEpisodeService {
 
   @Memoize()
   async getAllEpisodes(showId: number): Promise<Episode[]> {
-    const { seasons } = await this.tmdbShowService.getDetails(showId);
+    const {
+      details: { seasons },
+    } = await this.tmdbShowService.getShow(showId);
     const data: Episode[][] = await Promise.all(
       seasons.map(async ({ number }) =>
         this.httpService
@@ -41,6 +43,6 @@ export class TmdbEpisodeService {
   ): Promise<Episode> {
     return this.httpService
       .get(`/tv/${showId}/season/${seasonNumber}/episode/${episodeNumber}`)
-      .then(({ data }) => episodeFacade(data));
+      .then(({ data }) => episodeFacade({ ...data, showId }));
   }
 }

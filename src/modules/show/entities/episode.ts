@@ -1,8 +1,17 @@
 import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { PartialShow } from './partial-show';
+
+export class __ShowChild {
+  show: PartialShow;
+
+  __meta__: {
+    showId: number;
+  };
+}
 
 @ObjectType()
-export class Episode {
+export class Episode extends __ShowChild {
   @Field(() => Int)
   externalId: number;
 
@@ -15,6 +24,9 @@ export class Episode {
   @Field()
   name: string;
 
+  @Field()
+  isWatched: boolean;
+
   @Field(() => String, { nullable: true })
   description?: string;
 
@@ -23,4 +35,7 @@ export class Episode {
 
   @Field(() => Date, { nullable: true })
   airDate: Date;
+
+  @Field(() => PartialShow)
+  show: PartialShow;
 }
