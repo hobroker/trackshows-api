@@ -3,6 +3,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import {
+  ApolloServerPluginInlineTrace,
+  ApolloServerPluginLandingPageLocalDefault,
+} from 'apollo-server-core';
 import { UserModule } from './modules/user/user.module';
 import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
@@ -22,9 +26,14 @@ import { WatchlistModule } from './modules/watchlist/watchlist.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       driver: ApolloDriver,
+      playground: false,
+      plugins: [
+        ApolloServerPluginLandingPageLocalDefault(),
+        ApolloServerPluginInlineTrace(),
+      ],
       cors: {
-        credentials: true,
-        origin: true,
+        credentials: 'include',
+        origin: ['http://localhost:3003'],
       },
     }),
     HealthModule,
