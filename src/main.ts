@@ -15,7 +15,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: true,
+    origin: ['http://localhost:3003'],
     credentials: true,
   });
   app.setGlobalPrefix('v1', {

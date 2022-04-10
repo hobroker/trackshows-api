@@ -1,0 +1,11 @@
+apiVersion: v2
+name: tshows-api
+description: Trachshows API chart
+icon: https://
+type: application
+version: 0.1.2
+appVersion: '3.3.0'
+dependencies:
+  - name: base
+    version: 1.0.0
+    repository: file://../base

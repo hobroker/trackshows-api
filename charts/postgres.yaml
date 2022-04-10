@@ -3,12 +3,10 @@ image:
   tag: 14.0
   pullPolicy: IfNotPresent
 
-services:
-  - type: LoadBalancer
-    ports:
-      - protocol: TCP
-        port: 5432
-        containerPort: 5432
+service:
+  type: LoadBalancer
+  port: 5432
+  containerPort: 5432
 
 env:
   - name: POSTGRES_DB

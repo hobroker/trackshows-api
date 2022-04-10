@@ -5,15 +5,10 @@ image:
   tag:
   pullPolicy: IfNotPresent
 
-services:
-#  - type: LoadBalancer
-#    suffix:
-#    ports:
-#      - protocol: TCP
-#        port: 80
-#        containerPort: 80
-
-labels:
+service:
+  type: LoadBalancer
+#  port: 80
+#  containerPort: 80
 
 volumes:
 #  - name: base-config
@@ -24,14 +19,8 @@ volumeMounts:
 #  - name: base-config
 #    mountPath: "/config"
 
-
-waitForServices:
-#  - test-service
-
 baseEnv:
 
 env:
-
-args:
 
 configmaps:
