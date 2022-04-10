@@ -1,4 +1,4 @@
-import { curry } from 'rambda';
+import { curry } from 'ramda';
 
 export const mapObject = curry((fn, object: { [x: string]: any }) =>
   Object.entries(object).reduce(

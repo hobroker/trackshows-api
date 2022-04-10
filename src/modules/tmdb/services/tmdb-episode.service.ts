@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { flatten, map } from 'rambda';
+import { flatten, map } from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';

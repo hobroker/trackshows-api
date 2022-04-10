@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Watchlist } from '@prisma/client';
-import { assoc } from 'rambda';
+import { assoc } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { TmdbEpisodeService } from '../../tmdb';
 import { Episode } from '../../show/entities/episode';

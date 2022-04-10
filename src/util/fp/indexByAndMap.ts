@@ -1,4 +1,4 @@
-import { curry } from 'rambda';
+import { curry } from 'ramda';
 
 export const indexByAndMap = curry(
   (indexByFn, mapFn, list): { [x: string]: any } =>

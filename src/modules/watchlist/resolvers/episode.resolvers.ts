@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Args, Context, Info, Mutation, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
-import { when } from 'rambda';
+import { when } from 'ramda';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphQLResolveInfo } from 'graphql';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';

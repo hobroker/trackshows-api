@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { indexBy, prop } from 'rambda';
+import { indexBy, prop } from 'ramda';
 import { PartialShow } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { PrismaService } from '../../prisma';

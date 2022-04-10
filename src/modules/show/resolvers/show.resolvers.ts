@@ -3,7 +3,7 @@ import { Args, Context, Info, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphQLResolveInfo } from 'graphql';
-import { when } from 'rambda';
+import { when } from 'ramda';
 import { PartialShow } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { ShowService } from '../services';
