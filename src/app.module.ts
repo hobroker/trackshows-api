@@ -15,6 +15,9 @@ import { WatchlistModule } from './modules/watchlist/watchlist.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env', '.env.production'],
+    }),
     ConfigModule.forFeature(appConfig),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
