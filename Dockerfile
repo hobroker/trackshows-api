@@ -1,11 +1,8 @@
-FROM node:16-slim AS BUILD_IMAGE
+FROM node:16 AS BUILD_IMAGE
 
 ARG PORT
 
 WORKDIR /usr/src/app
-
-RUN apt-get update
-RUN apt-get install -y openssl
 
 COPY package*.json ./
 COPY prisma ./prisma
@@ -26,7 +23,7 @@ ENV NODE_ENV "production"
 
 WORKDIR /usr/src/app
 
-COPY --from=BUILD_IMAGE /usr/src/app/package*.json ./
+COPY package*.json ./
 COPY --from=BUILD_IMAGE /usr/src/app/dist ./dist
 COPY --from=BUILD_IMAGE /usr/src/app/node_modules ./node_modules
 
