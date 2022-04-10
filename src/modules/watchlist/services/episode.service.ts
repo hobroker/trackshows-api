@@ -20,17 +20,19 @@ export class EpisodeService {
         isWatched: false,
         watchlistId: watchlist.id,
       },
-      orderBy: { episodeNumber: 'asc' },
+      orderBy: { id: 'asc' },
       select: {
         id: true,
         seasonNumber: true,
         episodeNumber: true,
+        isWatched: true,
       },
     });
 
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
-      .then(assoc('id', episode.id));
+      .then(assoc('id', episode.id))
+      .then(assoc('isWatched', episode.isWatched));
   }
 
   async createEpisodes(watchlist: Watchlist) {
@@ -54,5 +56,16 @@ export class EpisodeService {
       where: { id: episodeId },
       data: { isWatched },
     });
+  }
+
+  async getEpisodeUpNext(episodeId: number): Promise<Episode | null> {
+    const { watchlist } = await this.prismaService.episode.findFirst({
+      where: { id: episodeId },
+      include: {
+        watchlist: true,
+      },
+    });
+
+    return this.findNext(watchlist);
   }
 }

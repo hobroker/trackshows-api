@@ -49,7 +49,7 @@ export class TmdbShowService {
     }, []);
   }
 
-  @Memoize()
+  @Memoize({ hashFunction: true })
   private async discoverByGenreId(
     genreId: number,
   ): Promise<PartialShowWithGenreIds[]> {
@@ -83,7 +83,7 @@ export class TmdbShowService {
     return results.map(partialShowFacade);
   }
 
-  @Memoize()
+  @Memoize({ hashFunction: true })
   async getShow(externalId: number) {
     const { skipSpecials } = this.config;
     const data = await this.httpService

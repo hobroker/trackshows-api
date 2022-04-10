@@ -88,7 +88,7 @@ type Mutation {
   refresh: User!
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
-  upsertEpisode(input: UpsertEpisodeInput!): [Void!]!
+  upsertEpisode(input: UpsertEpisodeInput!): Episode
 }
 
 input JoinWithGoogleInput {

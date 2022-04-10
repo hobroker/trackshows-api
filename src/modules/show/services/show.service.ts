@@ -15,6 +15,7 @@ export class ShowService {
   ) {
     this.linkGenres = this.linkGenres.bind(this);
     this.linkShows = this.linkShows.bind(this);
+    this.linkShow = this.linkShow.bind(this);
   }
 
   async linkGenres<T extends PartialShow>(data: T[]): Promise<T[]> {
@@ -39,6 +40,14 @@ export class ShowService {
       ...item,
       show: shows[item.__meta__.showId],
     }));
+  }
+
+  async linkShow<T extends __ShowChild>(item: T): Promise<T> {
+    if (!item) {
+      return null;
+    }
+
+    return this.linkShows([item]).then(([item]) => item);
   }
 
   async linkStatus(

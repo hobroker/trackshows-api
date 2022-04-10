@@ -18,7 +18,7 @@ export class TmdbEpisodeService {
     private readonly tmdbShowService: TmdbShowService,
   ) {}
 
-  @Memoize()
+  @Memoize({ hashFunction: true })
   async getAllEpisodes(showId: number): Promise<Episode[]> {
     const {
       details: { seasons },
@@ -35,7 +35,7 @@ export class TmdbEpisodeService {
     return flatten(data);
   }
 
-  @Memoize()
+  @Memoize({ hashFunction: true })
   async getDetails(
     showId: number,
     seasonNumber: number,
