@@ -1,27 +1,13 @@
-{{- $releaseName := .Release.Name }}
-{{- range .Values.services }}
-{{- $serviceName := print $releaseName (default "" .suffix) }}
-
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $serviceName }}
+  name: {{ .Release.Name }}
 spec:
-  type: {{ .type }}
+  type: {{ .Values.service.type }}
   selector:
-    app: {{ $releaseName }}
+    app: {{ .Release.Name }}
   ports:
-    {{- $serviceType := .type }}
-    {{- range .ports }}
-    {{- $containerPort := .containerPort | default .port }}
-    {{- $protocol := .protocol | default "TCP" }}
-    - name: {{ $protocol | lower }}-{{ $containerPort }}
-      protocol: {{ $protocol | quote }}
-      targetPort: {{ $containerPort }}
-      port: {{ .port }}
-      {{- if eq $serviceType "NodePort" }}
-      nodePort: {{ .port }}
-      {{- end }}
-    {{- end }}
-{{- end }}
+    - name: http
+      protocol: TCP
+      targetPort: {{ .Values.service.targetPort }}
+      port: {{ .Values.service.port }}

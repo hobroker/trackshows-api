@@ -1,0 +1,20 @@
+base:
+  image:
+    repository: ghcr.io/hobroker/tshows-api
+    tag: 3.3.0
+    pullPolicy: Always
+
+  service:
+    type: LoadBalancer
+    targetPort: 3000
+    port: 80
+
+  volumes:
+    - name: api-config
+      configMap:
+        name: tshows-api-config
+
+  volumeMounts:
+    - name: api-config
+      subPath: .env
+      mountPath: '/usr/src/app/.env'
