@@ -1,4 +1,4 @@
-import { compose, curry, equals, not } from 'rambda';
+import { compose, curry, equals, not } from 'ramda';
 
 const toggleListItem = curry((value, list) =>
   list.includes(value)

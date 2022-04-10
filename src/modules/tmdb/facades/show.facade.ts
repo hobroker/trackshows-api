@@ -1,4 +1,4 @@
-import { applySpec, compose, head, map, path, prop } from 'rambda';
+import { applySpec, compose, head, map, path, prop } from 'ramda';
 import { sanitize } from '../../../util/fp';
 import { PartialShowInterface, ShowDetailsInterface } from '../interfaces';
 import { PartialShow, ShowDetails } from '../../show';

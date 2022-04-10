@@ -1,4 +1,4 @@
-import { applySpec, prop } from 'rambda';
+import { applySpec, prop } from 'ramda';
 import { CastInterface, CrewInterface } from '../interfaces';
 
 export const castFacade = applySpec<CastInterface>({

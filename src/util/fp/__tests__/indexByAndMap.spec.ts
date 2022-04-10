@@ -1,4 +1,4 @@
-import { prop } from 'rambda';
+import { prop } from 'ramda';
 import { indexByAndMap } from '../indexByAndMap';
 
 describe('indexByAndMap', () => {

@@ -1,4 +1,4 @@
-import { applySpec, prop } from 'rambda';
+import { applySpec, prop } from 'ramda';
 import { ProductionCompanyInterface } from '../interfaces';
 
 export const productionCompanyFacade = applySpec<ProductionCompanyInterface>({

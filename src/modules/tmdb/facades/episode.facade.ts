@@ -1,4 +1,4 @@
-import { applySpec, compose, prop } from 'rambda';
+import { applySpec, compose, prop } from 'ramda';
 import { toDate } from '../../../util/fp';
 import { Episode } from '../../show/entities/episode';
 

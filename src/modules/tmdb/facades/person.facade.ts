@@ -1,4 +1,4 @@
-import { applySpec, compose, prop } from 'rambda';
+import { applySpec, compose, prop } from 'ramda';
 import { PersonInterface } from '../interfaces';
 import { sanitize, toDate } from '../../../util/fp';
 

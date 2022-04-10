@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, prop } from 'rambda';
-import { filter, propEq, when } from 'rambda/immutable';
+import { always, compose, evolve, prop, filter, propEq, when } from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
