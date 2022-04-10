@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Watchlist } from '@prisma/client';
-import { assoc } from 'ramda';
+import { always, assoc, compose, ifElse } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { TmdbEpisodeService } from '../../tmdb';
 import { Episode } from '../../show/entities/episode';
@@ -14,7 +14,7 @@ export class EpisodeService {
     this.findNext = this.findNext.bind(this);
   }
 
-  async findNext(watchlist: Watchlist): Promise<Episode> {
+  async findNext(watchlist: Watchlist): Promise<Episode | null> {
     const episode = await this.prismaService.episode.findFirst({
       where: {
         isWatched: false,
@@ -31,8 +31,16 @@ export class EpisodeService {
 
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
-      .then(assoc('id', episode.id))
-      .then(assoc('isWatched', episode.isWatched));
+      .then(
+        ifElse(
+          (item) => item.airDate <= new Date(),
+          compose(
+            assoc('id', episode.id),
+            assoc('isWatched', episode.isWatched),
+          ),
+          always(null),
+        ),
+      );
   }
 
   async createEpisodes(watchlist: Watchlist) {
