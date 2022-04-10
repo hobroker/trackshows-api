@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/hobroker/tshows-api/compare/v3.2.3...v3.3.0) (2022-04-10)
+
+
+### Features
+
+* add .env.production ([#45](https://github.com/hobroker/tshows-api/issues/45)) ([a128874](https://github.com/hobroker/tshows-api/commit/a12887487bc84a5aba8480b7160f035c7c0a07a2))
+
 ## [3.2.3](https://github.com/hobroker/tshows-api/compare/v3.2.2...v3.2.3) (2022-04-10)
 
 
