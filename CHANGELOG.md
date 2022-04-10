@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/hobroker/tshows-api/compare/v3.3.0...v3.4.0) (2022-04-10)
+
+
+### Features
+
+* add helm chart to deploy the app ([#46](https://github.com/hobroker/tshows-api/issues/46)) ([d6ec4f8](https://github.com/hobroker/tshows-api/commit/d6ec4f898514f23d510d72aab797bb5811598454))
+
 # [3.3.0](https://github.com/hobroker/tshows-api/compare/v3.2.3...v3.3.0) (2022-04-10)
 
 
