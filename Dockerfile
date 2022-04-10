@@ -13,9 +13,7 @@ RUN npx prisma generate
 COPY . .
 
 RUN npm run build
-RUN du -sh node_modules/
 RUN npm prune --production
-RUN du -sh node_modules/
 
 FROM node:16-slim
 
