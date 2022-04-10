@@ -1,3 +1,10 @@
+## [3.2.3](https://github.com/hobroker/tshows-api/compare/v3.2.2...v3.2.3) (2022-04-10)
+
+
+### Bug Fixes
+
+* **docker:** use node image instead of the slim one ([#44](https://github.com/hobroker/tshows-api/issues/44)) ([61c3ea2](https://github.com/hobroker/tshows-api/commit/61c3ea2399d5ebf9605a82f5ea7b2dc606c81f4f))
+
 ## [3.2.2](https://github.com/hobroker/tshows-api/compare/v3.2.1...v3.2.2) (2022-04-10)
 
 
