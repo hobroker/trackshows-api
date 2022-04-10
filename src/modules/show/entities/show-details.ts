@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Season } from './season';
 
 @ObjectType()
 export class ShowDetails {
@@ -8,4 +9,7 @@ export class ShowDetails {
 
   @Field()
   isInProduction: boolean;
+
+  @Field(() => [Season])
+  seasons: Season[];
 }

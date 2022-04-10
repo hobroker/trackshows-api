@@ -2,10 +2,10 @@ import 'reflect-metadata';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
-import { WatchlistService } from '../services';
 import { RequestWithUser } from '../../auth/interfaces';
 import { Watchlist } from '../entities';
-import { ShowWithStatusInput } from './inputs';
+import { WatchlistService } from '../services';
+import { UpsertWatchlistInput } from './inputs';
 
 @Injectable()
 export class WatchlistResolver {
@@ -14,7 +14,7 @@ export class WatchlistResolver {
   @Mutation(() => Watchlist)
   @UseGuards(GraphqlJwtAuthGuard)
   async upsertWatchlistItem(
-    @Args('input') { showId, status }: ShowWithStatusInput,
+    @Args('input') { showId, status }: UpsertWatchlistInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
     const userId = user.id;

@@ -4,11 +4,7 @@ import { HttpModule } from '../http';
 import { PrismaModule } from '../prisma';
 import { tmdbConfig } from './tmdb.config';
 import { HttpConfigService } from './services/http-config.service';
-import {
-  TmdbGenreService,
-  TmdbShowService,
-  TmdbPersonService,
-} from './services';
+import * as services from './services';
 
 @Module({
   imports: [
@@ -19,7 +15,7 @@ import {
       imports: [ConfigModule.forFeature(tmdbConfig)],
     }),
   ],
-  exports: [TmdbShowService, TmdbGenreService, TmdbPersonService],
-  providers: [TmdbShowService, TmdbGenreService, TmdbPersonService],
+  exports: [...Object.values(services)],
+  providers: [...Object.values(services)],
 })
 export class TmdbModule {}

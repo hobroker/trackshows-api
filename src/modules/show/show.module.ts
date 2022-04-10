@@ -7,5 +7,6 @@ import { ShowService } from './services';
 @Module({
   imports: [PrismaModule, TmdbModule],
   providers: [GenreResolver, ShowResolver, ShowService],
+  exports: [ShowService],
 })
 export class ShowModule {}

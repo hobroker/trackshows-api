@@ -25,4 +25,8 @@ export class PartialShow {
 
   @Field(() => Status)
   status: Status;
+
+  __meta__: {
+    genreIds: number[];
+  };
 }

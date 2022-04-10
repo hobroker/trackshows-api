@@ -1,12 +1,17 @@
 import { applySpec, compose, prop } from 'rambda';
-import { EpisodeInterface } from '../interfaces';
 import { toDate } from '../../../util/fp';
+import { Episode } from '../../show/entities/episode';
 
-export const episodeFacade = applySpec<EpisodeInterface>({
+export const episodeFacade = applySpec<Episode>({
   externalId: prop('id'),
+  seasonNumber: prop('season_number'),
+  number: prop('episode_number'),
   name: prop('name'),
   description: prop('overview'),
   wideImage: prop('still_path'),
   airDate: compose(toDate, prop('air_date')),
-  number: prop('episode_number'),
+
+  __meta__: {
+    showId: prop('showId'),
+  },
 });

@@ -39,14 +39,26 @@ model Preference {
 }
 
 model Watchlist {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   showId    Int
-  status    Status   @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  status    Status    @relation(fields: [statusId], references: [id], onDelete: Cascade)
   statusId  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  episodes  Episode[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@unique([userId, showId])
+}
+
+model Episode {
+  id          Int       @id @default(autoincrement())
+  episodeNumber   Int
+  seasonNumber    Int
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  watchlistId Int
+  isWatched   Boolean
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

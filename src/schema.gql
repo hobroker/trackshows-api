@@ -35,6 +35,13 @@ type PartialShow {
   status: Status!
 }
 
+type Season {
+  name: String!
+  description: String
+  tallImage: String!
+  number: Int!
+}
+
 type Void {
   _: String
 }
@@ -43,6 +50,24 @@ type Preference {
   genres: [Genre!]!
 }
 
+type Episode {
+  id: Int!
+  externalId: Int!
+  number: Int!
+  seasonNumber: Int!
+  name: String!
+  isWatched: Boolean!
+  description: String
+  wideImage: String
+  airDate: DateTime
+  show: PartialShow!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   allUsers: User!
   me: User!
@@ -50,6 +75,7 @@ type Query {
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   getPreferences: Preference
   getWatchlist: [Watchlist!]!
+  listUpNext: [Episode!]!
 }
 
 input DiscoverShowsInput {
@@ -61,7 +87,8 @@ type Mutation {
   logout: Void!
   refresh: User!
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
-  upsertWatchlistItem(input: ShowWithStatusInput!): Watchlist!
+  upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
+  upsertEpisode(input: UpsertEpisodeInput!): Episode
 }
 
 input JoinWithGoogleInput {
@@ -72,7 +99,12 @@ input ToggleGenrePreferenceInput {
   genreId: Int!
 }
 
-input ShowWithStatusInput {
+input UpsertWatchlistInput {
   showId: Int!
   status: Status!
+}
+
+input UpsertEpisodeInput {
+  episodeId: Int!
+  isWatched: Boolean!
 }
