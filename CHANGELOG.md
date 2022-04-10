@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/hobroker/tshows-api/compare/v3.2.1...v3.2.2) (2022-04-10)
+
+
+### Bug Fixes
+
+* **docker:** add linux-musl to prisma binaryTargets ([#43](https://github.com/hobroker/tshows-api/issues/43)) ([b7f5e35](https://github.com/hobroker/tshows-api/commit/b7f5e35294f89c8462dc621712522ea1ec88a640))
+
 ## [3.2.1](https://github.com/hobroker/tshows-api/compare/v3.2.0...v3.2.1) (2022-04-10)
 
 
