@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/hobroker/tshows-api/compare/v3.1.0...v3.2.0) (2022-04-10)
+
+
+### Features
+
+* add listUpNext and upsertEpisode endpoints ([#41](https://github.com/hobroker/tshows-api/issues/41)) ([8f97aff](https://github.com/hobroker/tshows-api/commit/8f97affb76de41364e7c84b2afa88ae0b13c8303))
+
 # [3.1.0](https://github.com/hobroker/tshows-api/compare/v3.0.0...v3.1.0) (2022-04-03)
 
 
