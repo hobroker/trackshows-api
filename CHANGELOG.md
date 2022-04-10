@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/hobroker/tshows-api/compare/v3.2.0...v3.2.1) (2022-04-10)
+
+
+### Bug Fixes
+
+* **docker:** prisma engine ([#42](https://github.com/hobroker/tshows-api/issues/42)) ([06d599b](https://github.com/hobroker/tshows-api/commit/06d599b73270c863f33a78dace66f7687bd5eb80))
+
 # [3.2.0](https://github.com/hobroker/tshows-api/compare/v3.1.0...v3.2.0) (2022-04-10)
 
 
