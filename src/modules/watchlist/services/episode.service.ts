@@ -16,35 +16,30 @@ export class EpisodeService {
   }
 
   async findNext(watchlist: Watchlist): Promise<Episode | null> {
-    const episode = await this.prismaService.episode.findFirst({
-      where: {
-        isWatched: false,
-        watchlistId: watchlist.id,
-        airDate: {
-          lte: new Date(),
-        },
+    return this.findEpisodeInWatchlist(watchlist, {
+      airDate: {
+        lte: new Date(),
       },
-      orderBy: { id: 'asc' },
     });
-
-    if (!episode) {
-      return null;
-    }
-
-    return this.tmdbEpisodeService
-      .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
-      .then(assoc('id', episode.id))
-      .then(assoc('isWatched', episode.isWatched));
   }
 
-  async findUpcoming(watchlist: Watchlist): Promise<Episode | null> {
+  findUpcoming(watchlist: Watchlist): Promise<Episode | null> {
+    return this.findEpisodeInWatchlist(watchlist, {
+      airDate: {
+        gte: new Date(),
+      },
+    });
+  }
+
+  private async findEpisodeInWatchlist(
+    watchlist: Watchlist,
+    where: Prisma.EpisodeWhereInput,
+  ) {
     const episode = await this.prismaService.episode.findFirst({
       where: {
-        isWatched: false,
         watchlistId: watchlist.id,
-        airDate: {
-          gte: new Date(),
-        },
+        isWatched: false,
+        ...where,
       },
       orderBy: { id: 'asc' },
     });
