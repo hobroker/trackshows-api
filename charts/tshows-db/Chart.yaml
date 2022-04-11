@@ -1,0 +1,11 @@
+apiVersion: v2
+name: tshows-db
+description: Trachshows Postgres chart
+icon: https://
+type: application
+version: 0.1.2
+appVersion: '1.0.0'
+dependencies:
+  - name: base
+    version: 1.0.0
+    repository: file://../base
