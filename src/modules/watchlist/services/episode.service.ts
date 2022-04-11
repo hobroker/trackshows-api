@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Watchlist } from '@prisma/client';
-import { always, assoc, compose, ifElse } from 'ramda';
+import { assoc } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { TmdbEpisodeService } from '../../tmdb';
 import { Episode } from '../../show/entities/episode';
@@ -20,6 +20,9 @@ export class EpisodeService {
       where: {
         isWatched: false,
         watchlistId: watchlist.id,
+        airedAt: {
+          lte: new Date(),
+        },
       },
       orderBy: { id: 'asc' },
       select: {
@@ -30,18 +33,14 @@ export class EpisodeService {
       },
     });
 
+    if (!episode) {
+      return null;
+    }
+
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
-      .then(
-        ifElse(
-          (item) => item.airDate <= new Date(),
-          compose(
-            assoc('id', episode.id),
-            assoc('isWatched', episode.isWatched),
-          ),
-          always(null),
-        ),
-      );
+      .then(assoc('id', episode.id))
+      .then(assoc('isWatched', episode.isWatched));
   }
 
   async findUpcoming(watchlist: Watchlist): Promise<Episode | null> {
@@ -49,8 +48,11 @@ export class EpisodeService {
       where: {
         isWatched: false,
         watchlistId: watchlist.id,
+        airedAt: {
+          gte: new Date(),
+        },
       },
-      orderBy: { id: 'desc' },
+      orderBy: { id: 'asc' },
       select: {
         id: true,
         seasonNumber: true,
@@ -59,20 +61,16 @@ export class EpisodeService {
       },
     });
 
+    if (!episode) {
+      return null;
+    }
+
     console.log('episode.id', episode.id);
 
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
-      .then(
-        ifElse(
-          (item) => item?.airDate >= new Date(),
-          compose(
-            assoc('id', episode.id),
-            assoc('isWatched', episode.isWatched),
-          ),
-          always(null),
-        ),
-      );
+      .then(assoc('id', episode.id))
+      .then(assoc('isWatched', episode.isWatched));
   }
 
   async createEpisodes(watchlist: Watchlist) {
@@ -80,11 +78,12 @@ export class EpisodeService {
       watchlist.showId,
     );
     const data: Prisma.EpisodeUncheckedCreateInput[] = episodes.map(
-      ({ number, seasonNumber }) => ({
+      ({ number, seasonNumber, airDate }) => ({
         seasonNumber: seasonNumber,
         episodeNumber: number,
         watchlistId: watchlist.id,
         isWatched: false,
+        airedAt: airDate,
       }),
     );
 
