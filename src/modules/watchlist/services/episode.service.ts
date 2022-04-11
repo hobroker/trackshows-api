@@ -12,22 +12,41 @@ export class EpisodeService {
     private readonly tmdbEpisodeService: TmdbEpisodeService,
   ) {
     this.findNext = this.findNext.bind(this);
+    this.findUpcoming = this.findUpcoming.bind(this);
   }
 
-  async findNext(watchlist: Watchlist): Promise<Episode> {
-    const episode = await this.prismaService.episode.findFirst({
-      where: {
-        isWatched: false,
-        watchlistId: watchlist.id,
-      },
-      orderBy: { id: 'asc' },
-      select: {
-        id: true,
-        seasonNumber: true,
-        episodeNumber: true,
-        isWatched: true,
+  async findNext(watchlist: Watchlist): Promise<Episode | null> {
+    return this.findEpisodeInWatchlist(watchlist, {
+      airDate: {
+        lte: new Date(),
       },
     });
+  }
+
+  findUpcoming(watchlist: Watchlist): Promise<Episode | null> {
+    return this.findEpisodeInWatchlist(watchlist, {
+      airDate: {
+        gte: new Date(),
+      },
+    });
+  }
+
+  private async findEpisodeInWatchlist(
+    watchlist: Watchlist,
+    where: Prisma.EpisodeWhereInput,
+  ) {
+    const episode = await this.prismaService.episode.findFirst({
+      where: {
+        watchlistId: watchlist.id,
+        isWatched: false,
+        ...where,
+      },
+      orderBy: { id: 'asc' },
+    });
+
+    if (!episode) {
+      return null;
+    }
 
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
@@ -40,11 +59,12 @@ export class EpisodeService {
       watchlist.showId,
     );
     const data: Prisma.EpisodeUncheckedCreateInput[] = episodes.map(
-      ({ number, seasonNumber }) => ({
+      ({ number, seasonNumber, airDate }) => ({
         seasonNumber: seasonNumber,
         episodeNumber: number,
         watchlistId: watchlist.id,
         isWatched: false,
+        airDate,
       }),
     );
 
