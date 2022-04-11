@@ -12,6 +12,7 @@ export class EpisodeService {
     private readonly tmdbEpisodeService: TmdbEpisodeService,
   ) {
     this.findNext = this.findNext.bind(this);
+    this.findUpcoming = this.findUpcoming.bind(this);
   }
 
   async findNext(watchlist: Watchlist): Promise<Episode | null> {
@@ -34,6 +35,37 @@ export class EpisodeService {
       .then(
         ifElse(
           (item) => item.airDate <= new Date(),
+          compose(
+            assoc('id', episode.id),
+            assoc('isWatched', episode.isWatched),
+          ),
+          always(null),
+        ),
+      );
+  }
+
+  async findUpcoming(watchlist: Watchlist): Promise<Episode | null> {
+    const episode = await this.prismaService.episode.findFirst({
+      where: {
+        isWatched: false,
+        watchlistId: watchlist.id,
+      },
+      orderBy: { id: 'desc' },
+      select: {
+        id: true,
+        seasonNumber: true,
+        episodeNumber: true,
+        isWatched: true,
+      },
+    });
+
+    console.log('episode.id', episode.id);
+
+    return this.tmdbEpisodeService
+      .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
+      .then(
+        ifElse(
+          (item) => item?.airDate >= new Date(),
           compose(
             assoc('id', episode.id),
             assoc('isWatched', episode.isWatched),

@@ -33,6 +33,20 @@ export class EpisodeResolver {
       .then(when(() => 'show' in fields, this.showService.linkShows));
   }
 
+  @Query(() => [Episode])
+  @UseGuards(GraphqlJwtAuthGuard)
+  async listUpcoming(
+    @Info() info: GraphQLResolveInfo,
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ) {
+    const userId = user.id;
+    const fields = fieldsMap(info);
+
+    return this.watchlistService
+      .listUpcoming(userId)
+      .then(when(() => 'show' in fields, this.showService.linkShows));
+  }
+
   @Mutation(() => Episode, { nullable: true })
   @UseGuards(GraphqlJwtAuthGuard)
   async upsertEpisode(
