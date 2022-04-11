@@ -38,9 +38,7 @@ export class WatchlistService {
   }
 
   async listUpNext(userId: number): Promise<Episode[]> {
-    const watchlist = await this.prismaService.watchlist.findMany({
-      where: { userId, statusId: Status.InWatchlist },
-    });
+    const watchlist = await this.findUserWatchlist(userId);
 
     return Promise.all(watchlist.map(this.episodeService.findNext)).then(
       filter<Episode>(Boolean),
@@ -48,12 +46,16 @@ export class WatchlistService {
   }
 
   async listUpcoming(userId: number): Promise<Episode[]> {
-    const watchlist = await this.prismaService.watchlist.findMany({
-      where: { userId, statusId: Status.InWatchlist },
-    });
+    const watchlist = await this.findUserWatchlist(userId);
 
     return Promise.all(watchlist.map(this.episodeService.findUpcoming)).then(
       filter<Episode>(Boolean),
     );
+  }
+
+  private findUserWatchlist(userId: number) {
+    return this.prismaService.watchlist.findMany({
+      where: { userId, statusId: Status.InWatchlist },
+    });
   }
 }
