@@ -1,3 +1,10 @@
+# [3.5.0](https://github.com/hobroker/tshows-api/compare/v3.4.0...v3.5.0) (2022-04-11)
+
+
+### Features
+
+* add listUpcoming endpoint ([#49](https://github.com/hobroker/tshows-api/issues/49)) ([3b9857d](https://github.com/hobroker/tshows-api/commit/3b9857d8dd22a3635a65d50d438135158c2cf28b))
+
 # [3.4.0](https://github.com/hobroker/tshows-api/compare/v3.3.0...v3.4.0) (2022-04-10)
 
 
