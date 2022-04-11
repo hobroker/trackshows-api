@@ -1,0 +1,35 @@
+base:
+  image:
+    repository: postgres
+    tag: 14.0
+    pullPolicy: IfNotPresent
+
+  service:
+    type: LoadBalancer
+    port: 5432
+    containerPort: 5432
+
+  env:
+    - name: POSTGRES_DB
+      valueFrom:
+        secretKeyRef:
+          name: tshows-api-secret
+          key: POSTGRES_DB
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: tshows-api-secret
+          key: POSTGRES_PASSWORD
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: tshows-api-secret
+          key: POSTGRES_USER
+
+  volumeMounts:
+    - mountPath: /var/lib/postgresql/data
+      name: postgres-pv-claim
+  volumes:
+    - name: postgres-pv-claim
+      persistentVolumeClaim:
+        claimName: postgres-pv-claim
