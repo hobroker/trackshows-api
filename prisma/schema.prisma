@@ -59,7 +59,7 @@ model Episode {
   watchlist     Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
   watchlistId   Int
   isWatched     Boolean
-  airedAt       DateTime?
+  airDate       DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }

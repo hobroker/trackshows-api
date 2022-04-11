@@ -20,17 +20,11 @@ export class EpisodeService {
       where: {
         isWatched: false,
         watchlistId: watchlist.id,
-        airedAt: {
+        airDate: {
           lte: new Date(),
         },
       },
       orderBy: { id: 'asc' },
-      select: {
-        id: true,
-        seasonNumber: true,
-        episodeNumber: true,
-        isWatched: true,
-      },
     });
 
     if (!episode) {
@@ -48,24 +42,16 @@ export class EpisodeService {
       where: {
         isWatched: false,
         watchlistId: watchlist.id,
-        airedAt: {
+        airDate: {
           gte: new Date(),
         },
       },
       orderBy: { id: 'asc' },
-      select: {
-        id: true,
-        seasonNumber: true,
-        episodeNumber: true,
-        isWatched: true,
-      },
     });
 
     if (!episode) {
       return null;
     }
-
-    console.log('episode.id', episode.id);
 
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
@@ -83,7 +69,7 @@ export class EpisodeService {
         episodeNumber: number,
         watchlistId: watchlist.id,
         isWatched: false,
-        airedAt: airDate,
+        airDate,
       }),
     );
 
