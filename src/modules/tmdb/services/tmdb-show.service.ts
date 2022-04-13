@@ -22,6 +22,7 @@ export class TmdbShowService {
     private readonly httpService: HttpService,
   ) {
     this.discoverByGenreId = this.discoverByGenreId.bind(this);
+    this.whereNotExcluded = this.whereNotExcluded.bind(this);
   }
 
   async discoverByGenres(
@@ -62,7 +63,7 @@ export class TmdbShowService {
       },
     });
 
-    return results.map(partialShowFacade);
+    return results.map(partialShowFacade).filter(this.whereNotExcluded);
   }
 
   async getTrending({
@@ -84,7 +85,6 @@ export class TmdbShowService {
 
   @Memoize({ hashFunction: true })
   async getShow(externalId: number) {
-    const { skipSpecials } = this.config;
     const data = await this.httpService
       .get(`/tv/${externalId}`, {
         params: {
@@ -94,7 +94,7 @@ export class TmdbShowService {
       .then(prop('data'))
       .then(
         when(
-          always(skipSpecials),
+          always(this.config.skipSpecials),
           evolve({
             seasons: filter(compose(Boolean, prop('season_number'))),
           }),
@@ -122,5 +122,11 @@ export class TmdbShowService {
     );
 
     return indexByAndMap(prop('seasonExternalId'), prop('episodes'), data);
+  }
+
+  private whereNotExcluded(show: PartialShowInterface) {
+    const { skipShowIds } = this.config;
+
+    return !skipShowIds.includes(show.externalId);
   }
 }
