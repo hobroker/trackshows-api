@@ -1,3 +1,10 @@
+## [3.6.1](https://github.com/hobroker/tshows-api/compare/v3.6.0...v3.6.1) (2022-04-13)
+
+
+### Bug Fixes
+
+* duplicate episodes ([#51](https://github.com/hobroker/tshows-api/issues/51)) ([c17db1e](https://github.com/hobroker/tshows-api/commit/c17db1e33e35e86dac2e9ff234ac5d8092645073))
+
 # [3.6.0](https://github.com/hobroker/tshows-api/compare/v3.5.0...v3.6.0) (2022-04-13)
 
 
