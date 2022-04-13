@@ -4,12 +4,15 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphQLResolveInfo } from 'graphql';
 import { when } from 'ramda';
-import { PartialShow } from '../entities';
+import { FullShow, PartialShow } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { ShowService } from '../services';
-import { RequestWithUser } from '../../auth/interfaces';
-import { GraphqlJwtAuthGuard } from '../../auth/guards';
-import { DiscoverShowsInput } from './input';
+import {
+  RequestWithAnyoneInterface,
+  RequestWithUser,
+} from '../../auth/interfaces';
+import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
+import { DiscoverShowsInput, FullShowInput } from './input';
 
 @Injectable()
 export class ShowResolver {
@@ -22,11 +25,10 @@ export class ShowResolver {
   @Query(() => [PartialShow])
   @UseGuards(GraphqlJwtAuthGuard)
   async discoverShows(
-    @Args('input') input: DiscoverShowsInput,
     @Info() info: GraphQLResolveInfo,
+    @Args('input') { genreIds }: DiscoverShowsInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ): Promise<PartialShow[]> {
-    const { genreIds } = input;
     const fields = fieldsMap(info);
 
     return this.tmdbShowService
@@ -35,8 +37,25 @@ export class ShowResolver {
       .then(
         when(
           () => 'status' in fields,
-          (shows) => this.showService.linkStatus(user.id, shows),
+          (shows) => this.showService.linkStatusToShows(user.id, shows),
         ),
       );
+  }
+
+  @Query(() => FullShow)
+  @UseGuards(GraphqlJwtAnyoneGuard)
+  async fullShow(
+    @Info() info: GraphQLResolveInfo,
+    @Args('input') { externalId }: FullShowInput,
+    @Context() { req: { user } }: { req: RequestWithAnyoneInterface },
+  ): Promise<FullShow> {
+    const fields = fieldsMap(info);
+
+    return this.tmdbShowService.getShow(externalId).then(
+      when(
+        () => 'status' in fields,
+        (show) => this.showService.linkStatusToShow(user?.id, show),
+      ),
+    );
   }
 }

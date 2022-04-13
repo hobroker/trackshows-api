@@ -6,7 +6,7 @@ import { HttpService } from '../../http';
 import { episodeFacade } from '../facades';
 import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
-import { partialShowFacade, showFacade } from '../facades/show.facade';
+import { partialShowFacade, fullShowFacade } from '../facades/fullShowFacade';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 import { PartialShow } from '../../show';
 import { Episode } from '../../show/entities/episode';
@@ -101,7 +101,7 @@ export class TmdbShowService {
         ),
       );
 
-    return showFacade(data);
+    return fullShowFacade(data);
   }
 
   async getEpisodesMap(

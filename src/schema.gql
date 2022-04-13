@@ -42,6 +42,23 @@ type Season {
   number: Int!
 }
 
+type ShowDetails {
+  episodeRuntime: Int!
+  isInProduction: Boolean!
+  seasons: [Season!]!
+}
+
+type FullShow {
+  externalId: Int!
+  name: String!
+  description: String!
+  wideImage: String!
+  tallImage: String!
+  genres: [Genre!]!
+  status: Status!
+  details: ShowDetails!
+}
+
 type Void {
   _: String
 }
@@ -73,6 +90,7 @@ type Query {
   me: User!
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
+  fullShow(input: FullShowInput!): FullShow!
   getPreferences: Preference
   getWatchlist: [Watchlist!]!
   listUpNext: [Episode!]!
@@ -81,6 +99,10 @@ type Query {
 
 input DiscoverShowsInput {
   genreIds: [Int!]!
+}
+
+input FullShowInput {
+  externalId: Int!
 }
 
 type Mutation {
