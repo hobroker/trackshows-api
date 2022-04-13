@@ -26,7 +26,9 @@ export class WatchlistService {
       update: data,
     });
 
-    await this.episodeService.createEpisodes(watchlist);
+    if (data.statusId === Status.InWatchlist) {
+      await this.episodeService.createEpisodes(watchlist);
+    }
 
     return watchlist;
   }

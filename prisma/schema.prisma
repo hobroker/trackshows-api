@@ -62,4 +62,6 @@ model Episode {
   airDate       DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@unique([episodeNumber, seasonNumber, watchlistId])
 }
