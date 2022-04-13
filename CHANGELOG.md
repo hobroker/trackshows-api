@@ -1,3 +1,10 @@
+# [3.6.0](https://github.com/hobroker/tshows-api/compare/v3.5.0...v3.6.0) (2022-04-13)
+
+
+### Features
+
+* exclude shows ([#50](https://github.com/hobroker/tshows-api/issues/50)) ([6dbdcb5](https://github.com/hobroker/tshows-api/commit/6dbdcb572daf8548b2049cbc79c5297c522907d7))
+
 # [3.5.0](https://github.com/hobroker/tshows-api/compare/v3.4.0...v3.5.0) (2022-04-11)
 
 
