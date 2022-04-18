@@ -21,6 +21,9 @@ export class PartialShow {
   tallImage: string;
 
   @Field()
+  originCountry?: string;
+
+  @Field()
   firstAirDate: Date;
 
   @Field(() => [Genre])
