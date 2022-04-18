@@ -20,6 +20,9 @@ export class PartialShow {
   @Field()
   tallImage: string;
 
+  @Field()
+  firstAirDate: Date;
+
   @Field(() => [Genre])
   genres: Genre[];
 

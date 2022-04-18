@@ -31,9 +31,15 @@ type PartialShow {
   description: String!
   wideImage: String!
   tallImage: String!
+  firstAirDate: DateTime!
   genres: [Genre!]!
   status: Status!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Season {
   name: String!
@@ -45,6 +51,7 @@ type Season {
 type ShowDetails {
   episodeRuntime: Int!
   isInProduction: Boolean!
+  tagline: String
   seasons: [Season!]!
 }
 
@@ -54,6 +61,7 @@ type FullShow {
   description: String!
   wideImage: String!
   tallImage: String!
+  firstAirDate: DateTime!
   genres: [Genre!]!
   status: Status!
   details: ShowDetails!
@@ -79,11 +87,6 @@ type Episode {
   airDate: DateTime
   show: PartialShow!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Query {
   allUsers: User!
