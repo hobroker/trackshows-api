@@ -4,12 +4,15 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { when } from 'ramda';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphQLResolveInfo } from 'graphql';
-import { GraphqlJwtAuthGuard } from '../../auth/guards';
-import { RequestWithUser } from '../../auth/interfaces';
+import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
+import {
+  RequestWithAnyoneInterface,
+  RequestWithUser,
+} from '../../auth/interfaces';
 import { Episode } from '../../show/entities/episode';
 import { EpisodeService, WatchlistService } from '../services';
 import { ShowService } from '../../show/services';
-import { UpsertEpisodeInput } from './inputs';
+import { GetSeasonEpisodesInput, UpsertEpisodeInput } from './inputs';
 
 @Injectable()
 export class EpisodeResolver {
@@ -31,6 +34,15 @@ export class EpisodeResolver {
     return this.watchlistService
       .listUpNext(userId)
       .then(when(() => 'show' in fields, this.showService.linkShows));
+  }
+
+  @Query(() => [Episode])
+  @UseGuards(GraphqlJwtAnyoneGuard)
+  async getSeasonEpisodes(
+    @Args('input') { showId, seasonNumber }: GetSeasonEpisodesInput,
+    @Context() { req: { user } }: { req: RequestWithAnyoneInterface },
+  ) {
+    return this.episodeService.getSeasonEpisodes(showId, seasonNumber, user.id);
   }
 
   @Query(() => [Episode])

@@ -103,6 +103,7 @@ type Query {
   getPreferences: Preference
   getWatchlist: [Watchlist!]!
   listUpNext: [Episode!]!
+  getSeasonEpisodes(input: GetSeasonEpisodesInput!): [Episode!]!
   listUpcoming: [Episode!]!
 }
 
@@ -112,6 +113,11 @@ input DiscoverShowsInput {
 
 input FullShowInput {
   externalId: Int!
+}
+
+input GetSeasonEpisodesInput {
+  showId: Int!
+  seasonNumber: Int!
 }
 
 type Mutation {

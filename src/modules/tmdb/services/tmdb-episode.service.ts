@@ -24,15 +24,21 @@ export class TmdbEpisodeService {
       details: { seasons },
     } = await this.tmdbShowService.getShow(showId);
     const data: Episode[][] = await Promise.all(
-      seasons.map(async ({ number }) =>
-        this.httpService
-          .get(`/tv/${showId}/season/${number}`)
-          .then(({ data }) => data.episodes)
-          .then(map(episodeFacade)),
-      ),
+      seasons.map(async ({ number }) => this.getSeasonEpisodes(showId, number)),
     );
 
     return flatten(data);
+  }
+
+  @Memoize({ hashFunction: true })
+  async getSeasonEpisodes(
+    showId: number,
+    seasonNumber: number,
+  ): Promise<Episode[]> {
+    return this.httpService
+      .get(`/tv/${showId}/season/${seasonNumber}`)
+      .then(({ data }) => data.episodes)
+      .then(map(episodeFacade));
   }
 
   @Memoize({ hashFunction: true })

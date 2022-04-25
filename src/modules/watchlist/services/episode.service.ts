@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Watchlist } from '@prisma/client';
-import { assoc } from 'ramda';
+import { assoc, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { TmdbEpisodeService } from '../../tmdb';
 import { Episode } from '../../show/entities/episode';
+import { Status } from '../entities';
+import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 
 @Injectable()
 export class EpisodeService {
@@ -59,7 +61,8 @@ export class EpisodeService {
       watchlist.showId,
     );
     const data: Prisma.EpisodeUncheckedCreateInput[] = episodes.map(
-      ({ number, seasonNumber, airDate }) => ({
+      ({ number, seasonNumber, airDate, externalId }) => ({
+        id: externalId,
         seasonNumber: seasonNumber,
         episodeNumber: number,
         watchlistId: watchlist.id,
@@ -87,5 +90,37 @@ export class EpisodeService {
     });
 
     return this.findNext(watchlist);
+  }
+
+  async getSeasonEpisodes(
+    showId: number,
+    seasonNumber: number,
+    userId: number | undefined,
+  ): Promise<Episode[]> {
+    const watchlist = !userId
+      ? null
+      : await this.prismaService.watchlist.findFirst({
+          where: { userId, statusId: Status.InWatchlist },
+        });
+    const episodesMap = !watchlist
+      ? {}
+      : await this.prismaService.episode
+          .findMany({
+            where: {
+              watchlistId: watchlist.id,
+              seasonNumber,
+            },
+          })
+          .then(indexByAndMap(prop('id'), prop('isWatched')));
+
+    return this.tmdbEpisodeService
+      .getSeasonEpisodes(showId, seasonNumber)
+      .then((episodes) =>
+        episodes.map((episode) => ({
+          ...episode,
+          id: episode.externalId,
+          isWatched: episodesMap?.[episode.externalId] || false,
+        })),
+      );
   }
 }
