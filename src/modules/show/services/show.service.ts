@@ -16,6 +16,8 @@ export class ShowService {
     this.linkGenres = this.linkGenres.bind(this);
     this.linkShows = this.linkShows.bind(this);
     this.linkShow = this.linkShow.bind(this);
+    this.linkRatingToShows = this.linkRatingToShows.bind(this);
+    this.linkRatingToShow = this.linkRatingToShow.bind(this);
   }
 
   async linkGenres<T extends PartialShow>(data: T[]): Promise<T[]> {
@@ -81,5 +83,20 @@ export class ShowService {
     }
 
     return this.linkStatusToShows(userId, [item]).then(([item]) => item);
+  }
+
+  async linkRatingToShows<T extends PartialShow>(shows: T[]): Promise<T[]> {
+    return shows.map((show) => ({
+      ...show,
+      rating: Math.ceil(21 / 6),
+    }));
+  }
+
+  async linkRatingToShow(item: FullShow): Promise<FullShow> {
+    if (!item) {
+      return null;
+    }
+
+    return this.linkRatingToShows([item]).then(([item]) => item);
   }
 }

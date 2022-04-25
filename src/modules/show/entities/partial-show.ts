@@ -32,6 +32,9 @@ export class PartialShow {
   @Field(() => Status)
   status: Status;
 
+  @Field(() => Int)
+  rating?: number;
+
   __meta__: {
     genreIds: number[];
   };
