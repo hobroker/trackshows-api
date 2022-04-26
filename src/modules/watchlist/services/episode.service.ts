@@ -119,7 +119,7 @@ export class EpisodeService {
         episodes.map((episode) => ({
           ...episode,
           id: episode.externalId,
-          isWatched: episodesMap?.[episode.externalId] || false,
+          isWatched: !!episodesMap[episode.externalId],
         })),
       );
   }
