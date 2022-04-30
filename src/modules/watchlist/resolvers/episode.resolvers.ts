@@ -42,7 +42,11 @@ export class EpisodeResolver {
     @Args('input') { showId, seasonNumber }: GetSeasonEpisodesInput,
     @Context() { req: { user } }: { req: RequestWithAnyoneInterface },
   ) {
-    return this.episodeService.getSeasonEpisodes(showId, seasonNumber, user.id);
+    return this.episodeService.getSeasonEpisodes(
+      showId,
+      seasonNumber,
+      user?.id,
+    );
   }
 
   @Query(() => [Episode])
