@@ -14,4 +14,10 @@ export class Season {
 
   @Field(() => Int)
   number: number;
+
+  @Field()
+  episodeCount: string;
+
+  @Field()
+  airDate: Date;
 }

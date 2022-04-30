@@ -20,11 +20,20 @@ export class PartialShow {
   @Field()
   tallImage: string;
 
+  @Field()
+  originCountry?: string;
+
+  @Field()
+  firstAirDate: Date;
+
   @Field(() => [Genre])
   genres: Genre[];
 
   @Field(() => Status)
   status: Status;
+
+  @Field(() => Int)
+  rating?: number;
 
   __meta__: {
     genreIds: number[];

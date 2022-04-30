@@ -10,6 +10,9 @@ export class ShowDetails {
   @Field()
   isInProduction: boolean;
 
+  @Field(() => String, { nullable: true })
+  tagline: string;
+
   @Field(() => [Season])
   seasons: Season[];
 }

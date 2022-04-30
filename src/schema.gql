@@ -31,15 +31,46 @@ type PartialShow {
   description: String!
   wideImage: String!
   tallImage: String!
+  originCountry: String!
+  firstAirDate: DateTime!
   genres: [Genre!]!
   status: Status!
+  rating: Int!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Season {
   name: String!
   description: String
   tallImage: String!
   number: Int!
+  episodeCount: String!
+  airDate: DateTime!
+}
+
+type ShowDetails {
+  episodeRuntime: Int!
+  isInProduction: Boolean!
+  tagline: String
+  seasons: [Season!]!
+}
+
+type FullShow {
+  externalId: Int!
+  name: String!
+  description: String!
+  wideImage: String!
+  tallImage: String!
+  originCountry: String!
+  firstAirDate: DateTime!
+  genres: [Genre!]!
+  status: Status!
+  rating: Int!
+  details: ShowDetails!
 }
 
 type Void {
@@ -63,24 +94,30 @@ type Episode {
   show: PartialShow!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Query {
   allUsers: User!
   me: User!
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
+  fullShow(input: FullShowInput!): FullShow!
   getPreferences: Preference
   getWatchlist: [Watchlist!]!
   listUpNext: [Episode!]!
+  getSeasonEpisodes(input: GetSeasonEpisodesInput!): [Episode!]!
   listUpcoming: [Episode!]!
 }
 
 input DiscoverShowsInput {
   genreIds: [Int!]!
+}
+
+input FullShowInput {
+  externalId: Int!
+}
+
+input GetSeasonEpisodesInput {
+  showId: Int!
+  seasonNumber: Int!
 }
 
 type Mutation {

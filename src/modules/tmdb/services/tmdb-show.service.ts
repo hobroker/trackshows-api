@@ -3,10 +3,9 @@ import { always, compose, evolve, prop, filter, propEq, when } from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
-import { episodeFacade } from '../facades';
+import { episodeFacade, partialShowFacade, fullShowFacade } from '../facades';
 import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
-import { partialShowFacade, showFacade } from '../facades/show.facade';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 import { PartialShow } from '../../show';
 import { Episode } from '../../show/entities/episode';
@@ -101,7 +100,7 @@ export class TmdbShowService {
         ),
       );
 
-    return showFacade(data);
+    return fullShowFacade(data);
   }
 
   async getEpisodesMap(
