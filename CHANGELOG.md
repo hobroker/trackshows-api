@@ -1,3 +1,10 @@
+# [3.7.0](https://github.com/hobroker/tshows-api/compare/v3.6.1...v3.7.0) (2022-04-30)
+
+
+### Features
+
+* add fullShow endpoint ([#52](https://github.com/hobroker/tshows-api/issues/52)) ([9334cf7](https://github.com/hobroker/tshows-api/commit/9334cf76769f2e2431a9837345ba38d323a9db12))
+
 ## [3.6.1](https://github.com/hobroker/tshows-api/compare/v3.6.0...v3.6.1) (2022-04-13)
 
 
