@@ -7,15 +7,16 @@ import {
   ApolloServerPluginInlineTrace,
   ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core';
-import { UserModule } from './modules/user/user.module';
+import { UserModule } from './modules/user';
 import { appConfig } from './app.config';
 import { TmdbModule } from './modules/tmdb';
 import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
-import HealthModule from './modules/health/health.module';
+import { HealthModule } from './modules/health';
 import { AuthModule } from './modules/auth';
 import { PreferenceModule } from './modules/preference';
-import { WatchlistModule } from './modules/watchlist/watchlist.module';
+import { WatchlistModule } from './modules/watchlist';
+import { ReviewModule } from './modules/review';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { WatchlistModule } from './modules/watchlist/watchlist.module';
     HealthModule,
     PreferenceModule,
     WatchlistModule,
+    ReviewModule,
   ],
 })
 export class AppModule {}
