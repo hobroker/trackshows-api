@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { map, prop, sum, filter } from 'ramda';
+import { filter, map, prop, sum } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { Review } from '../entities';
 
@@ -13,11 +13,10 @@ export class ReviewService {
     data: Omit<Prisma.ReviewUncheckedCreateInput, 'userId' | 'showId'>,
   ): Promise<Review> {
     return this.prismaService.review.upsert({
-      where: {
-        userId_showId: where,
-      },
+      where: { userId_showId: where },
       create: { ...where, ...data },
       update: data,
+      include: { user: true },
     });
   }
 
@@ -38,5 +37,20 @@ export class ReviewService {
     }
 
     return review;
+  }
+
+  async getOtherReviews(showId: number, userId?: number): Promise<Review[]> {
+    return this.prismaService.review.findMany({
+      where: { showId, userId: { not: userId } },
+      orderBy: { createdAt: 'asc' },
+      include: { user: true },
+    });
+  }
+
+  async getMyReview(showId: number, userId?: number): Promise<Review> {
+    return this.prismaService.review.findFirst({
+      where: { showId, userId },
+      include: { user: true },
+    });
   }
 }

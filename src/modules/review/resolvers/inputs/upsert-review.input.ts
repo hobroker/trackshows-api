@@ -5,9 +5,12 @@ export class UpsertReviewInput {
   @Field(() => Int)
   showId: number;
 
-  @Field()
+  @Field({ nullable: true })
   title?: string;
 
-  @Field()
+  @Field({ nullable: true })
   content?: string;
+
+  @Field(() => Int, { nullable: true })
+  rating?: number;
 }
