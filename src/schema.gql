@@ -145,7 +145,6 @@ type Mutation {
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
   upsertEpisode(input: UpsertEpisodeInput!): Episode
   upsertReview(input: UpsertReviewInput!): Review!
-  updateRating(input: UpdateRatingInput!): Void!
 }
 
 input JoinWithGoogleInput {
@@ -171,9 +170,4 @@ input UpsertReviewInput {
   title: String
   content: String
   rating: Int
-}
-
-input UpdateRatingInput {
-  showId: Int!
-  rating: Int!
 }

@@ -7,14 +7,8 @@ import {
   RequestWithAnyoneInterface,
   RequestWithUser,
 } from '../../auth/interfaces';
-import { Void } from '../../../util/void';
 import { Review } from '../entities';
-import {
-  GetRatingInput,
-  GetReviewInput,
-  UpdateRatingInput,
-  UpsertReviewInput,
-} from './inputs';
+import { GetRatingInput, GetReviewInput, UpsertReviewInput } from './inputs';
 
 @Injectable()
 export class ReviewResolver {
@@ -54,14 +48,5 @@ export class ReviewResolver {
     @Context() { req: { user } }: { req: RequestWithUser },
   ): Promise<Review> {
     return this.reviewService.upsert({ userId: user.id, showId }, input);
-  }
-
-  @Mutation(() => Void)
-  @UseGuards(GraphqlJwtAuthGuard)
-  async updateRating(
-    @Args('input') { showId, rating }: UpdateRatingInput,
-    @Context() { req: { user } }: { req: RequestWithUser },
-  ) {
-    return this.reviewService.upsert({ userId: user.id, showId }, { rating });
   }
 }
