@@ -106,6 +106,7 @@ type Query {
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   fullShow(input: FullShowInput!): FullShow!
+  getSimilarShows(input: SimilarShowsInput!): [PartialShow!]!
   getPreferences: Preference
   getWatchlist: [Watchlist!]!
   listUpNext: [Episode!]!
@@ -121,6 +122,10 @@ input DiscoverShowsInput {
 }
 
 input FullShowInput {
+  externalId: Int!
+}
+
+input SimilarShowsInput {
   externalId: Int!
 }
 

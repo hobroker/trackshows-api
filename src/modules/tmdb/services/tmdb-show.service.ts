@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, prop, filter, propEq, when } from 'ramda';
+import { always, compose, evolve, filter, prop, propEq, when } from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
-import { episodeFacade, partialShowFacade, fullShowFacade } from '../facades';
+import { fullShowFacade, partialShowFacade } from '../facades';
 import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
-import { indexByAndMap } from '../../../util/fp/indexByAndMap';
 import { PartialShow } from '../../show';
-import { Episode } from '../../show/entities/episode';
 
 type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
 
@@ -62,24 +60,16 @@ export class TmdbShowService {
       },
     });
 
-    return results.map(partialShowFacade).filter(this.whereNotExcluded);
+    return this.withPartialShowFacade(results);
   }
 
-  async getTrending({
-    page = 1,
-    period = 'week',
-  }: { page?: number; period?: 'day' | 'week' } = {}): Promise<
-    PartialShowInterface[]
-  > {
+  @Memoize({ hashFunction: true })
+  async getRecommendations(showId: number): Promise<PartialShowWithGenreIds[]> {
     const {
       data: { results },
-    } = await this.httpService.get(`/trending/tv/${period}`, {
-      params: {
-        page,
-      },
-    });
+    } = await this.httpService.get(`/tv/${showId}/recommendations`);
 
-    return results.map(partialShowFacade);
+    return this.withPartialShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
@@ -103,29 +93,13 @@ export class TmdbShowService {
     return fullShowFacade(data);
   }
 
-  async getEpisodesMap(
-    externalId: number,
-    seasonNumbers: number[],
-  ): Promise<Record<string, Episode[]>> {
-    const data = await Promise.all(
-      seasonNumbers.map(async (seasonNumber) => {
-        const { data } = await this.httpService.get(
-          `/tv/${externalId}/season/${seasonNumber}`,
-        );
-
-        return {
-          seasonExternalId: data.id,
-          episodes: data.episodes.map(episodeFacade),
-        };
-      }),
-    );
-
-    return indexByAndMap(prop('seasonExternalId'), prop('episodes'), data);
-  }
-
   private whereNotExcluded(show: PartialShowInterface) {
     const { skipShowIds } = this.config;
 
     return !skipShowIds.includes(show.externalId);
+  }
+
+  private withPartialShowFacade(data) {
+    return data.map(partialShowFacade).filter(this.whereNotExcluded);
   }
 }
