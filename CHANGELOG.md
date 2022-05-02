@@ -1,3 +1,10 @@
+# [3.8.0](https://github.com/hobroker/tshows-api/compare/v3.7.0...v3.8.0) (2022-05-02)
+
+
+### Features
+
+* add show reviews ([#53](https://github.com/hobroker/tshows-api/issues/53)) ([2d53b0d](https://github.com/hobroker/tshows-api/commit/2d53b0d5651e7dee863c0ee3be0e659cd456da40))
+
 # [3.7.0](https://github.com/hobroker/tshows-api/compare/v3.6.1...v3.7.0) (2022-04-30)
 
 
