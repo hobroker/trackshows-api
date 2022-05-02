@@ -97,20 +97,21 @@ export class EpisodeService {
     seasonNumber: number,
     userId: number | undefined,
   ): Promise<Episode[]> {
-    const watchlist = !userId
-      ? null
-      : await this.prismaService.watchlist.findFirst({
-          where: { userId, showId, statusId: Status.InWatchlist },
-        });
-    const episodesMap = !watchlist
+    const episodesMap = !userId
       ? {}
-      : await this.prismaService.episode
-          .findMany({
-            where: {
-              watchlistId: watchlist.id,
-              seasonNumber,
+      : await this.prismaService.watchlist
+          .findFirst({
+            where: { userId, showId, statusId: Status.InWatchlist },
+            include: {
+              episodes: {
+                select: {
+                  id: true,
+                  isWatched: true,
+                },
+              },
             },
           })
+          .then(prop('episodes'))
           .then(indexByAndMap(prop('id'), prop('isWatched')));
 
     return this.tmdbEpisodeService
