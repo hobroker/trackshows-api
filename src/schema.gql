@@ -35,7 +35,6 @@ type PartialShow {
   firstAirDate: DateTime!
   genres: [Genre!]!
   status: Status!
-  rating: Int!
 }
 
 """
@@ -69,7 +68,6 @@ type FullShow {
   firstAirDate: DateTime!
   genres: [Genre!]!
   status: Status!
-  rating: Int!
   details: ShowDetails!
 }
 
@@ -94,6 +92,14 @@ type Episode {
   show: PartialShow!
 }
 
+type Review {
+  id: Int!
+  rating: Int!
+  title: String!
+  content: String!
+  user: User!
+}
+
 type Query {
   allUsers: User!
   me: User!
@@ -105,6 +111,9 @@ type Query {
   listUpNext: [Episode!]!
   getSeasonEpisodes(input: GetSeasonEpisodesInput!): [Episode!]!
   listUpcoming: [Episode!]!
+  getRating(input: GetRatingInput!): Review!
+  getOtherReviews(input: GetReviewInput!): [Review!]!
+  getMyReview(input: GetReviewInput!): Review
 }
 
 input DiscoverShowsInput {
@@ -120,6 +129,14 @@ input GetSeasonEpisodesInput {
   seasonNumber: Int!
 }
 
+input GetRatingInput {
+  showId: Int!
+}
+
+input GetReviewInput {
+  showId: Int!
+}
+
 type Mutation {
   joinWithGoogle(input: JoinWithGoogleInput!): User!
   logout: Void!
@@ -127,6 +144,7 @@ type Mutation {
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
   upsertEpisode(input: UpsertEpisodeInput!): Episode
+  upsertReview(input: UpsertReviewInput!): Review!
 }
 
 input JoinWithGoogleInput {
@@ -145,4 +163,11 @@ input UpsertWatchlistInput {
 input UpsertEpisodeInput {
   episodeId: Int!
   isWatched: Boolean!
+}
+
+input UpsertReviewInput {
+  showId: Int!
+  title: String
+  content: String
+  rating: Int
 }

@@ -26,6 +26,6 @@ export class WatchlistResolver {
   @Query(() => [Watchlist])
   @UseGuards(GraphqlJwtAuthGuard)
   async getWatchlist(@Context() { req: { user } }: { req: RequestWithUser }) {
-    return await this.watchlistService.listByUserId(user.id);
+    return this.watchlistService.listByUserId(user.id);
   }
 }
