@@ -39,8 +39,7 @@ export class ShowResolver {
           () => 'status' in fields,
           (shows) => this.showService.linkStatusToShows(user.id, shows),
         ),
-      )
-      .then(when(() => 'rating' in fields, this.showService.linkRatingToShows));
+      );
   }
 
   @Query(() => FullShow)
@@ -52,14 +51,11 @@ export class ShowResolver {
   ): Promise<FullShow> {
     const fields = fieldsMap(info);
 
-    return this.tmdbShowService
-      .getShow(externalId)
-      .then(
-        when(
-          () => 'status' in fields,
-          (show) => this.showService.linkStatusToShow(user?.id, show),
-        ),
-      )
-      .then(when(() => 'rating' in fields, this.showService.linkRatingToShow));
+    return this.tmdbShowService.getShow(externalId).then(
+      when(
+        () => 'status' in fields,
+        (show) => this.showService.linkStatusToShow(user?.id, show),
+      ),
+    );
   }
 }
