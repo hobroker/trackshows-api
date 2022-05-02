@@ -100,7 +100,7 @@ export class EpisodeService {
     const watchlist = !userId
       ? null
       : await this.prismaService.watchlist.findFirst({
-          where: { userId, statusId: Status.InWatchlist },
+          where: { userId, showId, statusId: Status.InWatchlist },
         });
     const episodesMap = !watchlist
       ? {}
