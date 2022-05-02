@@ -1,3 +1,10 @@
+## [3.9.1](https://github.com/hobroker/tshows-api/compare/v3.9.0...v3.9.1) (2022-05-02)
+
+
+### Bug Fixes
+
+* wrong user watchlist query in season episodes fn ([#56](https://github.com/hobroker/tshows-api/issues/56)) ([d9bfae2](https://github.com/hobroker/tshows-api/commit/d9bfae23827c0fbad9a1e8c8f262ddf8e4340117))
+
 # [3.9.0](https://github.com/hobroker/tshows-api/compare/v3.8.0...v3.9.0) (2022-05-02)
 
 
