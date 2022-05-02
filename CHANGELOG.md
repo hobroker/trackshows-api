@@ -1,3 +1,10 @@
+# [3.9.0](https://github.com/hobroker/tshows-api/compare/v3.8.0...v3.9.0) (2022-05-02)
+
+
+### Features
+
+* add getSimilarShows endpoint ([#55](https://github.com/hobroker/tshows-api/issues/55)) ([d272420](https://github.com/hobroker/tshows-api/commit/d272420b23eab8f565b6139051997f77f21ee572))
+
 # [3.8.0](https://github.com/hobroker/tshows-api/compare/v3.7.0...v3.8.0) (2022-05-02)
 
 
