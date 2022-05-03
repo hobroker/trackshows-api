@@ -20,6 +20,7 @@ export class TmdbShowService {
   ) {
     this.discoverByGenreId = this.discoverByGenreId.bind(this);
     this.whereNotExcluded = this.whereNotExcluded.bind(this);
+    this.getShow = this.getShow.bind(this);
   }
 
   async discoverByGenres(
@@ -91,6 +92,11 @@ export class TmdbShowService {
       );
 
     return fullShowFacade(data);
+  }
+
+  @Memoize({ hashFunction: true })
+  getShows(externalIds: number[]) {
+    return Promise.all(externalIds.map(this.getShow));
   }
 
   private whereNotExcluded(show: PartialShowInterface) {

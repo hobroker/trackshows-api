@@ -7,7 +7,13 @@ type User {
   email: String!
   name: String!
   avatar: String
+  createdAt: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Watchlist {
   show: PartialShow!
@@ -36,11 +42,6 @@ type PartialShow {
   genres: [Genre!]!
   status: Status!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Season {
   name: String!
@@ -100,6 +101,17 @@ type Review {
   user: User!
 }
 
+type StatsSummaryItem {
+  key: StatsSummaryItemKey!
+  value: Int!
+}
+
+enum StatsSummaryItemKey {
+  WatchingTvShowsCount
+  WatchedEpisodesCount
+  SpentMinutes
+}
+
 type Query {
   allUsers: User!
   me: User!
@@ -115,6 +127,7 @@ type Query {
   getRating(input: GetRatingInput!): Review!
   getOtherReviews(input: GetReviewInput!): [Review!]!
   getMyReview(input: GetReviewInput!): Review
+  getStatsSummary: [StatsSummaryItem!]!
 }
 
 input DiscoverShowsInput {
