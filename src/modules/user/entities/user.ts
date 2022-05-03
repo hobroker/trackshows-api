@@ -20,6 +20,9 @@ export class User {
   @HideField()
   password?: string;
 
+  @Field()
+  createdAt?: Date;
+
   @HideField()
-  public currentHashedRefreshToken?: string;
+  currentHashedRefreshToken?: string;
 }
