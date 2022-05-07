@@ -1,3 +1,10 @@
+# [3.10.0](https://github.com/hobroker/tshows-api/compare/v3.9.1...v3.10.0) (2022-05-07)
+
+
+### Features
+
+* add stats summary ([#57](https://github.com/hobroker/tshows-api/issues/57)) ([1fc98de](https://github.com/hobroker/tshows-api/commit/1fc98def41522c7fcb9dc8f232856f102d1db289))
+
 ## [3.9.1](https://github.com/hobroker/tshows-api/compare/v3.9.0...v3.9.1) (2022-05-02)
 
 
