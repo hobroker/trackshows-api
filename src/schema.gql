@@ -96,9 +96,9 @@ type Episode {
 
 type Review {
   id: Int!
-  rating: Int!
-  title: String!
-  content: String!
+  rating: Int
+  title: String
+  content: String
   user: User!
 }
 
@@ -114,7 +114,6 @@ enum StatsSummaryItemKey {
 }
 
 type Query {
-  allUsers: User!
   me: User!
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
