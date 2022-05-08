@@ -47,10 +47,10 @@ type PartialShow {
 type Season {
   name: String!
   description: String
-  tallImage: String!
+  tallImage: String
   number: Int!
   episodeCount: String!
-  airDate: DateTime!
+  airDate: DateTime
 }
 
 type ShowDetails {

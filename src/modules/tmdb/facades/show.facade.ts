@@ -1,4 +1,4 @@
-import { applySpec, compose, head, map, prop } from 'ramda';
+import { applySpec, compose, filter, head, map, prop } from 'ramda';
 import { sanitize, toDate } from '../../../util/fp';
 import { FullShow, PartialShow, ShowDetails } from '../../show';
 import { seasonFacade } from './season.facade';
@@ -24,7 +24,11 @@ export const showDetailsFacade = applySpec<ShowDetails>({
   episodeRuntime: compose(head, prop('episode_run_time')),
   isInProduction: prop('in_production'),
   tagline: prop('tagline'),
-  seasons: compose(map(seasonFacade), prop('seasons')),
+  seasons: compose(
+    filter(({ episodeCount }) => Number(episodeCount) > 0),
+    map(seasonFacade),
+    prop('seasons'),
+  ),
 });
 
 export const fullShowFacade = applySpec<FullShow>({
