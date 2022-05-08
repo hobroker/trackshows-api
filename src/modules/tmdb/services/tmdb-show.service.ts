@@ -1,12 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, filter, prop, propEq, when } from 'ramda';
+import {
+  always,
+  compose,
+  evolve,
+  filter,
+  prop,
+  propEq,
+  splitEvery,
+  when,
+} from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { fullShowFacade, partialShowFacade } from '../facades';
 import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
-import { PartialShow } from '../../show';
+import { FullShow, PartialShow } from '../../show';
+import { serialEvery } from '../../../util/promise';
 
 type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
 
@@ -102,8 +112,8 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  getShows(externalIds: number[]) {
-    return Promise.all(externalIds.map(this.getShow));
+  getShows(externalIds: number[]): Promise<FullShow[]> {
+    return serialEvery(splitEvery(10, externalIds), this.getShow);
   }
 
   private whereNotExcluded(show: PartialShowInterface) {
