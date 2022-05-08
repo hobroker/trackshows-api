@@ -12,7 +12,7 @@ import {
   RequestWithUser,
 } from '../../auth/interfaces';
 import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
-import { DiscoverShowsInput, FullShowInput } from './input';
+import { DiscoverShowsInput, FullShowInput, TrendingInput } from './input';
 
 @Injectable()
 export class ShowResolver {
@@ -60,6 +60,13 @@ export class ShowResolver {
           (shows) => this.statusService.linkStatusToShows(user.id, shows),
         ),
       );
+  }
+
+  @Query(() => [PartialShow])
+  async listTrending(
+    @Args('input') { page = 1 }: TrendingInput,
+  ): Promise<PartialShow[]> {
+    return this.tmdbShowService.getTrending(page);
   }
 
   @Query(() => FullShow)

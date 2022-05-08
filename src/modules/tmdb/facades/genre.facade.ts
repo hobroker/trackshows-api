@@ -1,7 +1,7 @@
 import { applySpec, prop } from 'ramda';
-import { GenreInterface } from '../interfaces';
+import { Genre } from '../../show';
 
-export const genreFacade = applySpec<GenreInterface>({
+export const genreFacade = applySpec<Genre>({
   externalId: prop('id'),
   name: prop('name'),
 });

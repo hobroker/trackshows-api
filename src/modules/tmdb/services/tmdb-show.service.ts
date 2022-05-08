@@ -1,14 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, compose, evolve, filter, prop, propEq, when } from 'ramda';
+import {
+  always,
+  compose,
+  evolve,
+  filter,
+  prop,
+  propEq,
+  splitEvery,
+  when,
+} from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { fullShowFacade, partialShowFacade } from '../facades';
-import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
-import { PartialShow } from '../../show';
-
-type PartialShowWithGenreIds = PartialShow & { genreIds: number[] };
+import { FullShow, PartialShow } from '../../show';
+import { serialEvery } from '../../../util/promise';
 
 @Injectable()
 export class TmdbShowService {
@@ -26,7 +33,7 @@ export class TmdbShowService {
   async discoverByGenres(
     genreIds: number[] = [],
     { countPerGenre = 6 } = {},
-  ): Promise<PartialShowWithGenreIds[]> {
+  ): Promise<PartialShow[]> {
     const data = await Promise.all(genreIds.map(this.discoverByGenreId));
 
     return data.reduce((acc, curr) => {
@@ -48,9 +55,7 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  private async discoverByGenreId(
-    genreId: number,
-  ): Promise<PartialShowWithGenreIds[]> {
+  private async discoverByGenreId(genreId: number): Promise<PartialShow[]> {
     const {
       data: { results },
     } = await this.httpService.get(`/discover/tv`, {
@@ -65,7 +70,7 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  async getRecommendations(showId: number): Promise<PartialShowWithGenreIds[]> {
+  async getRecommendations(showId: number): Promise<PartialShow[]> {
     const {
       data: { results },
     } = await this.httpService.get(`/tv/${showId}/recommendations`);
@@ -102,11 +107,24 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  getShows(externalIds: number[]) {
-    return Promise.all(externalIds.map(this.getShow));
+  async getTrending(page): Promise<PartialShow[]> {
+    const {
+      data: { results },
+    } = await this.httpService.get('/trending/tv/week', {
+      params: {
+        page,
+      },
+    });
+
+    return this.withPartialShowFacade(results);
   }
 
-  private whereNotExcluded(show: PartialShowInterface) {
+  @Memoize({ hashFunction: true })
+  getShows(externalIds: number[]): Promise<FullShow[]> {
+    return serialEvery(splitEvery(10, externalIds), this.getShow);
+  }
+
+  private whereNotExcluded(show: PartialShow) {
     const { skipShowIds } = this.config;
 
     return !skipShowIds.includes(show.externalId);
