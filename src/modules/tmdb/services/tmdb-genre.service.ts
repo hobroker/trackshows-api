@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
-import { genreFacade } from '../facades';
 import { Genre } from '../../show';
+import { genreFacade } from '../facades';
 
 @Injectable()
 export class TmdbGenreService {

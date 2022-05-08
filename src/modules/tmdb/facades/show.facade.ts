@@ -2,7 +2,6 @@ import { applySpec, compose, head, map, prop } from 'ramda';
 import { sanitize, toDate } from '../../../util/fp';
 import { FullShow, PartialShow, ShowDetails } from '../../show';
 import { seasonFacade } from './season.facade';
-import { statusFacade } from './status.facade';
 import { genreFacade } from './genre.facade';
 
 const partialShow = {
@@ -25,7 +24,6 @@ export const showDetailsFacade = applySpec<ShowDetails>({
   episodeRuntime: compose(head, prop('episode_run_time')),
   isInProduction: prop('in_production'),
   tagline: prop('tagline'),
-  status: statusFacade,
   seasons: compose(map(seasonFacade), prop('seasons')),
 });
 

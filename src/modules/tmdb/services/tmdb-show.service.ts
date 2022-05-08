@@ -13,7 +13,6 @@ import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { fullShowFacade, partialShowFacade } from '../facades';
-import { PartialShowInterface } from '../interfaces';
 import { tmdbConfig } from '../tmdb.config';
 import { FullShow, PartialShow } from '../../show';
 import { serialEvery } from '../../../util/promise';
@@ -112,7 +111,7 @@ export class TmdbShowService {
     return serialEvery(splitEvery(10, externalIds), this.getShow);
   }
 
-  private whereNotExcluded(show: PartialShowInterface) {
+  private whereNotExcluded(show: PartialShow) {
     const { skipShowIds } = this.config;
 
     return !skipShowIds.includes(show.externalId);
