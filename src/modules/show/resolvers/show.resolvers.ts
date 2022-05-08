@@ -6,7 +6,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import { when } from 'ramda';
 import { FullShow, PartialShow } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
-import { ShowService } from '../services';
+import { ShowService, StatusService } from '../services';
 import {
   RequestWithAnyoneInterface,
   RequestWithUser,
@@ -20,6 +20,7 @@ export class ShowResolver {
     private readonly tmdbShowService: TmdbShowService,
     private readonly tmdbGenreService: TmdbGenreService,
     private readonly showService: ShowService,
+    private readonly statusService: StatusService,
   ) {}
 
   @Query(() => [PartialShow])
@@ -37,7 +38,7 @@ export class ShowResolver {
       .then(
         when(
           () => 'status' in fields,
-          (shows) => this.showService.linkStatusToShows(user.id, shows),
+          (shows) => this.statusService.linkStatusToShows(user.id, shows),
         ),
       );
   }
@@ -56,7 +57,7 @@ export class ShowResolver {
       .then(
         when(
           () => 'status' in fields,
-          (shows) => this.showService.linkStatusToShows(user.id, shows),
+          (shows) => this.statusService.linkStatusToShows(user.id, shows),
         ),
       );
   }
@@ -73,7 +74,7 @@ export class ShowResolver {
     return this.tmdbShowService.getShow(externalId).then(
       when(
         () => 'status' in fields,
-        (show) => this.showService.linkStatusToShow(user?.id, show),
+        (show) => this.statusService.linkStatusToShow(user?.id, show),
       ),
     );
   }
