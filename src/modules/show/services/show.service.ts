@@ -67,6 +67,9 @@ export class ShowService {
     const excludedExternalIds: number[] = await this.prismaService.watchlist
       .findMany({ where: { userId }, select: { showId: true } })
       .then(map(prop('showId')));
+    const trendingExternalIds: number[] = await this.tmdbShowService
+      .getTrending()
+      .then(map(prop('externalId')));
 
     const preferencesGenreIds =
       genreIds ||
@@ -75,7 +78,7 @@ export class ShowService {
         .then(prop('genreIds')));
 
     return this.tmdbShowService.discoverByGenres(preferencesGenreIds, {
-      excludedExternalIds,
+      excludedExternalIds: [...excludedExternalIds, ...trendingExternalIds],
     });
   }
 }

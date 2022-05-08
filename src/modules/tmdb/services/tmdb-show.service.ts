@@ -108,7 +108,7 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  async getTrending(page): Promise<PartialShow[]> {
+  async getTrending(page = 1): Promise<PartialShow[]> {
     const {
       data: { results },
     } = await this.httpService.get('/trending/tv/week', {
