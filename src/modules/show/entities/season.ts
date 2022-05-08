@@ -9,7 +9,7 @@ export class Season {
   @Field(() => String, { nullable: true })
   description?: string;
 
-  @Field()
+  @Field({ nullable: true })
   tallImage: string;
 
   @Field(() => Int)
@@ -18,6 +18,6 @@ export class Season {
   @Field()
   episodeCount: string;
 
-  @Field()
+  @Field({ nullable: true })
   airDate: Date;
 }
