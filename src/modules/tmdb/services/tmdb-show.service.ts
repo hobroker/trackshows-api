@@ -32,7 +32,7 @@ export class TmdbShowService {
 
   async discoverByGenres(
     genreIds: number[] = [],
-    { countPerGenre = 6 } = {},
+    { countPerGenre = 6, excludedExternalIds = [] } = {},
   ): Promise<PartialShow[]> {
     const data = await Promise.all(genreIds.map(this.discoverByGenreId));
 
@@ -42,6 +42,7 @@ export class TmdbShowService {
       curr.forEach((item) => {
         if (
           i >= countPerGenre ||
+          excludedExternalIds.includes(item.externalId) ||
           acc.find(propEq('externalId', item.externalId))
         ) {
           return;
@@ -107,7 +108,7 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  async getTrending(page): Promise<PartialShow[]> {
+  async getTrending(page = 1): Promise<PartialShow[]> {
     const {
       data: { results },
     } = await this.httpService.get('/trending/tv/week', {

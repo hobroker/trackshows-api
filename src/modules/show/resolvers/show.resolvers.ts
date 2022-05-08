@@ -12,7 +12,12 @@ import {
   RequestWithUser,
 } from '../../auth/interfaces';
 import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
-import { DiscoverShowsInput, FullShowInput, TrendingInput } from './input';
+import {
+  DiscoverShowsInput,
+  FullShowInput,
+  ListRecommendationsInput,
+  TrendingInput,
+} from './input';
 
 @Injectable()
 export class ShowResolver {
@@ -41,6 +46,15 @@ export class ShowResolver {
           (shows) => this.statusService.linkStatusToShows(user.id, shows),
         ),
       );
+  }
+
+  @Query(() => [PartialShow])
+  @UseGuards(GraphqlJwtAuthGuard)
+  async listRecommendations(
+    @Args('input') { genreIds }: ListRecommendationsInput,
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ): Promise<PartialShow[]> {
+    return this.showService.listRecommendations(user.id, genreIds);
   }
 
   @Query(() => [PartialShow])
