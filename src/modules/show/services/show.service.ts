@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { indexBy, prop } from 'ramda';
+import { indexBy, map, prop } from 'ramda';
 import { FullShow, PartialShow } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { PrismaService } from '../../prisma';
@@ -54,20 +54,33 @@ export class ShowService {
     userId: number,
     shows: T[],
   ): Promise<T[]> {
-    const watchlist = await this.prismaService.watchlist
-      .findMany({
-        where: {
-          userId,
-          showId: {
-            in: shows.map(prop('externalId')),
-          },
+    const watchlist = await this.prismaService.watchlist.findMany({
+      where: {
+        userId,
+        showId: {
+          in: shows.map(prop('externalId')),
         },
-      })
-      .then(indexBy(prop('showId')));
+      },
+      include: {
+        episodes: {
+          take: 1,
+          where: { isWatched: false },
+        },
+      },
+    });
+    const watchlistToStatusMap: Record<number, Status> = watchlist.reduce(
+      (acc, item) => ({
+        ...acc,
+        [item.showId]: item.episodes.length
+          ? item.statusId
+          : Status.FinishedWatching,
+      }),
+      {},
+    );
 
     return shows.map((show) => ({
       ...show,
-      status: watchlist[show.externalId]?.statusId || Status.None,
+      status: watchlistToStatusMap[show.externalId] || Status.None,
     }));
   }
 
@@ -81,5 +94,16 @@ export class ShowService {
     }
 
     return this.linkStatusToShows(userId, [item]).then(([item]) => item);
+  }
+
+  async getMyShows(userId: number): Promise<PartialShow[]> {
+    const externalIds: number[] = await this.prismaService.watchlist
+      .findMany({
+        where: { userId },
+        select: { showId: true },
+      })
+      .then(map(prop('showId')));
+
+    return this.tmdbShowService.getShows(externalIds);
   }
 }

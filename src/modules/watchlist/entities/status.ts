@@ -5,6 +5,7 @@ export enum Status {
   None,
   InWatchlist,
   StoppedWatching,
+  FinishedWatching,
 }
 
 registerEnumType(Status, {

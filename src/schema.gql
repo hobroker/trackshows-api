@@ -24,6 +24,7 @@ enum Status {
   None
   InWatchlist
   StoppedWatching
+  FinishedWatching
 }
 
 type Genre {
@@ -117,6 +118,7 @@ type Query {
   me: User!
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
+  getMyShows: [PartialShow!]!
   fullShow(input: FullShowInput!): FullShow!
   getSimilarShows(input: SimilarShowsInput!): [PartialShow!]!
   getPreferences: Preference

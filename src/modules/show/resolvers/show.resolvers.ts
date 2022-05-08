@@ -42,6 +42,25 @@ export class ShowResolver {
       );
   }
 
+  @Query(() => [PartialShow])
+  @UseGuards(GraphqlJwtAuthGuard)
+  async getMyShows(
+    @Info() info: GraphQLResolveInfo,
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ): Promise<PartialShow[]> {
+    const fields = fieldsMap(info);
+
+    return this.showService
+      .getMyShows(user.id)
+      .then(when(() => 'genres' in fields, this.showService.linkGenres))
+      .then(
+        when(
+          () => 'status' in fields,
+          (shows) => this.showService.linkStatusToShows(user.id, shows),
+        ),
+      );
+  }
+
   @Query(() => FullShow)
   @UseGuards(GraphqlJwtAnyoneGuard)
   async fullShow(
