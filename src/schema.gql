@@ -118,6 +118,7 @@ type Query {
   listGenres: [Genre!]
   discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
   getMyShows: [PartialShow!]!
+  listTrending(input: TrendingInput!): [PartialShow!]!
   fullShow(input: FullShowInput!): FullShow!
   getSimilarShows(input: SimilarShowsInput!): [PartialShow!]!
   getPreferences: Preference
@@ -134,6 +135,10 @@ type Query {
 
 input DiscoverShowsInput {
   genreIds: [Int!]!
+}
+
+input TrendingInput {
+  page: Int
 }
 
 input FullShowInput {

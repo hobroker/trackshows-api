@@ -107,6 +107,19 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
+  async getTrending(page): Promise<PartialShow[]> {
+    const {
+      data: { results },
+    } = await this.httpService.get('/trending/tv/week', {
+      params: {
+        page,
+      },
+    });
+
+    return this.withPartialShowFacade(results);
+  }
+
+  @Memoize({ hashFunction: true })
   getShows(externalIds: number[]): Promise<FullShow[]> {
     return serialEvery(splitEvery(10, externalIds), this.getShow);
   }

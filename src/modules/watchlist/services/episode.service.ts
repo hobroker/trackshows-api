@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Watchlist } from '@prisma/client';
-import { assoc, prop } from 'ramda';
+import { assoc, prop, propOr } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { TmdbEpisodeService } from '../../tmdb';
 import { Episode } from '../../show/entities/episode';
@@ -111,7 +111,7 @@ export class EpisodeService {
               },
             },
           })
-          .then(prop('episodes'))
+          .then(propOr([], 'episodes'))
           .then(indexByAndMap(prop('id'), prop('isWatched')));
 
     return this.tmdbEpisodeService
