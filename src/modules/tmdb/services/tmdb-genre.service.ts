@@ -1,17 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Memoize } from 'typescript-memoize';
-import { PrismaService } from '../../prisma';
 import { HttpService } from '../../http';
 import { genreFacade } from '../facades';
 import { Genre } from '../../show';
 
 @Injectable()
 export class TmdbGenreService {
-  @Inject(HttpService)
-  private httpService: HttpService;
-
-  @Inject(PrismaService)
-  private prismaService: PrismaService;
+  constructor(private httpService: HttpService) {}
 
   @Memoize()
   async list(): Promise<Genre[]> {

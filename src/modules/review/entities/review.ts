@@ -7,13 +7,13 @@ export class Review {
   @Field(() => Int)
   id: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   rating?: number;
 
-  @Field()
+  @Field({ nullable: true })
   title?: string;
 
-  @Field()
+  @Field({ nullable: true })
   content?: string;
 
   @Field(() => User)

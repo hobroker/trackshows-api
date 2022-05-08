@@ -76,11 +76,7 @@ export class TmdbShowService {
   @Memoize({ hashFunction: true })
   async getShow(externalId: number) {
     const data = await this.httpService
-      .get(`/tv/${externalId}`, {
-        params: {
-          append_to_response: 'keywords',
-        },
-      })
+      .get(`/tv/${externalId}`)
       .then(prop('data'))
       .then(
         when(
@@ -92,6 +88,17 @@ export class TmdbShowService {
       );
 
     return fullShowFacade(data);
+  }
+
+  @Memoize({ hashFunction: true })
+  async search(query: string): Promise<PartialShow[]> {
+    const {
+      data: { results },
+    } = await this.httpService.get(`/search/tv/`, {
+      params: { query },
+    });
+
+    return this.withPartialShowFacade(results).filter(prop('wideImage'));
   }
 
   @Memoize({ hashFunction: true })

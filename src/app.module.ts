@@ -18,6 +18,7 @@ import { PreferenceModule } from './modules/preference';
 import { WatchlistModule } from './modules/watchlist';
 import { ReviewModule } from './modules/review';
 import { StatsModule } from './modules/stats';
+import { SearchModule } from './modules/search';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { StatsModule } from './modules/stats';
     WatchlistModule,
     ReviewModule,
     StatsModule,
+    SearchModule,
   ],
 })
 export class AppModule {}
