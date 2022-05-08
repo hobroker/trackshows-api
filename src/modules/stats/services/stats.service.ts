@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { prop } from 'ramda';
+import { DateTime } from 'luxon';
+import { map, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
-import { StatsSummaryItem } from '../entities';
+import { PieItem, StatsSummaryItem, StatsCalendarItem } from '../entities';
 import { StatsSummaryItemKey } from '../entities/stats-summary-item';
 import { Status } from '../../watchlist/entities';
 import { TmdbShowService } from '../../tmdb';
@@ -60,5 +61,58 @@ export class StatsService {
         value: minutesSpent,
       },
     ];
+  }
+
+  async getCalendarSummary(userId: number): Promise<StatsCalendarItem[]> {
+    const watchlist = await this.prismaService.watchlist.findMany({
+      where: { userId },
+      include: {
+        episodes: {
+          where: { isWatched: true },
+          select: { updatedAt: true },
+        },
+      },
+    });
+    const episodes = watchlist.flatMap(prop('episodes'));
+    const calendarItems: Record<string, number> = episodes.reduce(
+      (acc, { updatedAt }) => {
+        const date = DateTime.fromJSDate(updatedAt).toISODate();
+
+        return {
+          ...acc,
+          [date]: acc[date] ? acc[date] + 1 : 1,
+        };
+      },
+      {},
+    );
+
+    return Object.entries(calendarItems).map(([day, value]) => ({
+      day,
+      value,
+    }));
+  }
+
+  async getGenresSummary(userId: number): Promise<PieItem[]> {
+    const showIds = await this.prismaService.watchlist
+      .findMany({
+        where: { userId },
+        select: { showId: true },
+      })
+      .then(map(prop('showId')));
+    const shows = await this.tmdbShowService.getShows(showIds);
+    const genres = shows.flatMap(prop('genres'));
+    const genreItems: Record<string, number> = genres.reduce(
+      (acc, { name }) => ({
+        ...acc,
+        [name]: acc[name] ? acc[name] + 1 : 1,
+      }),
+      {},
+    );
+
+    return Object.entries(genreItems).map(([name, value]) => ({
+      id: name,
+      label: name,
+      value,
+    }));
   }
 }
