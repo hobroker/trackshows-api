@@ -118,6 +118,12 @@ type StatsCalendarItem {
   value: Int!
 }
 
+type PieItem {
+  id: String!
+  label: String!
+  value: Int!
+}
+
 type Query {
   me: User!
   listGenres: [Genre!]
@@ -137,6 +143,7 @@ type Query {
   getMyReview(input: GetReviewInput!): Review
   getStatsSummary: [StatsSummaryItem!]!
   getStatsCalendar: [StatsCalendarItem!]!
+  getStatsGenres: [PieItem!]!
   search(input: SearchInput!): [PartialShow!]!
 }
 

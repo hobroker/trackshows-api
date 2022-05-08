@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { prop } from 'ramda';
+import { map, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
-import { StatsSummaryItem } from '../entities';
+import { PieItem, StatsSummaryItem, StatsCalendarItem } from '../entities';
 import { StatsSummaryItemKey } from '../entities/stats-summary-item';
 import { Status } from '../../watchlist/entities';
 import { TmdbShowService } from '../../tmdb';
-import { StatsCalendarItem } from '../entities/stats-calendar-item';
 
 @Injectable()
 export class StatsService {
@@ -66,10 +65,7 @@ export class StatsService {
 
   async getCalendarSummary(userId: number): Promise<StatsCalendarItem[]> {
     const watchlist = await this.prismaService.watchlist.findMany({
-      where: {
-        userId,
-        statusId: { in: [Status.InWatchlist, Status.StoppedWatching] },
-      },
+      where: { userId },
       include: {
         episodes: {
           where: { isWatched: true },
@@ -92,6 +88,30 @@ export class StatsService {
 
     return Object.entries(calendarItems).map(([day, value]) => ({
       day,
+      value,
+    }));
+  }
+
+  async getGenresSummary(userId: number): Promise<PieItem[]> {
+    const showIds = await this.prismaService.watchlist
+      .findMany({
+        where: { userId },
+        select: { showId: true },
+      })
+      .then(map(prop('showId')));
+    const shows = await this.tmdbShowService.getShows(showIds);
+    const genres = shows.flatMap(prop('genres'));
+    const genreItems: Record<string, number> = genres.reduce(
+      (acc, { name }) => ({
+        ...acc,
+        [name]: acc[name] ? acc[name] + 1 : 1,
+      }),
+      {},
+    );
+
+    return Object.entries(genreItems).map(([name, value]) => ({
+      id: name,
+      label: name,
       value,
     }));
   }

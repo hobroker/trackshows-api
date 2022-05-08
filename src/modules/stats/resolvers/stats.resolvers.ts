@@ -1,11 +1,10 @@
 import 'reflect-metadata';
 import { Context, Query } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
-import { StatsSummaryItem } from '../entities';
+import { StatsSummaryItem, StatsCalendarItem, PieItem } from '../entities';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { StatsService } from '../services';
 import { RequestWithUser } from '../../auth/interfaces';
-import { StatsCalendarItem } from '../entities/stats-calendar-item';
 
 @Injectable()
 export class StatsResolver {
@@ -25,5 +24,13 @@ export class StatsResolver {
     @Context() { req: { user } }: { req: RequestWithUser },
   ): Promise<StatsCalendarItem[]> {
     return this.statsService.getCalendarSummary(user.id);
+  }
+
+  @Query(() => [PieItem])
+  @UseGuards(GraphqlJwtAuthGuard)
+  async getStatsGenres(
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ): Promise<PieItem[]> {
+    return this.statsService.getGenresSummary(user.id);
   }
 }
