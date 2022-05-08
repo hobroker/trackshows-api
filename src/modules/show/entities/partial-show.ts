@@ -14,10 +14,10 @@ export class PartialShow {
   @Field()
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   wideImage: string;
 
-  @Field()
+  @Field({ nullable: true })
   tallImage: string;
 
   @Field()

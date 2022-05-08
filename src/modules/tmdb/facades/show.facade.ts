@@ -1,7 +1,6 @@
-import { applySpec, compose, head, map, path, prop } from 'ramda';
+import { applySpec, compose, head, map, prop } from 'ramda';
 import { sanitize, toDate } from '../../../util/fp';
 import { FullShow, PartialShow, ShowDetails } from '../../show';
-import { keywordFacade } from './keyword.facade';
 import { seasonFacade } from './season.facade';
 import { statusFacade } from './status.facade';
 import { genreFacade } from './genre.facade';
@@ -27,7 +26,6 @@ export const showDetailsFacade = applySpec<ShowDetails>({
   isInProduction: prop('in_production'),
   tagline: prop('tagline'),
   status: statusFacade,
-  keywords: compose(map(keywordFacade), path(['keywords', 'results'])),
   seasons: compose(map(seasonFacade), prop('seasons')),
 });
 

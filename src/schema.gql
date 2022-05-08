@@ -36,8 +36,8 @@ type PartialShow {
   externalId: Int!
   name: String!
   description: String!
-  wideImage: String!
-  tallImage: String!
+  wideImage: String
+  tallImage: String
   originCountry: String!
   firstAirDate: DateTime!
   genres: [Genre!]!
@@ -64,8 +64,8 @@ type FullShow {
   externalId: Int!
   name: String!
   description: String!
-  wideImage: String!
-  tallImage: String!
+  wideImage: String
+  tallImage: String
   originCountry: String!
   firstAirDate: DateTime!
   genres: [Genre!]!
@@ -130,6 +130,7 @@ type Query {
   getOtherReviews(input: GetReviewInput!): [Review!]!
   getMyReview(input: GetReviewInput!): Review
   getStatsSummary: [StatsSummaryItem!]!
+  search(input: SearchInput!): [PartialShow!]!
 }
 
 input DiscoverShowsInput {
@@ -155,6 +156,10 @@ input GetRatingInput {
 
 input GetReviewInput {
   showId: Int!
+}
+
+input SearchInput {
+  query: String!
 }
 
 type Mutation {
