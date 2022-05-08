@@ -5,6 +5,7 @@ import { StatsSummaryItem } from '../entities';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { StatsService } from '../services';
 import { RequestWithUser } from '../../auth/interfaces';
+import { StatsCalendarItem } from '../entities/stats-calendar-item';
 
 @Injectable()
 export class StatsResolver {
@@ -14,7 +15,15 @@ export class StatsResolver {
   @UseGuards(GraphqlJwtAuthGuard)
   async getStatsSummary(
     @Context() { req: { user } }: { req: RequestWithUser },
-  ) {
+  ): Promise<StatsSummaryItem[]> {
     return this.statsService.getSummary(user.id);
+  }
+
+  @Query(() => [StatsCalendarItem])
+  @UseGuards(GraphqlJwtAuthGuard)
+  async getStatsCalendar(
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ): Promise<StatsCalendarItem[]> {
+    return this.statsService.getCalendarSummary(user.id);
   }
 }

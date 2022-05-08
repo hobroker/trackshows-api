@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { prop } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { StatsSummaryItem } from '../entities';
 import { StatsSummaryItemKey } from '../entities/stats-summary-item';
 import { Status } from '../../watchlist/entities';
 import { TmdbShowService } from '../../tmdb';
+import { StatsCalendarItem } from '../entities/stats-calendar-item';
 
 @Injectable()
 export class StatsService {
@@ -60,5 +62,37 @@ export class StatsService {
         value: minutesSpent,
       },
     ];
+  }
+
+  async getCalendarSummary(userId: number): Promise<StatsCalendarItem[]> {
+    const watchlist = await this.prismaService.watchlist.findMany({
+      where: {
+        userId,
+        statusId: { in: [Status.InWatchlist, Status.StoppedWatching] },
+      },
+      include: {
+        episodes: {
+          where: { isWatched: true },
+          select: { updatedAt: true },
+        },
+      },
+    });
+    const episodes = watchlist.flatMap(prop('episodes'));
+    const calendarItems: Record<string, number> = episodes.reduce(
+      (acc, { updatedAt }) => {
+        const date = DateTime.fromJSDate(updatedAt).toISODate();
+
+        return {
+          ...acc,
+          [date]: acc[date] ? acc[date] + 1 : 1,
+        };
+      },
+      {},
+    );
+
+    return Object.entries(calendarItems).map(([day, value]) => ({
+      day,
+      value,
+    }));
   }
 }

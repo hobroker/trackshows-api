@@ -113,6 +113,11 @@ enum StatsSummaryItemKey {
   SpentMinutes
 }
 
+type StatsCalendarItem {
+  day: String!
+  value: Int!
+}
+
 type Query {
   me: User!
   listGenres: [Genre!]
@@ -131,6 +136,7 @@ type Query {
   getOtherReviews(input: GetReviewInput!): [Review!]!
   getMyReview(input: GetReviewInput!): Review
   getStatsSummary: [StatsSummaryItem!]!
+  getStatsCalendar: [StatsCalendarItem!]!
   search(input: SearchInput!): [PartialShow!]!
 }
 
