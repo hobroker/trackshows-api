@@ -1,3 +1,10 @@
+# [3.13.0](https://github.com/hobroker/tshows-api/compare/v3.12.0...v3.13.0) (2022-05-08)
+
+
+### Features
+
+* add listTrending endpoint ([5e28fa4](https://github.com/hobroker/tshows-api/commit/5e28fa414a4575659233c6b6a40064cc48652e83))
+
 # [3.12.0](https://github.com/hobroker/tshows-api/compare/v3.11.0...v3.12.0) (2022-05-08)
 
 
