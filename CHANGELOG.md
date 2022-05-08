@@ -1,3 +1,10 @@
+# [3.11.0](https://github.com/hobroker/tshows-api/compare/v3.10.0...v3.11.0) (2022-05-08)
+
+
+### Features
+
+* add getMyShows endpoint ([#58](https://github.com/hobroker/tshows-api/issues/58)) ([c1e7204](https://github.com/hobroker/tshows-api/commit/c1e72040789f0acfcc6421b2cbe70594c778f7f9))
+
 # [3.10.0](https://github.com/hobroker/tshows-api/compare/v3.9.1...v3.10.0) (2022-05-07)
 
 
