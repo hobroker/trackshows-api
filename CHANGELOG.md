@@ -1,3 +1,10 @@
+# [3.12.0](https://github.com/hobroker/tshows-api/compare/v3.11.0...v3.12.0) (2022-05-08)
+
+
+### Features
+
+* add search endpoint ([#59](https://github.com/hobroker/tshows-api/issues/59)) ([39e377c](https://github.com/hobroker/tshows-api/commit/39e377cd7ffc5024d3dc9b21e9dfe616d2d1d0e1))
+
 # [3.11.0](https://github.com/hobroker/tshows-api/compare/v3.10.0...v3.11.0) (2022-05-08)
 
 
