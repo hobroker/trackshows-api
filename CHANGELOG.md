@@ -1,3 +1,10 @@
+# [3.14.0](https://github.com/hobroker/tshows-api/compare/v3.13.0...v3.14.0) (2022-05-08)
+
+
+### Features
+
+* Add RecommendationsSection to HomePage ([#61](https://github.com/hobroker/tshows-api/issues/61)) ([b933f9c](https://github.com/hobroker/tshows-api/commit/b933f9c46ed6996ee067ead90135a647980742d0))
+
 # [3.13.0](https://github.com/hobroker/tshows-api/compare/v3.12.0...v3.13.0) (2022-05-08)
 
 
