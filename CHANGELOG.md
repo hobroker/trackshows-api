@@ -1,3 +1,10 @@
+## [3.15.1](https://github.com/hobroker/tshows-api/compare/v3.15.0...v3.15.1) (2022-05-08)
+
+
+### Bug Fixes
+
+* season data ([#63](https://github.com/hobroker/tshows-api/issues/63)) ([2d47529](https://github.com/hobroker/tshows-api/commit/2d475296afc7279e8c1725f800b31245270958c2))
+
 # [3.15.0](https://github.com/hobroker/tshows-api/compare/v3.14.0...v3.15.0) (2022-05-08)
 
 
