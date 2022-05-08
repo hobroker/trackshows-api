@@ -32,7 +32,7 @@ export class TmdbShowService {
 
   async discoverByGenres(
     genreIds: number[] = [],
-    { countPerGenre = 6 } = {},
+    { countPerGenre = 6, excludedExternalIds = [] } = {},
   ): Promise<PartialShow[]> {
     const data = await Promise.all(genreIds.map(this.discoverByGenreId));
 
@@ -42,6 +42,7 @@ export class TmdbShowService {
       curr.forEach((item) => {
         if (
           i >= countPerGenre ||
+          excludedExternalIds.includes(item.externalId) ||
           acc.find(propEq('externalId', item.externalId))
         ) {
           return;
