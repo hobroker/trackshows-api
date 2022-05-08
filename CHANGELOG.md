@@ -1,3 +1,10 @@
+# [3.15.0](https://github.com/hobroker/tshows-api/compare/v3.14.0...v3.15.0) (2022-05-08)
+
+
+### Features
+
+* add getStatsCalendar and getStatsGenres endpoints ([#62](https://github.com/hobroker/tshows-api/issues/62)) ([3628ac6](https://github.com/hobroker/tshows-api/commit/3628ac608dce64f91448963c908b167b1e7db26b))
+
 # [3.14.0](https://github.com/hobroker/tshows-api/compare/v3.13.0...v3.14.0) (2022-05-08)
 
 
