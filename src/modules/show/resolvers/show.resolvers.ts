@@ -13,6 +13,7 @@ import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { ShowService, StatusService } from '../services';
 import { RequestWithUser } from '../../auth/interfaces';
 import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
+import { Status } from '../../watchlist/entities';
 import {
   DiscoverShowsInput,
   FullShowInput,
@@ -35,7 +36,9 @@ export class ShowResolver {
   async status(
     @Parent() show: Show,
     @Context() { req: { user } }: { req: RequestWithUser },
-  ) {
+  ): Promise<Status> {
+    if (!user) return Status.None;
+
     return this.statusService.getStatusForShow(user.id, show);
   }
 
