@@ -12,9 +12,6 @@ export const showFacade = applySpec<Show>({
   tallImage: prop('poster_path'),
   originCountry: compose(head, prop('origin_country')),
   firstAirDate: compose(toDate, prop('first_air_date')),
-  __meta__: {
-    genreIds: prop('genre_ids'),
-  },
   genres: compose(map(genreFacade), propOr([], 'genres')),
   episodeRuntime: compose(head, propOr([0], 'episode_run_time')),
   isInProduction: propOr(false, 'in_production'),

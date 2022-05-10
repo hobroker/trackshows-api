@@ -63,6 +63,7 @@ type Void {
 
 type Preference {
   genres: [Genre!]!
+  genreIds: [Int!]!
 }
 
 type Episode {

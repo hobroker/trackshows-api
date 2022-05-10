@@ -44,8 +44,4 @@ export class Show {
 
   @Field(() => [Season])
   seasons: Season[];
-
-  __meta__: {
-    genreIds: number[];
-  };
 }
