@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
-import { assoc } from 'ramda';
+import { always, assoc, compose, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { Preference } from '../entities';
 import { toggleListItem } from '../../../util/fp';
@@ -18,15 +18,13 @@ export class PreferenceService {
   }
 
   async toggleGenreForUser(userId: number, genreId: number) {
-    const preference = await this.prismaService.preference.findFirst({
-      where: { userId },
-    });
-
-    if (!preference) {
-      return this.upsert(userId, { genreIds: [genreId] });
-    }
-
-    const genreIds = toggleListItem(genreId, preference.genreIds);
+    const genreIds = await this.prismaService.preference
+      .findFirst({
+        where: { userId },
+        rejectOnNotFound: true,
+      })
+      .then(compose(toggleListItem(genreId), prop('genreIds')))
+      .catch(always([genreId]));
 
     return this.upsert(userId, { genreIds });
   }
