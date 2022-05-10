@@ -17,6 +17,7 @@ import {
   DiscoverShowsInput,
   FullShowInput,
   ListRecommendationsInput,
+  SimilarShowsInput,
   TrendingInput,
 } from './input';
 
@@ -74,5 +75,12 @@ export class ShowResolver {
   @UseGuards(GraphqlJwtAnyoneGuard)
   async fullShow(@Args('input') { externalId }: FullShowInput): Promise<Show> {
     return this.tmdbShowService.getShow(externalId);
+  }
+
+  @Query(() => [Show])
+  async getSimilarShows(
+    @Args('input') { externalId }: SimilarShowsInput,
+  ): Promise<Show[]> {
+    return this.tmdbShowService.getRecommendations(externalId);
   }
 }
