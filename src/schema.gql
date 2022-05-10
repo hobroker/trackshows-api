@@ -16,7 +16,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Watchlist {
-  show: PartialShow!
+  show: Show!
   status: Status!
 }
 
@@ -41,7 +41,7 @@ type Season {
   airDate: DateTime
 }
 
-type PartialShow {
+type Show {
   externalId: Int!
   name: String!
   description: String!
@@ -75,7 +75,7 @@ type Episode {
   description: String
   wideImage: String
   airDate: DateTime
-  show: PartialShow!
+  show: Show!
 }
 
 type Review {
@@ -111,12 +111,12 @@ type PieItem {
 type Query {
   me: User!
   listGenres: [Genre!]
-  discoverShows(input: DiscoverShowsInput!): [PartialShow!]!
-  listRecommendations(input: ListRecommendationsInput!): [PartialShow!]!
-  getMyShows: [PartialShow!]!
-  listTrending(input: TrendingInput!): [PartialShow!]!
-  fullShow(input: FullShowInput!): PartialShow!
-  getSimilarShows(input: SimilarShowsInput!): [PartialShow!]!
+  discoverShows(input: DiscoverShowsInput!): [Show!]!
+  listRecommendations(input: ListRecommendationsInput!): [Show!]!
+  getMyShows: [Show!]!
+  listTrending(input: TrendingInput!): [Show!]!
+  fullShow(input: FullShowInput!): Show!
+  getSimilarShows(input: SimilarShowsInput!): [Show!]!
   getPreferences: Preference
   getWatchlist: [Watchlist!]!
   listUpNext: [Episode!]!
@@ -128,7 +128,7 @@ type Query {
   getStatsSummary: [StatsSummaryItem!]!
   getStatsCalendar: [StatsCalendarItem!]!
   getStatsGenres: [PieItem!]!
-  search(input: SearchInput!): [PartialShow!]!
+  search(input: SearchInput!): [Show!]!
 }
 
 input DiscoverShowsInput {

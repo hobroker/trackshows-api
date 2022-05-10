@@ -4,7 +4,7 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphQLResolveInfo } from 'graphql';
 import { when } from 'ramda';
-import { PartialShow } from '../entities';
+import { Show } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { ShowService } from '../services';
 import { GraphqlJwtAnyoneGuard } from '../../auth/guards';
@@ -18,12 +18,12 @@ export class SimilarResolver {
     private readonly showService: ShowService,
   ) {}
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   @UseGuards(GraphqlJwtAnyoneGuard)
   async getSimilarShows(
     @Info() info: GraphQLResolveInfo,
     @Args('input') { externalId }: SimilarShowsInput,
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     const fields = fieldsMap(info);
 
     return this.tmdbShowService

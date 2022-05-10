@@ -5,7 +5,7 @@ import { Genre } from './genre';
 import { Season } from './season';
 
 @ObjectType()
-export class PartialShow {
+export class Show {
   @Field(() => Int)
   externalId: number;
 

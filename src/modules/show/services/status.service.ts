@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { always, ifElse, path, prop } from 'ramda';
-import { PartialShow } from '../entities';
+import { Show } from '../entities';
 import { PrismaService } from '../../prisma';
 import { Status } from '../../watchlist/entities';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
@@ -18,7 +18,7 @@ const mapWatchlistToShowIdAndStatus = indexByAndMap(
 export class StatusService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async linkStatusToShows<T extends PartialShow>(
+  async linkStatusToShows<T extends Show>(
     userId: number,
     shows: T[],
   ): Promise<T[]> {
@@ -46,10 +46,7 @@ export class StatusService {
     }));
   }
 
-  async linkStatusToShow(
-    userId: number,
-    item: PartialShow,
-  ): Promise<PartialShow> {
+  async linkStatusToShow(userId: number, item: Show): Promise<Show> {
     if (!item) {
       return null;
     }
@@ -61,10 +58,7 @@ export class StatusService {
     return this.linkStatusToShows(userId, [item]).then(([item]) => item);
   }
 
-  getStatusForShow<T extends PartialShow>(
-    userId: number,
-    show: T,
-  ): Promise<Status> {
+  getStatusForShow<T extends Show>(userId: number, show: T): Promise<Status> {
     return this.prismaService.watchlist
       .findFirst({
         where: { userId, showId: show.externalId },

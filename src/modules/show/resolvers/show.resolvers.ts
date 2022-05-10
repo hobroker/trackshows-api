@@ -8,7 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
-import { PartialShow } from '../entities';
+import { Show } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { ShowService, StatusService } from '../services';
 import { RequestWithUser } from '../../auth/interfaces';
@@ -21,7 +21,7 @@ import {
 } from './input';
 
 @Injectable()
-@Resolver(PartialShow)
+@Resolver(Show)
 export class ShowResolver {
   constructor(
     private readonly tmdbShowService: TmdbShowService,
@@ -32,49 +32,47 @@ export class ShowResolver {
 
   @ResolveField()
   async status(
-    @Parent() show: PartialShow,
+    @Parent() show: Show,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
     return this.statusService.getStatusForShow(user.id, show);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   @UseGuards(GraphqlJwtAuthGuard)
   async discoverShows(
     @Args('input') { genreIds }: DiscoverShowsInput,
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     return this.tmdbShowService.discoverByGenres(genreIds);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   @UseGuards(GraphqlJwtAuthGuard)
   async listRecommendations(
     @Args('input') { genreIds }: ListRecommendationsInput,
     @Context() { req: { user } }: { req: RequestWithUser },
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     return this.showService.listRecommendations(user.id, genreIds);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   @UseGuards(GraphqlJwtAuthGuard)
   async getMyShows(
     @Context() { req: { user } }: { req: RequestWithUser },
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     return this.showService.getMyShows(user.id);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   async listTrending(
     @Args('input') { page = 1 }: TrendingInput,
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     return this.tmdbShowService.getTrending(page);
   }
 
-  @Query(() => PartialShow)
+  @Query(() => Show)
   @UseGuards(GraphqlJwtAnyoneGuard)
-  async fullShow(
-    @Args('input') { externalId }: FullShowInput,
-  ): Promise<PartialShow> {
+  async fullShow(@Args('input') { externalId }: FullShowInput): Promise<Show> {
     return this.tmdbShowService.getShow(externalId);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { indexBy, map, prop } from 'ramda';
-import { PartialShow } from '../entities';
+import { Show } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { PrismaService } from '../../prisma';
 import { __ShowChild } from '../entities/episode';
@@ -17,7 +17,7 @@ export class ShowService {
     this.linkShow = this.linkShow.bind(this);
   }
 
-  async linkGenres<T extends PartialShow>(data: T[]): Promise<T[]> {
+  async linkGenres<T extends Show>(data: T[]): Promise<T[]> {
     const genres = await this.tmdbGenreService
       .list()
       .then(indexBy(prop('externalId')));
@@ -49,7 +49,7 @@ export class ShowService {
     return this.linkShows([item]).then(([item]) => item);
   }
 
-  async getMyShows(userId: number): Promise<PartialShow[]> {
+  async getMyShows(userId: number): Promise<Show[]> {
     const externalIds: number[] = await this.prismaService.watchlist
       .findMany({
         where: { userId },
@@ -63,7 +63,7 @@ export class ShowService {
   async listRecommendations(
     userId: number,
     genreIds: number[],
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     const excludedExternalIds: number[] = await this.prismaService.watchlist
       .findMany({ where: { userId }, select: { showId: true } })
       .then(map(prop('showId')));
