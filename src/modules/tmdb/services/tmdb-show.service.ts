@@ -12,7 +12,7 @@ import {
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
-import { fullShowFacade, partialShowFacade } from '../facades';
+import { showFacade } from '../facades';
 import { tmdbConfig } from '../tmdb.config';
 import { Show } from '../../show';
 import { serialEvery } from '../../../util/promise';
@@ -67,7 +67,7 @@ export class TmdbShowService {
       },
     });
 
-    return this.withPartialShowFacade(results);
+    return this.withShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
@@ -76,7 +76,7 @@ export class TmdbShowService {
       data: { results },
     } = await this.httpService.get(`/tv/${showId}/recommendations`);
 
-    return this.withPartialShowFacade(results);
+    return this.withShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
@@ -93,7 +93,7 @@ export class TmdbShowService {
         ),
       );
 
-    return fullShowFacade(data);
+    return showFacade(data);
   }
 
   @Memoize({ hashFunction: true })
@@ -104,7 +104,7 @@ export class TmdbShowService {
       params: { query },
     });
 
-    return this.withPartialShowFacade(results).filter(prop('wideImage'));
+    return this.withShowFacade(results).filter(prop('wideImage'));
   }
 
   @Memoize({ hashFunction: true })
@@ -117,7 +117,7 @@ export class TmdbShowService {
       },
     });
 
-    return this.withPartialShowFacade(results);
+    return this.withShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
@@ -131,7 +131,7 @@ export class TmdbShowService {
     return !skipShowIds.includes(show.externalId);
   }
 
-  private withPartialShowFacade(data) {
-    return data.map(partialShowFacade).filter(this.whereNotExcluded);
+  private withShowFacade(data) {
+    return data.map(showFacade).filter(this.whereNotExcluded);
   }
 }

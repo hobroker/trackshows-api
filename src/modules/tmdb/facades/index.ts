@@ -3,5 +3,5 @@ export { personFacade } from './person.facade';
 export { keywordFacade } from './keyword.facade';
 export { seasonFacade } from './season.facade';
 export { episodeFacade } from './episode.facade';
-export { partialShowFacade, fullShowFacade } from './show.facade';
+export { showFacade } from './show.facade';
 export { castFacade, crewFacade } from './credits.facade';
