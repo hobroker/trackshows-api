@@ -33,7 +33,7 @@ export class StatsService {
     const showIdToEpisodeRuntime: Record<number, number> = shows.reduce(
       (acc, show) => ({
         ...acc,
-        [show.externalId]: show.details.episodeRuntime,
+        [show.externalId]: show.episodeRuntime,
       }),
       {},
     );

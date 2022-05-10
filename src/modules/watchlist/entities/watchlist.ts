@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { PartialShow } from '../../show';
+import { Show } from '../../show';
 import { Status } from './status';
 
 @ObjectType()
 export class Watchlist {
-  @Field(() => PartialShow)
-  show: PartialShow;
+  @Field(() => Show)
+  show: Show;
 
   @Field(() => Status)
   status: Status;

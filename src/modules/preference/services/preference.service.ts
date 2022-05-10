@@ -1,16 +1,13 @@
 import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
+import { always, assoc, compose, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
-import { TmdbGenreService } from '../../tmdb';
 import { Preference } from '../entities';
 import { toggleListItem } from '../../../util/fp';
 
 @Injectable()
 export class PreferenceService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly tmdbGenreService: TmdbGenreService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   upsert(userId: number, data: Partial<Prisma.PreferenceUncheckedCreateInput>) {
     return this.prismaService.preference.upsert({
@@ -20,43 +17,21 @@ export class PreferenceService {
     });
   }
 
-  async toggleGenre(userId: number, genreId: number) {
-    const preference = await this.prismaService.preference.findFirst({
-      where: { userId },
-    });
-
-    if (!preference) {
-      return this.upsert(userId, { genreIds: [genreId] });
-    }
-
-    const genreIds = toggleListItem(genreId, preference.genreIds);
+  async toggleGenreForUser(userId: number, genreId: number) {
+    const genreIds = await this.prismaService.preference
+      .findFirst({
+        where: { userId },
+        rejectOnNotFound: true,
+      })
+      .then(compose(toggleListItem(genreId), prop('genreIds')))
+      .catch(always([genreId]));
 
     return this.upsert(userId, { genreIds });
   }
 
-  async findByUserId(
-    userId: number,
-    { include = { genres: false } } = {},
-  ): Promise<Preference> {
-    const item = await this.prismaService.preference.findFirst({
-      where: { userId },
-    });
-
-    if (!item) {
-      return null;
-    }
-
-    const preference: Preference = {
-      ...item,
-      genres: [],
-    };
-
-    if (include.genres) {
-      preference.genres = await this.tmdbGenreService.findByExternalIds(
-        item.genreIds,
-      );
-    }
-
-    return preference;
+  async findByUserId(userId: number): Promise<Preference> {
+    return this.prismaService.preference
+      .findFirst({ where: { userId } })
+      .then(assoc('genres', []));
   }
 }

@@ -1,25 +1,29 @@
 import 'reflect-metadata';
-import { Args, Context, Info, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
-import { fieldsMap } from 'graphql-fields-list';
-import { GraphQLResolveInfo } from 'graphql';
-import { when } from 'ramda';
-import { FullShow, PartialShow } from '../entities';
+import { Show } from '../entities';
 import { TmdbGenreService, TmdbShowService } from '../../tmdb';
 import { ShowService, StatusService } from '../services';
-import {
-  RequestWithAnyoneInterface,
-  RequestWithUser,
-} from '../../auth/interfaces';
+import { RequestWithUser } from '../../auth/interfaces';
 import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
+import { Status } from '../../watchlist/entities';
 import {
   DiscoverShowsInput,
   FullShowInput,
   ListRecommendationsInput,
+  SimilarShowsInput,
   TrendingInput,
 } from './input';
 
 @Injectable()
+@Resolver(Show)
 export class ShowResolver {
   constructor(
     private readonly tmdbShowService: TmdbShowService,
@@ -28,75 +32,58 @@ export class ShowResolver {
     private readonly statusService: StatusService,
   ) {}
 
-  @Query(() => [PartialShow])
-  @UseGuards(GraphqlJwtAuthGuard)
-  async discoverShows(
-    @Info() info: GraphQLResolveInfo,
-    @Args('input') { genreIds }: DiscoverShowsInput,
+  @ResolveField()
+  async status(
+    @Parent() show: Show,
     @Context() { req: { user } }: { req: RequestWithUser },
-  ): Promise<PartialShow[]> {
-    const fields = fieldsMap(info);
+  ): Promise<Status> {
+    if (!user) return Status.None;
 
-    return this.tmdbShowService
-      .discoverByGenres(genreIds)
-      .then(when(() => 'genres' in fields, this.showService.linkGenres))
-      .then(
-        when(
-          () => 'status' in fields,
-          (shows) => this.statusService.linkStatusToShows(user.id, shows),
-        ),
-      );
+    return this.statusService.getStatusForShow(user.id, show);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
+  @UseGuards(GraphqlJwtAuthGuard)
+  async discoverShows(
+    @Args('input') { genreIds }: DiscoverShowsInput,
+  ): Promise<Show[]> {
+    return this.tmdbShowService.discoverByGenres(genreIds);
+  }
+
+  @Query(() => [Show])
   @UseGuards(GraphqlJwtAuthGuard)
   async listRecommendations(
     @Args('input') { genreIds }: ListRecommendationsInput,
     @Context() { req: { user } }: { req: RequestWithUser },
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     return this.showService.listRecommendations(user.id, genreIds);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   @UseGuards(GraphqlJwtAuthGuard)
   async getMyShows(
-    @Info() info: GraphQLResolveInfo,
     @Context() { req: { user } }: { req: RequestWithUser },
-  ): Promise<PartialShow[]> {
-    const fields = fieldsMap(info);
-
-    return this.showService
-      .getMyShows(user.id)
-      .then(when(() => 'genres' in fields, this.showService.linkGenres))
-      .then(
-        when(
-          () => 'status' in fields,
-          (shows) => this.statusService.linkStatusToShows(user.id, shows),
-        ),
-      );
+  ): Promise<Show[]> {
+    return this.showService.getMyShows(user.id);
   }
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   async listTrending(
     @Args('input') { page = 1 }: TrendingInput,
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     return this.tmdbShowService.getTrending(page);
   }
 
-  @Query(() => FullShow)
+  @Query(() => Show)
   @UseGuards(GraphqlJwtAnyoneGuard)
-  async fullShow(
-    @Info() info: GraphQLResolveInfo,
-    @Args('input') { externalId }: FullShowInput,
-    @Context() { req: { user } }: { req: RequestWithAnyoneInterface },
-  ): Promise<FullShow> {
-    const fields = fieldsMap(info);
+  async fullShow(@Args('input') { externalId }: FullShowInput): Promise<Show> {
+    return this.tmdbShowService.getShow(externalId);
+  }
 
-    return this.tmdbShowService.getShow(externalId).then(
-      when(
-        () => 'status' in fields,
-        (show) => this.statusService.linkStatusToShow(user?.id, show),
-      ),
-    );
+  @Query(() => [Show])
+  async getSimilarShows(
+    @Args('input') { externalId }: SimilarShowsInput,
+  ): Promise<Show[]> {
+    return this.tmdbShowService.getRecommendations(externalId);
   }
 }

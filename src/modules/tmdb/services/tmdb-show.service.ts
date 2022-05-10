@@ -12,9 +12,9 @@ import {
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
-import { fullShowFacade, partialShowFacade } from '../facades';
+import { showFacade } from '../facades';
 import { tmdbConfig } from '../tmdb.config';
-import { FullShow, PartialShow } from '../../show';
+import { Show } from '../../show';
 import { serialEvery } from '../../../util/promise';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class TmdbShowService {
   async discoverByGenres(
     genreIds: number[] = [],
     { countPerGenre = 6, excludedExternalIds = [] } = {},
-  ): Promise<PartialShow[]> {
+  ): Promise<Show[]> {
     const data = await Promise.all(genreIds.map(this.discoverByGenreId));
 
     return data.reduce((acc, curr) => {
@@ -56,7 +56,7 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  private async discoverByGenreId(genreId: number): Promise<PartialShow[]> {
+  private async discoverByGenreId(genreId: number): Promise<Show[]> {
     const {
       data: { results },
     } = await this.httpService.get(`/discover/tv`, {
@@ -67,16 +67,16 @@ export class TmdbShowService {
       },
     });
 
-    return this.withPartialShowFacade(results);
+    return this.withShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
-  async getRecommendations(showId: number): Promise<PartialShow[]> {
+  async getRecommendations(showId: number): Promise<Show[]> {
     const {
       data: { results },
     } = await this.httpService.get(`/tv/${showId}/recommendations`);
 
-    return this.withPartialShowFacade(results);
+    return this.withShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
@@ -93,22 +93,22 @@ export class TmdbShowService {
         ),
       );
 
-    return fullShowFacade(data);
+    return showFacade(data);
   }
 
   @Memoize({ hashFunction: true })
-  async search(query: string): Promise<PartialShow[]> {
+  async search(query: string): Promise<Show[]> {
     const {
       data: { results },
     } = await this.httpService.get(`/search/tv/`, {
       params: { query },
     });
 
-    return this.withPartialShowFacade(results).filter(prop('wideImage'));
+    return this.withShowFacade(results).filter(prop('wideImage'));
   }
 
   @Memoize({ hashFunction: true })
-  async getTrending(page = 1): Promise<PartialShow[]> {
+  async getTrending(page = 1): Promise<Show[]> {
     const {
       data: { results },
     } = await this.httpService.get('/trending/tv/week', {
@@ -117,21 +117,21 @@ export class TmdbShowService {
       },
     });
 
-    return this.withPartialShowFacade(results);
+    return this.withShowFacade(results);
   }
 
   @Memoize({ hashFunction: true })
-  getShows(externalIds: number[]): Promise<FullShow[]> {
+  getShows(externalIds: number[]): Promise<Show[]> {
     return serialEvery(splitEvery(10, externalIds), this.getShow);
   }
 
-  private whereNotExcluded(show: PartialShow) {
+  private whereNotExcluded(show: Show) {
     const { skipShowIds } = this.config;
 
     return !skipShowIds.includes(show.externalId);
   }
 
-  private withPartialShowFacade(data) {
-    return data.map(partialShowFacade).filter(this.whereNotExcluded);
+  private withShowFacade(data) {
+    return data.map(showFacade).filter(this.whereNotExcluded);
   }
 }

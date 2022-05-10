@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Args, Query } from '@nestjs/graphql';
 import { Injectable } from '@nestjs/common';
-import { PartialShow } from '../../show';
+import { Show } from '../../show';
 import { TmdbShowService } from '../../tmdb';
 import { SearchInput } from './inputs';
 
@@ -9,7 +9,7 @@ import { SearchInput } from './inputs';
 export class SearchResolver {
   constructor(private tmdbShowService: TmdbShowService) {}
 
-  @Query(() => [PartialShow])
+  @Query(() => [Show])
   async search(@Args('input') { query }: SearchInput) {
     return this.tmdbShowService.search(query);
   }
