@@ -68,6 +68,7 @@ type Preference {
 type Episode {
   id: Int!
   externalId: Int!
+  showId: Int!
   number: Int!
   seasonNumber: Int!
   name: String!

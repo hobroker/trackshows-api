@@ -2,21 +2,16 @@ import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Show } from './show';
 
-export class __ShowChild {
-  show: Show;
-
-  __meta__: {
-    showId: number;
-  };
-}
-
 @ObjectType()
-export class Episode extends __ShowChild {
+export class Episode {
   @Field(() => Int)
   id: number;
 
   @Field(() => Int)
   externalId: number;
+
+  @Field(() => Int)
+  showId: number;
 
   @Field(() => Int)
   number: number;

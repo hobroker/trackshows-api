@@ -1,9 +1,14 @@
 import 'reflect-metadata';
-import { Args, Context, Info, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
-import { when } from 'ramda';
-import { fieldsMap } from 'graphql-fields-list';
-import { GraphQLResolveInfo } from 'graphql';
 import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
 import {
   RequestWithAnyoneInterface,
@@ -12,28 +17,31 @@ import {
 import { Episode } from '../../show/entities/episode';
 import { EpisodeService, WatchlistService } from '../services';
 import { ShowService } from '../../show/services';
+import { TmdbShowService } from '../../tmdb';
+import { Show } from '../../show';
 import { GetSeasonEpisodesInput, UpsertEpisodeInput } from './inputs';
 
 @Injectable()
+@Resolver(Episode)
 export class EpisodeResolver {
   constructor(
     private readonly watchlistService: WatchlistService,
     private readonly episodeService: EpisodeService,
     private readonly showService: ShowService,
+    private readonly tmdbShowService: TmdbShowService,
   ) {}
+
+  @ResolveField()
+  async show(@Parent() episode: Episode): Promise<Show> {
+    return this.tmdbShowService.getShow(episode.showId);
+  }
 
   @Query(() => [Episode])
   @UseGuards(GraphqlJwtAuthGuard)
-  async listUpNext(
-    @Info() info: GraphQLResolveInfo,
-    @Context() { req: { user } }: { req: RequestWithUser },
-  ) {
+  async listUpNext(@Context() { req: { user } }: { req: RequestWithUser }) {
     const userId = user.id;
-    const fields = fieldsMap(info);
 
-    return this.watchlistService
-      .listUpNext(userId)
-      .then(when(() => 'show' in fields, this.showService.linkShows));
+    return this.watchlistService.listUpNext(userId);
   }
 
   @Query(() => [Episode])
@@ -51,30 +59,19 @@ export class EpisodeResolver {
 
   @Query(() => [Episode])
   @UseGuards(GraphqlJwtAuthGuard)
-  async listUpcoming(
-    @Info() info: GraphQLResolveInfo,
-    @Context() { req: { user } }: { req: RequestWithUser },
-  ) {
+  async listUpcoming(@Context() { req: { user } }: { req: RequestWithUser }) {
     const userId = user.id;
-    const fields = fieldsMap(info);
 
-    return this.watchlistService
-      .listUpcoming(userId)
-      .then(when(() => 'show' in fields, this.showService.linkShows));
+    return this.watchlistService.listUpcoming(userId);
   }
 
   @Mutation(() => Episode, { nullable: true })
   @UseGuards(GraphqlJwtAuthGuard)
   async upsertEpisode(
     @Args('input') { episodeId, isWatched }: UpsertEpisodeInput,
-    @Info() info: GraphQLResolveInfo,
   ) {
-    const fields = fieldsMap(info);
-
     await this.episodeService.upsertEpisode(episodeId, isWatched);
 
-    return this.episodeService
-      .getEpisodeUpNext(episodeId)
-      .then(when(() => 'show' in fields, this.showService.linkShow));
+    return this.episodeService.getEpisodeUpNext(episodeId);
   }
 }

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { always, flatten, map } from 'ramda';
+import { always, assoc, flatten, map, prop } from 'ramda';
 import { ConfigType } from '@nestjs/config';
 import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
@@ -36,6 +36,7 @@ export class TmdbEpisodeService {
     return this.httpService
       .get(`/tv/${showId}/season/${seasonNumber}`)
       .then(({ data }) => data.episodes)
+      .then(map(assoc('showId', showId)))
       .then(map(episodeFacade));
   }
 
@@ -47,7 +48,9 @@ export class TmdbEpisodeService {
   ): Promise<Episode> {
     return this.httpService
       .get(`/tv/${showId}/season/${seasonNumber}/episode/${episodeNumber}`)
-      .then(({ data }) => episodeFacade({ ...data, showId }))
+      .then(prop('data'))
+      .then(assoc('showId', showId))
+      .then(episodeFacade)
       .catch(always(null));
   }
 }

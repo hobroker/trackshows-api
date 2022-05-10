@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Args, Context, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { RequestWithUser } from '../../auth/interfaces';
@@ -8,6 +8,7 @@ import { WatchlistService } from '../services';
 import { UpsertWatchlistInput } from './inputs';
 
 @Injectable()
+@Resolver(Watchlist)
 export class WatchlistResolver {
   constructor(private readonly watchlistService: WatchlistService) {}
 
@@ -17,10 +18,12 @@ export class WatchlistResolver {
     @Args('input') { showId, status }: UpsertWatchlistInput,
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
-    const userId = user.id;
     const statusId = status;
 
-    return this.watchlistService.upsert({ showId, userId }, { statusId });
+    return this.watchlistService.upsert(
+      { showId, userId: user.id },
+      { statusId },
+    );
   }
 
   @Query(() => [Watchlist])
