@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { Auth, google } from 'googleapis';
 import { User } from '../../user/entities';
-import { UserService } from '../../user/services/user.service';
+import { UserService } from '../../user/services';
 import { googleConfig } from '../google.config';
 import { AuthService } from '../../auth';
 

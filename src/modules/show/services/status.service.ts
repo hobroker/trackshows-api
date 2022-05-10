@@ -57,4 +57,25 @@ export class StatusService {
 
     return this.linkStatusToShows(userId, [item]).then(([item]) => item);
   }
+
+  getStatusForShow<T extends PartialShow>(
+    userId: number,
+    show: T,
+  ): Promise<Status> {
+    return this.prismaService.watchlist
+      .findFirst({
+        where: { userId, showId: show.externalId },
+        include: {
+          episodes: {
+            take: 1,
+            where: { isWatched: false },
+          },
+        },
+        rejectOnNotFound: true,
+      })
+      .then(({ episodes, statusId }) =>
+        episodes.length ? statusId : Status.FinishedWatching,
+      )
+      .catch(() => Status.None);
+  }
 }

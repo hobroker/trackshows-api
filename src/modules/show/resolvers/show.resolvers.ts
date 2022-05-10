@@ -1,5 +1,13 @@
 import 'reflect-metadata';
-import { Args, Context, Info, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Info,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { fieldsMap } from 'graphql-fields-list';
 import { GraphQLResolveInfo } from 'graphql';
@@ -20,6 +28,7 @@ import {
 } from './input';
 
 @Injectable()
+@Resolver(PartialShow)
 export class ShowResolver {
   constructor(
     private readonly tmdbShowService: TmdbShowService,
@@ -28,24 +37,20 @@ export class ShowResolver {
     private readonly statusService: StatusService,
   ) {}
 
+  @ResolveField()
+  async status(
+    @Parent() show: PartialShow,
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ) {
+    return this.statusService.getStatusForShow(user.id, show);
+  }
+
   @Query(() => [PartialShow])
   @UseGuards(GraphqlJwtAuthGuard)
   async discoverShows(
-    @Info() info: GraphQLResolveInfo,
     @Args('input') { genreIds }: DiscoverShowsInput,
-    @Context() { req: { user } }: { req: RequestWithUser },
   ): Promise<PartialShow[]> {
-    const fields = fieldsMap(info);
-
-    return this.tmdbShowService
-      .discoverByGenres(genreIds)
-      .then(when(() => 'genres' in fields, this.showService.linkGenres))
-      .then(
-        when(
-          () => 'status' in fields,
-          (shows) => this.statusService.linkStatusToShows(user.id, shows),
-        ),
-      );
+    return this.tmdbShowService.discoverByGenres(genreIds);
   }
 
   @Query(() => [PartialShow])
@@ -60,20 +65,9 @@ export class ShowResolver {
   @Query(() => [PartialShow])
   @UseGuards(GraphqlJwtAuthGuard)
   async getMyShows(
-    @Info() info: GraphQLResolveInfo,
     @Context() { req: { user } }: { req: RequestWithUser },
   ): Promise<PartialShow[]> {
-    const fields = fieldsMap(info);
-
-    return this.showService
-      .getMyShows(user.id)
-      .then(when(() => 'genres' in fields, this.showService.linkGenres))
-      .then(
-        when(
-          () => 'status' in fields,
-          (shows) => this.statusService.linkStatusToShows(user.id, shows),
-        ),
-      );
+    return this.showService.getMyShows(user.id);
   }
 
   @Query(() => [PartialShow])
