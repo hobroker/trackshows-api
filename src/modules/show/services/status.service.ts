@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { always, ifElse, path, prop } from 'ramda';
-import { FullShow, PartialShow } from '../entities';
+import { PartialShow } from '../entities';
 import { PrismaService } from '../../prisma';
 import { Status } from '../../watchlist/entities';
 import { indexByAndMap } from '../../../util/fp/indexByAndMap';
@@ -46,7 +46,10 @@ export class StatusService {
     }));
   }
 
-  async linkStatusToShow(userId: number, item: FullShow): Promise<FullShow> {
+  async linkStatusToShow(
+    userId: number,
+    item: PartialShow,
+  ): Promise<PartialShow> {
     if (!item) {
       return null;
     }

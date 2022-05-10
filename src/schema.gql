@@ -32,6 +32,15 @@ type Genre {
   name: String!
 }
 
+type Season {
+  name: String!
+  description: String
+  tallImage: String
+  number: Int!
+  episodeCount: String!
+  airDate: DateTime
+}
+
 type PartialShow {
   externalId: Int!
   name: String!
@@ -42,35 +51,10 @@ type PartialShow {
   firstAirDate: DateTime!
   genres: [Genre!]!
   status: Status!
-}
-
-type Season {
-  name: String!
-  description: String
-  tallImage: String
-  number: Int!
-  episodeCount: String!
-  airDate: DateTime
-}
-
-type ShowDetails {
   episodeRuntime: Int!
   isInProduction: Boolean!
   tagline: String
   seasons: [Season!]!
-}
-
-type FullShow {
-  externalId: Int!
-  name: String!
-  description: String!
-  wideImage: String
-  tallImage: String
-  originCountry: String!
-  firstAirDate: DateTime!
-  genres: [Genre!]!
-  status: Status!
-  details: ShowDetails!
 }
 
 type Void {
@@ -131,7 +115,7 @@ type Query {
   listRecommendations(input: ListRecommendationsInput!): [PartialShow!]!
   getMyShows: [PartialShow!]!
   listTrending(input: TrendingInput!): [PartialShow!]!
-  fullShow(input: FullShowInput!): FullShow!
+  fullShow(input: FullShowInput!): PartialShow!
   getSimilarShows(input: SimilarShowsInput!): [PartialShow!]!
   getPreferences: Preference
   getWatchlist: [Watchlist!]!

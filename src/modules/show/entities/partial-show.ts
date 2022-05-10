@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Status } from '../../watchlist/entities';
 import { Genre } from './genre';
+import { Season } from './season';
 
 @ObjectType()
 export class PartialShow {
@@ -31,6 +32,18 @@ export class PartialShow {
 
   @Field(() => Status)
   status: Status;
+
+  @Field(() => Int)
+  episodeRuntime: number;
+
+  @Field()
+  isInProduction: boolean;
+
+  @Field(() => String, { nullable: true })
+  tagline: string;
+
+  @Field(() => [Season])
+  seasons: Season[];
 
   __meta__: {
     genreIds: number[];

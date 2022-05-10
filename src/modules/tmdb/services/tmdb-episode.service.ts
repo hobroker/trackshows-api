@@ -20,9 +20,7 @@ export class TmdbEpisodeService {
 
   @Memoize({ hashFunction: true })
   async getAllEpisodes(showId: number): Promise<Episode[]> {
-    const {
-      details: { seasons },
-    } = await this.tmdbShowService.getShow(showId);
+    const { seasons } = await this.tmdbShowService.getShow(showId);
     const data: Episode[][] = await Promise.all(
       seasons.map(async ({ number }) => this.getSeasonEpisodes(showId, number)),
     );

@@ -14,7 +14,7 @@ import { Memoize } from 'typescript-memoize';
 import { HttpService } from '../../http';
 import { fullShowFacade, partialShowFacade } from '../facades';
 import { tmdbConfig } from '../tmdb.config';
-import { FullShow, PartialShow } from '../../show';
+import { PartialShow } from '../../show';
 import { serialEvery } from '../../../util/promise';
 
 @Injectable()
@@ -121,7 +121,7 @@ export class TmdbShowService {
   }
 
   @Memoize({ hashFunction: true })
-  getShows(externalIds: number[]): Promise<FullShow[]> {
+  getShows(externalIds: number[]): Promise<PartialShow[]> {
     return serialEvery(splitEvery(10, externalIds), this.getShow);
   }
 
