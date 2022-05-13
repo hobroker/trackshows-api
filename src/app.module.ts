@@ -19,6 +19,7 @@ import { WatchlistModule } from './modules/watchlist';
 import { ReviewModule } from './modules/review';
 import { StatsModule } from './modules/stats';
 import { SearchModule } from './modules/search';
+import { NotificationModule } from './modules/notification';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { SearchModule } from './modules/search';
       ],
       cors: {
         credentials: 'include',
-        origin: ['http://localhost:3003'],
+        origin: ['http://localhost:3003', 'https://trackshows.hobroker.com'],
       },
     }),
     HealthModule,
@@ -51,6 +52,7 @@ import { SearchModule } from './modules/search';
     ReviewModule,
     StatsModule,
     SearchModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

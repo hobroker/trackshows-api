@@ -110,6 +110,12 @@ type PieItem {
   value: Int!
 }
 
+type Notification {
+  id: Int!
+  episode: Episode!
+  isRead: Boolean
+}
+
 type Query {
   me: User!
   listGenres: [Genre!]
@@ -131,6 +137,7 @@ type Query {
   getStatsCalendar: [StatsCalendarItem!]!
   getStatsGenres: [PieItem!]!
   search(input: SearchInput!): [Show!]!
+  getNotifications: [Notification!]!
 }
 
 input DiscoverShowsInput {

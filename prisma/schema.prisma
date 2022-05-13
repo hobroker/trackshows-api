@@ -9,17 +9,18 @@ datasource db {
 }
 
 model User {
-  id                        Int         @id @default(autoincrement())
-  email                     String      @unique
+  id                        Int            @id @default(autoincrement())
+  email                     String         @unique
   name                      String
   avatar                    String?
   password                  String?
   currentHashedRefreshToken String?
-  createdAt                 DateTime    @default(now())
-  updatedAt                 DateTime    @default(now()) @updatedAt
+  createdAt                 DateTime       @default(now())
+  updatedAt                 DateTime       @default(now()) @updatedAt
   preference                Preference?
   watchlist                 Watchlist[]
-  Review                    Review[]
+  Notification                    Notification[]
+  Notification              Notification[]
 }
 
 model Status {
@@ -65,9 +66,10 @@ model Episode {
   updatedAt     DateTime  @updatedAt
 
   @@unique([episodeNumber, seasonNumber, watchlistId])
+  Notification Notification[]
 }
 
-model Review {
+model Notification {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
@@ -79,4 +81,15 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, showId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  episodeId Int
+  isRead    Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
