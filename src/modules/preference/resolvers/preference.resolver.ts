@@ -15,20 +15,18 @@ import { PreferenceService } from '../services';
 import { Preference } from '../entities';
 import { Void } from '../../../util/void';
 import { Genre } from '../../show';
-import { TmdbGenreService } from '../../tmdb';
 import { ToggleGenrePreferenceInput } from './input';
 
 @Injectable()
 @Resolver(Preference)
 export class PreferenceResolver {
-  constructor(
-    private readonly preferenceService: PreferenceService,
-    private readonly tmdbGenreService: TmdbGenreService,
-  ) {}
+  constructor(private readonly preferenceService: PreferenceService) {}
 
   @ResolveField()
   async genres(@Parent() preference: Preference): Promise<Genre[]> {
-    return this.tmdbGenreService.findByExternalIds(preference.genreIds);
+    if (!preference) return [];
+
+    return this.preferenceService.findGenresByPreferenceId(preference.id);
   }
 
   @Mutation(() => Void)

@@ -4,10 +4,15 @@ import { always, assoc, compose, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { Preference } from '../entities';
 import { toggleListItem } from '../../../util/fp';
+import { TmdbGenreService } from '../../tmdb';
+import { Genre } from '../../show';
 
 @Injectable()
 export class PreferenceService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly tmdbGenreService: TmdbGenreService,
+  ) {}
 
   upsert(userId: number, data: Partial<Prisma.PreferenceUncheckedCreateInput>) {
     return this.prismaService.preference.upsert({
@@ -33,5 +38,16 @@ export class PreferenceService {
     return this.prismaService.preference
       .findFirst({ where: { userId } })
       .then(assoc('genres', []));
+  }
+
+  async findGenresByPreferenceId(id: number): Promise<Genre[]> {
+    return this.prismaService.preference
+      .findFirst({
+        where: { id },
+        rejectOnNotFound: true,
+      })
+      .then(prop('genreIds'))
+      .then(this.tmdbGenreService.findByExternalIds)
+      .catch(always([]));
   }
 }

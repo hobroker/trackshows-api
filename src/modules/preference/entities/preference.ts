@@ -4,9 +4,9 @@ import { Genre } from '../../show';
 
 @ObjectType()
 export class Preference {
+  @Field(() => Int)
+  id: number;
+
   @Field(() => [Genre])
   genres: Genre[];
-
-  @Field(() => [Int])
-  genreIds: number[];
 }
