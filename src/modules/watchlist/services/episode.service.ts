@@ -33,7 +33,7 @@ export class EpisodeService {
     });
   }
 
-  private async findEpisodeInWatchlist(
+  async findEpisodeInWatchlist(
     watchlist: Watchlist,
     where: Prisma.EpisodeWhereInput,
   ) {

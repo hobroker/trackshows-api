@@ -13,7 +13,7 @@ export class NotificationResolver {
 
   @Query(() => [Notification])
   @UseGuards(GraphqlJwtAuthGuard)
-  async getNotifications(
+  async listNotifications(
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
     const userId = user.id;
