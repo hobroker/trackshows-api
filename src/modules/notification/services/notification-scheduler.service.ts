@@ -20,7 +20,7 @@ export class NotificationSchedulerService {
   }
 
   @Cron('0 0 * * * *')
-  async handleCron() {
+  async refreshNotifications() {
     const users = await this.prismaService.user.findMany();
 
     await serialEvery(splitEvery(10, users), async (user) => {
