@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 import { Episode } from '../../show/entities/episode';
 
 @ObjectType()
@@ -8,8 +8,11 @@ export class Notification {
   id: number;
 
   @Field(() => Episode)
-  episode: Episode;
+  episode?: Episode;
 
   @Field({ nullable: true })
   isRead: boolean;
+
+  @HideField()
+  episodeId: number;
 }
