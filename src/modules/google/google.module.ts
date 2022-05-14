@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from '../user/user.module';
+import { UserModule } from '../user';
 import { AuthModule } from '../auth';
 import { googleConfig } from './google.config';
 import { GoogleService } from './services';

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { UserService } from '../../user/services/user.service';
+import { UserService } from '../../user/services';
 import { authConfig } from '../auth.config';
 import { RegisterDto } from '../dto';
 import { TokenPayload } from '../interfaces';
@@ -84,7 +84,7 @@ export class AuthService {
     plainTextPassword: string,
     hashedPassword: string,
   ) {
-    const isPasswordMatching = await bcrypt.compare(
+    const isPasswordMatching = bcrypt.compare(
       plainTextPassword,
       hashedPassword,
     );
@@ -95,5 +95,15 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async getUserFromJwtToken(token: string) {
+    const data = this.jwtService.decode(token) as { id: number };
+
+    if (!data) {
+      return null;
+    }
+
+    return this.userService.findById(data.id);
   }
 }

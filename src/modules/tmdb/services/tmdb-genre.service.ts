@@ -6,7 +6,9 @@ import { genreFacade } from '../facades';
 
 @Injectable()
 export class TmdbGenreService {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) {
+    this.findByExternalIds = this.findByExternalIds.bind(this);
+  }
 
   @Memoize()
   async list(): Promise<Genre[]> {

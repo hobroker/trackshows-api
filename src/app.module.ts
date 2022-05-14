@@ -13,12 +13,15 @@ import { TmdbModule } from './modules/tmdb';
 import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
 import { HealthModule } from './modules/health';
-import { AuthModule } from './modules/auth';
+import { AuthModule, AuthService } from './modules/auth';
 import { PreferenceModule } from './modules/preference';
 import { WatchlistModule } from './modules/watchlist';
 import { ReviewModule } from './modules/review';
 import { StatsModule } from './modules/stats';
 import { SearchModule } from './modules/search';
+import { NotificationModule } from './modules/notification';
+import { CORS_ORIGINS } from './app.constants';
+import { getCookie } from './util/cookie';
 
 @Module({
   imports: [
@@ -26,18 +29,46 @@ import { SearchModule } from './modules/search';
       envFilePath: ['.env', '.env.production'],
     }),
     ConfigModule.forFeature(appConfig),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      playground: false,
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault(),
-        ApolloServerPluginInlineTrace(),
-      ],
-      cors: {
-        credentials: 'include',
-        origin: ['http://localhost:3003'],
-      },
+      imports: [AuthModule],
+      inject: [AuthService],
+      useFactory: async (authService: AuthService) => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        playground: false,
+        // installSubscriptionHandlers: true,
+        async context({ extra }) {
+          let user = null;
+
+          if (extra) {
+            try {
+              const authToken = getCookie(
+                extra.request.headers.cookie,
+                'Authentication',
+              );
+
+              user = await authService.getUserFromJwtToken(authToken);
+            } catch (e) {
+              console.log('e', e);
+            }
+          }
+
+          return { user };
+        },
+        subscriptions: {
+          'graphql-ws': {
+            path: '/subscriptions',
+          },
+        },
+        plugins: [
+          ApolloServerPluginLandingPageLocalDefault(),
+          ApolloServerPluginInlineTrace(),
+        ],
+        cors: {
+          credentials: 'include',
+          origin: CORS_ORIGINS,
+        },
+      }),
     }),
     HealthModule,
     TmdbModule,
@@ -51,6 +82,7 @@ import { SearchModule } from './modules/search';
     ReviewModule,
     StatsModule,
     SearchModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

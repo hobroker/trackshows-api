@@ -33,7 +33,7 @@ export class EpisodeService {
     });
   }
 
-  private async findEpisodeInWatchlist(
+  async findEpisodeInWatchlist(
     watchlist: Watchlist,
     where: Prisma.EpisodeWhereInput,
   ) {
@@ -52,6 +52,32 @@ export class EpisodeService {
 
     return this.tmdbEpisodeService
       .getDetails(watchlist.showId, episode.seasonNumber, episode.episodeNumber)
+      .then(assoc('id', episode.id))
+      .then(assoc('isWatched', episode.isWatched));
+  }
+
+  async findEpisodeByExternalId(externalId: number) {
+    const episode = await this.prismaService.episode.findUnique({
+      where: { id: externalId },
+      include: {
+        watchlist: {
+          select: {
+            showId: true,
+          },
+        },
+      },
+    });
+
+    if (!episode) {
+      return null;
+    }
+
+    return this.tmdbEpisodeService
+      .getDetails(
+        episode.watchlist.showId,
+        episode.seasonNumber,
+        episode.episodeNumber,
+      )
       .then(assoc('id', episode.id))
       .then(assoc('isWatched', episode.isWatched));
   }

@@ -62,8 +62,8 @@ type Void {
 }
 
 type Preference {
+  id: Int!
   genres: [Genre!]!
-  genreIds: [Int!]!
 }
 
 type Episode {
@@ -110,6 +110,12 @@ type PieItem {
   value: Int!
 }
 
+type Notification {
+  id: Int!
+  episode: Episode!
+  isRead: Boolean
+}
+
 type Query {
   me: User!
   listGenres: [Genre!]
@@ -131,6 +137,7 @@ type Query {
   getStatsCalendar: [StatsCalendarItem!]!
   getStatsGenres: [PieItem!]!
   search(input: SearchInput!): [Show!]!
+  listNotifications: [Notification!]!
 }
 
 input DiscoverShowsInput {
@@ -171,13 +178,15 @@ input SearchInput {
 }
 
 type Mutation {
-  joinWithGoogle(input: JoinWithGoogleInput!): User!
   logout: Void!
   refresh: User!
+  joinWithGoogle(input: JoinWithGoogleInput!): User!
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
   upsertEpisode(input: UpsertEpisodeInput!): Episode
   upsertReview(input: UpsertReviewInput!): Review!
+  readNotification(input: ReadNotificationInput!): Void!
+  readAllNotifications: Void!
 }
 
 input JoinWithGoogleInput {
@@ -203,4 +212,12 @@ input UpsertReviewInput {
   title: String
   content: String
   rating: Int
+}
+
+input ReadNotificationInput {
+  notificationId: Int!
+}
+
+type Subscription {
+  notificationsAdded: [Notification!]!
 }

@@ -9,16 +9,17 @@ datasource db {
 }
 
 model User {
-  id                        Int         @id @default(autoincrement())
-  email                     String      @unique
+  id                        Int            @id @default(autoincrement())
+  email                     String         @unique
   name                      String
   avatar                    String?
   password                  String?
   currentHashedRefreshToken String?
-  createdAt                 DateTime    @default(now())
-  updatedAt                 DateTime    @default(now()) @updatedAt
+  createdAt                 DateTime       @default(now())
+  updatedAt                 DateTime       @default(now()) @updatedAt
   preference                Preference?
   watchlist                 Watchlist[]
+  Notification              Notification[]
   Review                    Review[]
 }
 
@@ -54,15 +55,16 @@ model Watchlist {
 }
 
 model Episode {
-  id            Int       @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   episodeNumber Int
   seasonNumber  Int
-  watchlist     Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  watchlist     Watchlist      @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
   watchlistId   Int
   isWatched     Boolean
   airDate       DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  Notification  Notification[]
 
   @@unique([episodeNumber, seasonNumber, watchlistId])
 }
@@ -79,4 +81,17 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, showId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  episodeId Int
+  isRead    Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, episodeId])
 }

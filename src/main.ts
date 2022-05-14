@@ -4,7 +4,7 @@ import { Logger, RequestMethod } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { LoggerService } from './modules/logger';
 import { AppModule } from './app.module';
-import { APP_MODULE_ID } from './app.constants';
+import { APP_MODULE_ID, CORS_ORIGINS } from './app.constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -15,8 +15,8 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: ['http://localhost:3003'],
     credentials: true,
+    origin: CORS_ORIGINS,
   });
   app.setGlobalPrefix('v1', {
     exclude: [{ path: 'health', method: RequestMethod.GET }],
