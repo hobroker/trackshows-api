@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/hobroker/tshows-api/compare/v4.0.0...v4.1.0) (2022-05-14)
+
+
+### Features
+
+* add notifications and subscription for new ones ([#65](https://github.com/hobroker/tshows-api/issues/65)) ([a1d902e](https://github.com/hobroker/tshows-api/commit/a1d902ea20983937e2baeec43d749aaafe8fb917))
+
 # [4.0.0](https://github.com/hobroker/tshows-api/compare/v3.15.1...v4.0.0) (2022-05-10)
 
 ## [3.15.1](https://github.com/hobroker/tshows-api/compare/v3.15.0...v3.15.1) (2022-05-08)
