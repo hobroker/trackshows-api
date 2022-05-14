@@ -28,4 +28,14 @@ export class NotificationService {
       data: { isRead: true },
     });
   }
+
+  listNotificationsByIds(ids: number[]): Promise<Notification[]> {
+    return this.prismaService.notification.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
 }

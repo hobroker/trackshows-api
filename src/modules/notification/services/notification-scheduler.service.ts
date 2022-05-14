@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Watchlist, Prisma } from '@prisma/client';
-import { filter, splitEvery } from 'ramda';
+import { filter, prop, splitEvery } from 'ramda';
 import { PrismaService } from '../../prisma';
 import { Episode } from '../../show/entities/episode';
 import { EpisodeService } from '../../watchlist/services';
 import { Status } from '../../watchlist/entities';
 import { serialEvery } from '../../../util/promise';
+import { Notification } from '../entities';
+import { NotificationPubsubService } from './notification-pubsub.service';
 
 @Injectable()
 export class NotificationSchedulerService {
@@ -15,6 +17,7 @@ export class NotificationSchedulerService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly episodeService: EpisodeService,
+    private readonly notificationPubsubService: NotificationPubsubService,
   ) {
     this.findNewEpisode = this.findNewEpisode.bind(this);
   }
@@ -25,12 +28,19 @@ export class NotificationSchedulerService {
 
     await serialEvery(splitEvery(10, users), async (user) => {
       const episodes = await this.findNewEpisodesForUser(user.id);
-      const { count } = await this.createNotificationsFromEpisodes(
+      const notifications = await this.createNotificationsFromEpisodes(
         user.id,
         episodes,
       );
 
-      this.logger.debug(`Created ${count} notifications for user=${user.id}`);
+      this.notificationPubsubService.publishNotificationsForUser(
+        user.id,
+        notifications.map(prop('id')),
+      );
+
+      this.logger.debug(
+        `Created ${notifications.length} notifications for user=${user.id}`,
+      );
     });
   }
 
@@ -53,8 +63,11 @@ export class NotificationSchedulerService {
     });
   }
 
-  private createNotificationsFromEpisodes(userId: number, episodes: Episode[]) {
-    const data: Prisma.NotificationUncheckedCreateInput[] = episodes.map(
+  private async createNotificationsFromEpisodes(
+    userId: number,
+    episodes: Episode[],
+  ): Promise<Notification[]> {
+    const list: Prisma.NotificationUncheckedCreateInput[] = episodes.map(
       ({ id }) => ({
         userId,
         episodeId: id,
@@ -62,9 +75,10 @@ export class NotificationSchedulerService {
       }),
     );
 
-    return this.prismaService.notification.createMany({
-      data,
-      skipDuplicates: true,
-    });
+    return Promise.all(
+      list.map((data) =>
+        this.prismaService.notification.create({ data }).catch(() => null),
+      ),
+    ).then(filter(Boolean));
   }
 }

@@ -38,6 +38,7 @@
     }
   },
   "dependencies": {
+    "@axelspringer/graphql-google-pubsub": "^2.1.0",
     "@nestjs/apollo": "^10.0.8",
     "@nestjs/common": "8.4.4",
     "@nestjs/config": "^2.0.0",
@@ -61,6 +62,7 @@
     "graphql": "^16.3.0",
     "graphql-fields-list": "^2.2.4",
     "graphql-tools": "8.2.5",
+    "graphql-ws": "^5.8.2",
     "luxon": "^2.3.2",
     "nest-commander": "^2.4.0",
     "passport-jwt": "^4.0.0",

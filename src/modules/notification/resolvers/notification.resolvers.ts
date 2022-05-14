@@ -8,11 +8,12 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
 import { Notification } from '../entities';
 import { GraphqlJwtAuthGuard } from '../../auth/guards';
 import { RequestWithUser } from '../../auth/interfaces';
-import { NotificationService } from '../services';
+import { NotificationPubsubService, NotificationService } from '../services';
 import { Episode } from '../../show/entities/episode';
 import { EpisodeService } from '../../watchlist/services';
 import { Void } from '../../../util/void';
@@ -24,6 +25,7 @@ export class NotificationResolver {
   constructor(
     private readonly notificationService: NotificationService,
     private readonly episodeService: EpisodeService,
+    private readonly notificationPubsubService: NotificationPubsubService,
   ) {}
 
   @ResolveField()
@@ -55,5 +57,21 @@ export class NotificationResolver {
     @Context() { req: { user } }: { req: RequestWithUser },
   ) {
     return this.notificationService.readAllNotificationsForUser(user.id);
+  }
+
+  @Subscription(() => [Notification], {
+    filter({ data }, variables, { user }) {
+      const { userId } = JSON.parse(data);
+
+      return userId === user.id;
+    },
+    resolve(this: NotificationResolver, { data }) {
+      const { notificationIds } = JSON.parse(data);
+
+      return this.notificationService.listNotificationsByIds(notificationIds);
+    },
+  })
+  notificationsAdded() {
+    return this.notificationPubsubService.getAsyncIterator();
   }
 }

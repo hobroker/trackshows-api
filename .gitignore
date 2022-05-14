@@ -35,6 +35,7 @@ lerna-debug.log*
 
 # config
 .env
+google.json
 
 # helm
 **/charts/*.tgz

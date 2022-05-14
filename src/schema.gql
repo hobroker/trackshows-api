@@ -178,9 +178,9 @@ input SearchInput {
 }
 
 type Mutation {
-  joinWithGoogle(input: JoinWithGoogleInput!): User!
   logout: Void!
   refresh: User!
+  joinWithGoogle(input: JoinWithGoogleInput!): User!
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
   upsertEpisode(input: UpsertEpisodeInput!): Episode
@@ -216,4 +216,8 @@ input UpsertReviewInput {
 
 input ReadNotificationInput {
   notificationId: Int!
+}
+
+type Subscription {
+  notificationsAdded: [Notification!]!
 }
