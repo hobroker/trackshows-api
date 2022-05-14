@@ -49,12 +49,11 @@ export class NotificationResolver {
     return this.notificationService.readNotification(notificationId);
   }
 
-  // @Mutation(() => [Notification])
-  // @UseGuards(GraphqlJwtAuthGuard)
-  // async readAllNotifications(
-  //   @Args('input') { notificationId }: ReadNotificationInput,
-  //   @Context() { req: { user } }: { req: RequestWithUser },
-  // ) {
-  //   return this.notificationService.readNotification(notificationId);
-  // }
+  @Mutation(() => Void)
+  @UseGuards(GraphqlJwtAuthGuard)
+  async readAllNotifications(
+    @Context() { req: { user } }: { req: RequestWithUser },
+  ) {
+    return this.notificationService.readAllNotificationsForUser(user.id);
+  }
 }

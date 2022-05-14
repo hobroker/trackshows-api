@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Injectable, UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphqlJwtAnyoneGuard, GraphqlJwtAuthGuard } from '../../auth/guards';
 import { ReviewService } from '../services';
 import {
@@ -11,6 +11,7 @@ import { Review } from '../entities';
 import { GetRatingInput, GetReviewInput, UpsertReviewInput } from './inputs';
 
 @Injectable()
+@Resolver(Review)
 export class ReviewResolver {
   constructor(private readonly reviewService: ReviewService) {}
 

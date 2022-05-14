@@ -186,6 +186,7 @@ type Mutation {
   upsertEpisode(input: UpsertEpisodeInput!): Episode
   upsertReview(input: UpsertReviewInput!): Review!
   readNotification(input: ReadNotificationInput!): Void!
+  readAllNotifications: Void!
 }
 
 input JoinWithGoogleInput {

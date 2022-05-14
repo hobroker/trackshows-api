@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Args, Context, Mutation } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { Request } from 'express';
 import { Injectable } from '@nestjs/common';
 import { User } from '../../user/entities';
@@ -7,6 +7,7 @@ import { GoogleService } from '../services';
 import { JoinWithGoogleInput } from './input';
 
 @Injectable()
+@Resolver(User)
 export class GoogleResolver {
   constructor(private readonly googleService: GoogleService) {}
 

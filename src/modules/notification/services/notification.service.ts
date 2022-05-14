@@ -22,10 +22,10 @@ export class NotificationService {
     });
   }
 
-  // readAllNotificationsForUser(userId: number): Promise<Notification> {
-  //   return this.prismaService.notification.update({
-  //     where: { userId },
-  //     data: { isRead: true },
-  //   });
-  // }
+  readAllNotificationsForUser(userId: number) {
+    return this.prismaService.notification.updateMany({
+      where: { userId },
+      data: { isRead: true },
+    });
+  }
 }
