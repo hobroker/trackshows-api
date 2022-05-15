@@ -33,12 +33,14 @@ type Genre {
 }
 
 type Season {
+  showId: Int!
   name: String!
   description: String
   tallImage: String
   number: Int!
   episodeCount: String!
   airDate: DateTime
+  isFullyWatched: Boolean!
 }
 
 type Show {
@@ -184,6 +186,7 @@ type Mutation {
   toggleGenrePreference(input: ToggleGenrePreferenceInput!): Void!
   upsertWatchlistItem(input: UpsertWatchlistInput!): Watchlist!
   upsertEpisode(input: UpsertEpisodeInput!): Episode
+  toggleSeasonIsFullyWatched(input: ToggleSeasonWatchedInput!): Void!
   upsertReview(input: UpsertReviewInput!): Review!
   readNotification(input: ReadNotificationInput!): Void!
   readAllNotifications: Void!
@@ -205,6 +208,11 @@ input UpsertWatchlistInput {
 input UpsertEpisodeInput {
   episodeId: Int!
   isWatched: Boolean!
+}
+
+input ToggleSeasonWatchedInput {
+  showId: Int!
+  seasonNumber: Int!
 }
 
 input UpsertReviewInput {

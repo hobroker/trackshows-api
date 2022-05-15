@@ -1,4 +1,4 @@
-import { applySpec, compose, filter, head, map, prop, propOr } from 'ramda';
+import { applySpec, compose, head, map, prop, propOr } from 'ramda';
 import { sanitize, toDate } from '../../../util/fp';
 import { Show } from '../../show';
 import { seasonFacade } from './season.facade';
@@ -16,9 +16,9 @@ export const showFacade = applySpec<Show>({
   episodeRuntime: compose(head, propOr([0], 'episode_run_time')),
   isInProduction: propOr(false, 'in_production'),
   tagline: propOr('', 'tagline'),
-  seasons: compose(
-    filter(({ episodeCount }) => Number(episodeCount) > 0),
-    map(seasonFacade),
-    propOr([], 'seasons'),
-  ),
+  seasons: ({ id: showId, seasons }) =>
+    (seasons || [])
+      .map(seasonFacade)
+      .filter(({ episodeCount }) => Number(episodeCount) > 0)
+      .map((item) => ({ ...item, showId })),
 });
