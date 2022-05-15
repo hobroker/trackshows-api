@@ -3,7 +3,6 @@ import { toDate } from '../../../util/fp';
 import { Season } from '../../show/entities/season';
 
 export const seasonFacade = applySpec<Season>({
-  externalId: prop('id'),
   name: prop('name'),
   description: prop('overview'),
   tallImage: prop('poster_path'),

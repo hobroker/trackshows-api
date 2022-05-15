@@ -3,6 +3,9 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Season {
+  @Field(() => Int)
+  showId: number;
+
   @Field()
   name: string;
 
@@ -20,4 +23,7 @@ export class Season {
 
   @Field({ nullable: true })
   airDate: Date;
+
+  @Field()
+  isFullyWatched: boolean;
 }

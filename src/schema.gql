@@ -33,12 +33,14 @@ type Genre {
 }
 
 type Season {
+  showId: Int!
   name: String!
   description: String
   tallImage: String
   number: Int!
   episodeCount: String!
   airDate: DateTime
+  isFullyWatched: Boolean!
 }
 
 type Show {
