@@ -6,14 +6,38 @@ import { PrismaService } from '../../prisma';
 export class SeasonService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getIsSeasonFullyWatched(showId: number, seasonNumber: number) {
+  getIsSeasonFullyWatched(
+    userId: number,
+    showId: number,
+    seasonNumber: number,
+  ) {
     return this.prismaService.episode
       .findMany({
         where: {
           seasonNumber,
-          watchlist: { showId },
+          watchlist: { showId, userId },
         },
       })
       .then(all(prop('isWatched')));
+  }
+
+  toggleSeasonIsFullyWatched(
+    userId: number,
+    showId: number,
+    seasonNumber: number,
+  ) {
+    const isSeasonFullyWatched = this.getIsSeasonFullyWatched(
+      userId,
+      showId,
+      seasonNumber,
+    );
+
+    return this.prismaService.episode.updateMany({
+      where: {
+        seasonNumber,
+        watchlist: { showId, userId },
+      },
+      data: { isWatched: !isSeasonFullyWatched },
+    });
   }
 }
