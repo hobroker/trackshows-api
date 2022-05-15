@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/hobroker/tshows-api/compare/v4.1.0...v4.2.0) (2022-05-15)
+
+
+### Features
+
+* add toggleSeasonIsFullyWatched mutation ([#66](https://github.com/hobroker/tshows-api/issues/66)) ([fd4b800](https://github.com/hobroker/tshows-api/commit/fd4b800768f78ea6a23b3927f37efca658d135f4))
+
 # [4.1.0](https://github.com/hobroker/tshows-api/compare/v4.0.0...v4.1.0) (2022-05-14)
 
 
