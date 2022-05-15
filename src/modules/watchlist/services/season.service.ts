@@ -21,12 +21,12 @@ export class SeasonService {
       .then(all(prop('isWatched')));
   }
 
-  toggleSeasonIsFullyWatched(
+  async toggleSeasonIsFullyWatched(
     userId: number,
     showId: number,
     seasonNumber: number,
   ) {
-    const isSeasonFullyWatched = this.getIsSeasonFullyWatched(
+    const isSeasonFullyWatched = await this.getIsSeasonFullyWatched(
       userId,
       showId,
       seasonNumber,
