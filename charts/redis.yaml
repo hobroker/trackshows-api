@@ -1,0 +1,9 @@
+image:
+  repository: redis
+  tag: 6.2-alpine
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  targetPort: 6379
+  port: 6379

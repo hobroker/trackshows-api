@@ -60,14 +60,10 @@ export class NotificationResolver {
   }
 
   @Subscription(() => [Notification], {
-    filter({ data }, variables, { user }) {
-      const { userId } = JSON.parse(data);
-
+    filter({ userId }, variables, { user }) {
       return userId === user.id;
     },
-    resolve(this: NotificationResolver, { data }) {
-      const { notificationIds } = JSON.parse(data);
-
+    resolve(this: NotificationResolver, { notificationIds }) {
       return this.notificationService.listNotificationsByIds(notificationIds);
     },
   })

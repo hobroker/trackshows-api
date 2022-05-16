@@ -41,16 +41,14 @@ import { getCookie } from './util/cookie';
           let user = null;
 
           if (extra) {
-            try {
-              const authToken = getCookie(
-                extra.request.headers.cookie,
-                'Authentication',
-              );
+            const authToken = getCookie(
+              extra.request.headers.cookie,
+              'Authentication',
+            );
 
-              user = await authService.getUserFromJwtToken(authToken);
-            } catch (e) {
-              console.log('e', e);
-            }
+            user = await authService
+              .getUserFromJwtToken(authToken)
+              .catch(() => null);
           }
 
           return { user };

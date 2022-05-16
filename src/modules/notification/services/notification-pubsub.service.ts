@@ -1,20 +1,28 @@
-import { GooglePubSub } from '@axelspringer/graphql-google-pubsub';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { googleConfig } from '../../google/google.config';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { notificationConfig } from '../notification.config';
 
 @Injectable()
-export class NotificationPubsubService {
-  pubsub: GooglePubSub;
+export class NotificationPubsubService implements OnModuleDestroy {
+  pubsub: RedisPubSub;
+
   private topicName = 'notifications';
 
   constructor(
-    @Inject(googleConfig.KEY)
-    private config: ConfigType<typeof googleConfig>,
+    @Inject(notificationConfig.KEY)
+    private config: ConfigType<typeof notificationConfig>,
   ) {
-    this.pubsub = new GooglePubSub({
-      projectId: config.projectId,
+    this.pubsub = new RedisPubSub({
+      connection: {
+        host: config.redisHost,
+        port: config.redisPort,
+      },
     });
+  }
+
+  onModuleDestroy() {
+    return this.pubsub.close();
   }
 
   getAsyncIterator() {
@@ -22,7 +30,7 @@ export class NotificationPubsubService {
   }
 
   publishNotificationsForUser(userId, notificationIds: number[]) {
-    this.pubsub.publish(this.topicName, {
+    return this.pubsub.publish(this.topicName, {
       userId,
       notificationIds,
     });
