@@ -10,7 +10,6 @@ import {
   JwtRefreshTokenStrategy,
 } from './strategies';
 import { authConfig } from './auth.config';
-import { AuthController } from './controllers';
 import { AuthResolver } from './resolvers';
 
 @Module({
@@ -28,6 +27,5 @@ import { AuthResolver } from './resolvers';
     JwtStrategy,
     JwtRefreshTokenStrategy,
   ],
-  controllers: [AuthController],
 })
 export class AuthModule {}

@@ -60,28 +60,23 @@ export class GoogleService {
   }
 
   private async getCookiesForUser(user: User) {
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      user.id,
-    );
-    const { cookie: refreshTokenCookie, token: refreshToken } =
-      this.authService.getCookieWithJwtRefreshToken(user.id);
+    const accessToken = this.authService.getCookieWithJwtAccessToken(user.id);
+    const refreshToken = this.authService.getCookieWithJwtRefreshToken(user.id);
 
-    await this.userService.setCurrentRefreshToken(refreshToken, user.id);
+    await this.userService.setCurrentRefreshToken(refreshToken.token, user.id);
 
     return {
-      accessTokenCookie,
-      refreshTokenCookie,
+      accessToken,
+      refreshToken,
     };
   }
 
   private async handleRegisteredUser(user: User) {
-    const { accessTokenCookie, refreshTokenCookie } =
-      await this.getCookiesForUser(user);
+    const { accessToken, refreshToken } = await this.getCookiesForUser(user);
 
     return {
-      accessTokenCookie,
-      refreshTokenCookie,
-      user,
+      accessToken,
+      refreshToken,
     };
   }
 

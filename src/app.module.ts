@@ -13,7 +13,7 @@ import { TmdbModule } from './modules/tmdb';
 import { ShowModule } from './modules/show';
 import { GoogleModule } from './modules/google';
 import { HealthModule } from './modules/health';
-import { AuthModule, AuthService } from './modules/auth';
+import { AuthModule } from './modules/auth';
 import { PreferenceModule } from './modules/preference';
 import { WatchlistModule } from './modules/watchlist';
 import { ReviewModule } from './modules/review';
@@ -21,7 +21,6 @@ import { StatsModule } from './modules/stats';
 import { SearchModule } from './modules/search';
 import { NotificationModule } from './modules/notification';
 import { CORS_ORIGINS } from './app.constants';
-import { getCookie } from './util/cookie';
 
 @Module({
   imports: [
@@ -29,46 +28,38 @@ import { getCookie } from './util/cookie';
       envFilePath: ['.env', '.env.production'],
     }),
     ConfigModule.forFeature(appConfig),
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AuthModule],
-      inject: [AuthService],
-      useFactory: async (authService: AuthService) => ({
-        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        playground: false,
-        // installSubscriptionHandlers: true,
-        async context({ extra }) {
-          let user = null;
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: false,
+      context: ({ req, extra, connectionParams }) => {
+        if (extra) {
+          return {
+            req: {
+              ...extra.request,
+              headers: {
+                ...extra.request.headers,
+                authorization: connectionParams.authorization,
+              },
+            },
+          };
+        }
 
-          if (extra) {
-            try {
-              const authToken = getCookie(
-                extra.request.headers.cookie,
-                'Authentication',
-              );
-
-              user = await authService.getUserFromJwtToken(authToken);
-            } catch (e) {
-              console.log('e', e);
-            }
-          }
-
-          return { user };
+        return { req };
+      },
+      subscriptions: {
+        'graphql-ws': {
+          path: '/subscriptions',
         },
-        subscriptions: {
-          'graphql-ws': {
-            path: '/subscriptions',
-          },
-        },
-        plugins: [
-          ApolloServerPluginLandingPageLocalDefault(),
-          ApolloServerPluginInlineTrace(),
-        ],
-        cors: {
-          credentials: 'include',
-          origin: CORS_ORIGINS,
-        },
-      }),
+      },
+      plugins: [
+        ApolloServerPluginLandingPageLocalDefault(),
+        ApolloServerPluginInlineTrace(),
+      ],
+      cors: {
+        credentials: 'include',
+        origin: CORS_ORIGINS,
+      },
     }),
     HealthModule,
     TmdbModule,

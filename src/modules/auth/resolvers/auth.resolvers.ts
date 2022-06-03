@@ -27,11 +27,11 @@ export class AuthResolver {
   @Mutation(() => User)
   @UseGuards(GraphqlJwtRefreshGuard)
   async refresh(@Context() { req }: { req: RequestWithUser }) {
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
+    const accessToken = this.authService.getCookieWithJwtAccessToken(
       req.user.id,
     );
 
-    req.res.setHeader('Set-Cookie', accessTokenCookie);
+    req.res.setHeader('Set-Cookie', accessToken.cookie);
 
     return req.user;
   }

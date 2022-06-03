@@ -37,11 +37,15 @@ export class AuthService {
       secret: this.config.jwtAccessTokenSecret,
       expiresIn: `${this.config.jwtAccessTokenExirationTime}s`,
     });
-
-    return createCookie(AUTHENTICATION_COOKIE, {
+    const cookie = createCookie(AUTHENTICATION_COOKIE, {
       value: token,
       maxAge: this.config.jwtAccessTokenExirationTime,
     });
+
+    return {
+      cookie,
+      token,
+    };
   }
 
   public getCookieWithJwtRefreshToken(userId: number) {

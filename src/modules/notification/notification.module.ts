@@ -5,14 +5,14 @@ import { PrismaModule } from '../prisma';
 import { WatchlistModule } from '../watchlist';
 import { TmdbModule } from '../tmdb';
 import { GoogleModule } from '../google';
-import { googleConfig } from '../google/google.config';
 import * as resolvers from './resolvers';
 import * as services from './services';
 import { NotificationSchedulerService } from './services';
+import { notificationConfig } from './notification.config';
 
 @Module({
   imports: [
-    ConfigModule.forFeature(googleConfig),
+    ConfigModule.forFeature(notificationConfig),
     ScheduleModule.forRoot(),
     PrismaModule,
     WatchlistModule,
