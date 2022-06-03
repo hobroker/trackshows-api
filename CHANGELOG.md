@@ -1,3 +1,10 @@
+# [4.3.0](https://github.com/hobroker/tshows-api/compare/v4.2.0...v4.3.0) (2022-06-03)
+
+
+### Features
+
+* replace Google Pub/Sub with Redis ([#67](https://github.com/hobroker/tshows-api/issues/67)) ([8a92107](https://github.com/hobroker/tshows-api/commit/8a92107cd0f089f2e56c49cd31195f37a058bbcb))
+
 # [4.2.0](https://github.com/hobroker/tshows-api/compare/v4.1.0...v4.2.0) (2022-05-15)
 
 
