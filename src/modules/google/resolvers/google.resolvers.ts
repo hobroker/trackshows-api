@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { Injectable } from '@nestjs/common';
 import { User } from '../../user/entities';
 import { GoogleService } from '../services';
+import { Void } from '../../../util/void';
 import { JoinWithGoogleInput } from './input';
 
 @Injectable()
@@ -11,16 +12,17 @@ import { JoinWithGoogleInput } from './input';
 export class GoogleResolver {
   constructor(private readonly googleService: GoogleService) {}
 
-  @Mutation(() => User)
+  @Mutation(() => Void)
   async joinWithGoogle(
     @Args('input') input: JoinWithGoogleInput,
     @Context() { req }: { req: Request },
-  ) {
-    const { user, refreshTokenCookie, accessTokenCookie } =
-      await this.googleService.authenticate(input.token);
+  ): Promise<Void> {
+    const { accessToken, refreshToken } = await this.googleService.authenticate(
+      input.token,
+    );
 
-    req.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
+    req.res.setHeader('Set-Cookie', [accessToken.cookie, refreshToken.cookie]);
 
-    return user;
+    return {};
   }
 }

@@ -5,7 +5,6 @@ import { ConfigService, ConfigType } from '@nestjs/config';
 import { Request } from 'express';
 import { UserService } from '../../user/services';
 import { authConfig } from '../auth.config';
-import { AUTHENTICATION_COOKIE } from '../auth.constants';
 
 interface TokenPayload {
   userId: number;
@@ -22,7 +21,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => request?.cookies?.[AUTHENTICATION_COOKIE],
+        (request: Request) => {
+          return request.headers.authorization;
+        },
       ]),
       secretOrKey: config.jwtAccessTokenSecret,
     });

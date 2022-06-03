@@ -60,13 +60,14 @@ export class NotificationResolver {
   }
 
   @Subscription(() => [Notification], {
-    filter({ userId }, variables, { user }) {
+    filter({ userId }, variables, { req: { user } }) {
       return userId === user.id;
     },
     resolve(this: NotificationResolver, { notificationIds }) {
       return this.notificationService.listNotificationsByIds(notificationIds);
     },
   })
+  @UseGuards(GraphqlJwtAuthGuard)
   notificationsAdded() {
     return this.notificationPubsubService.getAsyncIterator();
   }

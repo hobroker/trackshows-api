@@ -2,7 +2,10 @@ import 'reflect-metadata';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Void {
-  @Field(() => String, { nullable: true })
-  _?: string;
+export class Token {
+  @Field()
+  accessToken: string;
+
+  @Field()
+  refreshToken: string;
 }
