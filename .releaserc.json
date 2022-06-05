@@ -22,6 +22,12 @@
       }
     ],
     [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "yq '.appVersion = \"${nextRelease.version}\"' -i charts/tshows-api/Chart.yaml && yq '.base.image.tag = \"${nextRelease.version}\"' -i charts/tshows-api/values.yaml"
+      }
+    ],
+    [
       "@eclass/semantic-release-docker",
       {
         "baseImageName": "hobroker/tshows-api",
@@ -38,7 +44,13 @@
     [
       "@semantic-release/git",
       {
-        "assets": ["package.json", "package-lock.json", "CHANGELOG.md"],
+        "assets": [
+          "package.json",
+          "package-lock.json",
+          "CHANGELOG.md",
+          "charts/tshows-api/Chart.yaml",
+          "charts/tshows-api/values.yaml"
+        ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
