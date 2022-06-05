@@ -1,3 +1,10 @@
+# [4.4.0](https://github.com/hobroker/tshows-api/compare/v4.3.0...v4.4.0) (2022-06-05)
+
+
+### Features
+
+* semantic release update chart ([#68](https://github.com/hobroker/tshows-api/issues/68)) ([a537544](https://github.com/hobroker/tshows-api/commit/a537544a81dd6c9db8baeb709ce414aa2fd2051e))
+
 # [4.3.0](https://github.com/hobroker/tshows-api/compare/v4.2.0...v4.3.0) (2022-06-03)
 
 

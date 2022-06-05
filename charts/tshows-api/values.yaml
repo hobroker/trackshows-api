@@ -1,19 +1,16 @@
 base:
   image:
     repository: ghcr.io/hobroker/tshows-api
-    tag: 3.5.0
+    tag: 4.4.0
     pullPolicy: IfNotPresent
-
   service:
     type: LoadBalancer
     targetPort: 3000
     port: 80
-
   volumes:
     - name: api-config
       configMap:
         name: tshows-api-config
-
   volumeMounts:
     - name: api-config
       subPath: .env
