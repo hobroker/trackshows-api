@@ -4,7 +4,7 @@ description: Trachshows API chart
 icon: https://
 type: application
 version: 0.1.2
-appVersion: '4.4.0'
+appVersion: '4.5.0'
 dependencies:
   - name: base
     version: 1.0.0
