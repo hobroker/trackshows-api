@@ -55,6 +55,12 @@ export class WatchlistService {
     );
   }
 
+  isShowInWatchlist(userId: number, showId: number): Promise<boolean> {
+    return this.prismaService.watchlist
+      .findFirst({ where: { userId, showId } })
+      .then(Boolean);
+  }
+
   private findUserWatchlist(userId: number) {
     return this.prismaService.watchlist.findMany({
       where: { userId, statusId: Status.InWatchlist },
