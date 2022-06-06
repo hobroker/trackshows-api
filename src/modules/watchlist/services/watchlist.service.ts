@@ -55,10 +55,10 @@ export class WatchlistService {
     );
   }
 
-  isShowInWatchlist(userId: number, showId: number): Promise<boolean> {
-    return this.prismaService.watchlist
-      .findFirst({ where: { userId, showId } })
-      .then(Boolean);
+  findWatchlist(userId: number, showId: number): Promise<Watchlist> {
+    return this.prismaService.watchlist.findFirst({
+      where: { userId, showId },
+    });
   }
 
   private findUserWatchlist(userId: number) {

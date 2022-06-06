@@ -15,18 +15,15 @@ export class SeasonService {
     showId: number,
     seasonNumber: number,
   ) {
-    const isInWatchlist = await this.watchlistService.isShowInWatchlist(
-      userId,
-      showId,
-    );
+    const watchlist = await this.watchlistService.findWatchlist(userId, showId);
 
-    if (!isInWatchlist) return false;
+    if (!watchlist) return false;
 
     return this.prismaService.episode
       .findMany({
         where: {
           seasonNumber,
-          watchlist: { showId, userId },
+          watchlistId: watchlist.id,
         },
       })
       .then(all(prop('isWatched')));
