@@ -8,4 +8,6 @@ export const tmdbConfig = registerAs(TMDB_MODULE_ID, () => ({
   },
   skipSpecials: process.env.TMDB_SKIP_SPECIALS !== 'false',
   skipShowIds: process.env.TMDB_SKIP_SHOWS.split(',').map(Number),
+  redisHost: process.env.REDIS_HOST,
+  redisPort: process.env.REDIS_PORT,
 }));

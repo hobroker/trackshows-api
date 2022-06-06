@@ -105,7 +105,7 @@ export class HttpModule {
 
     return {
       provide: HTTP_MODULE_OPTIONS,
-      useFactory: async (optionsFactory: HttpModuleOptionsFactory) =>
+      useFactory: (optionsFactory: HttpModuleOptionsFactory) =>
         optionsFactory.createHttpOptions(),
       inject,
     };
