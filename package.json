@@ -51,7 +51,8 @@
     "@prisma/client": "^3.12.0",
     "apollo-server-core": "^3.6.7",
     "apollo-server-express": "^3.6.7",
-    "axios": "^0.26.1",
+    "axios": "^0.21.1",
+    "axios-cache-adapter": "^2.7.3",
     "axios-retry": "^3.2.4",
     "bcrypt": "^5.0.1",
     "class-validator": "0.13.2",
@@ -68,6 +69,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "ramda": "^0.28.0",
+    "redis": "^4.1.0",
     "reflect-metadata": "0.1.13",
     "typescript-memoize": "^1.1.0"
   },
