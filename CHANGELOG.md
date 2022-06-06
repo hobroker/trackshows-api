@@ -1,3 +1,10 @@
+# [4.5.0](https://github.com/hobroker/tshows-api/compare/v4.4.0...v4.5.0) (2022-06-06)
+
+
+### Features
+
+* add redis cache for tmdb api ([#69](https://github.com/hobroker/tshows-api/issues/69)) ([fcec95e](https://github.com/hobroker/tshows-api/commit/fcec95e30a73b04feaeb948d91620d1799717df0))
+
 # [4.4.0](https://github.com/hobroker/tshows-api/compare/v4.3.0...v4.4.0) (2022-06-05)
 
 
