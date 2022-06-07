@@ -1,3 +1,10 @@
+## [4.5.1](https://github.com/hobroker/tshows-api/compare/v4.5.0...v4.5.1) (2022-06-07)
+
+
+### Bug Fixes
+
+* season watched when not in watchlist ([#70](https://github.com/hobroker/tshows-api/issues/70)) ([28c84b9](https://github.com/hobroker/tshows-api/commit/28c84b944ee588688afe2f20f5cc531b550247d7))
+
 # [4.5.0](https://github.com/hobroker/tshows-api/compare/v4.4.0...v4.5.0) (2022-06-06)
 
 
