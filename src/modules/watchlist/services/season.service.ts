@@ -1,21 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { all, prop } from 'ramda';
 import { PrismaService } from '../../prisma';
+import { WatchlistService } from './watchlist.service';
 
 @Injectable()
 export class SeasonService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly watchlistService: WatchlistService,
+  ) {}
 
-  getIsSeasonFullyWatched(
+  async getIsSeasonFullyWatched(
     userId: number,
     showId: number,
     seasonNumber: number,
   ) {
+    const watchlist = await this.watchlistService.findWatchlist(userId, showId);
+
+    if (!watchlist) return false;
+
     return this.prismaService.episode
       .findMany({
         where: {
           seasonNumber,
-          watchlist: { showId, userId },
+          watchlistId: watchlist.id,
         },
       })
       .then(all(prop('isWatched')));
