@@ -101,9 +101,14 @@ export class EpisodeService {
   }
 
   async upsertEpisode(episodeId, isWatched) {
-    await this.prismaService.episode.update({
+    const episode = await this.prismaService.episode.update({
       where: { id: episodeId },
       data: { isWatched },
+    });
+
+    await this.prismaService.watchlist.update({
+      where: { id: episode.watchlistId },
+      data: { updatedAt: new Date() },
     });
   }
 

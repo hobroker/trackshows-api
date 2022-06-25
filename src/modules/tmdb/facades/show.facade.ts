@@ -1,4 +1,4 @@
-import { applySpec, compose, head, map, prop, propOr } from 'ramda';
+import { applySpec, compose, defaultTo, head, map, prop, propOr } from 'ramda';
 import { sanitize, toDate } from '../../../util/fp';
 import { Show } from '../../show';
 import { seasonFacade } from './season.facade';
@@ -13,7 +13,7 @@ export const showFacade = applySpec<Show>({
   originCountry: compose(head, prop('origin_country')),
   firstAirDate: compose(toDate, prop('first_air_date')),
   genres: compose(map(genreFacade), propOr([], 'genres')),
-  episodeRuntime: compose(head, propOr([0], 'episode_run_time')),
+  episodeRuntime: compose(defaultTo(0), head, propOr([0], 'episode_run_time')),
   isInProduction: propOr(false, 'in_production'),
   tagline: propOr('', 'tagline'),
   seasons: ({ id: showId, seasons }) =>
