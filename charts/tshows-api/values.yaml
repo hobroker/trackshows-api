@@ -1,7 +1,7 @@
 base:
   image:
     repository: ghcr.io/hobroker/tshows-api
-    tag: 4.5.1
+    tag: 4.6.0
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer

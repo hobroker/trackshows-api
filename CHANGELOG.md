@@ -1,3 +1,10 @@
+# [4.6.0](https://github.com/hobroker/tshows-api/compare/v4.5.1...v4.6.0) (2022-06-25)
+
+
+### Features
+
+* sort watchlist in upnext by watchlist updatedAt ([#71](https://github.com/hobroker/tshows-api/issues/71)) ([079fbce](https://github.com/hobroker/tshows-api/commit/079fbce597da231733591d285e858eb017b3f814))
+
 ## [4.5.1](https://github.com/hobroker/tshows-api/compare/v4.5.0...v4.5.1) (2022-06-07)
 
 
